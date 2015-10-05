@@ -88,14 +88,10 @@ def get_page(
 
     if len(published)> 0:
         published = published[0]
-    else:
-        published = False
+        if published.translated() or DEFAULT_LANGUAGE_FALLBACK:
+            return published
 
-    # Check if a translation exists for that page
-    if published.translated() or DEFAULT_LANGUAGE_FALLBACK:
-        return published
-    else:
-        return None
+    return None
 
 
 # Page decorator
