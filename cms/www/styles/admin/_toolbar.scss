@@ -1,0 +1,62 @@
+/**
+ * Defines the toolbar.
+ * 
+ */
+
+.toolbar{
+    position: fixed;
+    left: 60px;
+    top: 0;
+    width: 100%;
+    height: 60px;
+    z-index: 1;
+
+    border-bottom: 1px solid darken(#e8e8e8, 3%);
+    background-color: #fff;
+
+    padding-left: calc-em($horizontal_padding);
+
+    &--menu-open{
+        @include media($tablet) {
+            left: 240px;
+        }
+    }
+
+    &--menu-collapse{
+        @include media($tablet) {
+            left: 60px;
+        }
+    }
+
+    &--menu-close{
+        left: 0px;
+    }
+
+    &__menu_toggle{
+        display: inline-block;
+        width: 60px;
+        height: 60px;
+        padding-top: 19px;
+
+        border-right: 1px solid $grey--light;
+        
+        font-size: calc-em($font_size--large);
+        color: $grey--medium;
+        text-align: center;
+
+        @include transition(background-color 0.2s ease-in-out);
+        
+        &:hover{
+            color: $grey--medium;
+            background-color: $grey--lighter;
+            border-bottom: 1px solid $grey--light;
+        }
+    }
+
+    &__title{
+        font-size: $font_size--large;
+        font-family: $font_family--heading;
+        line-height: 60px;
+        display: inline-block;
+    }
+}

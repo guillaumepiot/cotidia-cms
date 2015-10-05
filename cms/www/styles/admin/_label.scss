@@ -1,0 +1,39 @@
+/**
+ * Label - Standard label mixin.
+ */
+
+@mixin label(){
+	color: #fff;
+	background-color: $grey--medium;
+	
+	display: inline-block;
+	border-radius: $border-radius;
+	padding-left: 0.5em;
+	padding-right: 0.5em;
+
+	text-transform: uppercase;
+	font-size: $font_size--small;
+
+	white-space: nowrap;
+  	overflow: ellipsis;
+}
+
+.label{
+	@include label();
+
+	&--primary{
+		background-color: $background_color--primary;
+	}
+
+	&--success{
+		background-color: $background_color--create;
+	}
+
+	&--warning{
+		background-color: $background_color--change;
+	}
+
+	&--danger{
+		background-color: $background_color--delete;
+	}
+}

@@ -1,0 +1,81 @@
+{% extends 'cms/base.html' %}{% load mptt_tags cms_tags %}
+{% block title %}
+    {{page.translated.title}}
+{% endblock title %}
+{% block main %}
+<div class="grid">
+    <div class="grid__span-3">
+        {% get_published_pages as pages %}
+        <ul class="nav">
+        {% recursetree pages %}
+            {% if not node.get_published.hide_from_nav and node.get_published.translated %}
+            <li class="{% if request.path == node.get_absolute_url %}active{% endif %}">
+                <a href="{{node.get_absolute_url}}" 
+                    {% if not node.get_published.target == '_self' %}
+                    target="{{node.get_published.target}}"
+                    {% endif %}>
+                    {{node.get_published.translated.title}}
+                </a>
+                {% if not node.is_leaf_node %}
+                    <ul class="children">
+                        {{ children }}
+                    </ul>
+                {% endif %}
+            </li>
+            {% endif %}
+        {% endrecursetree %}
+        </ul>
+
+    </div>
+    <div class="grid__span-9">
+        <div class="main-content">
+            <div class="[ editable ]"  data-name="title">
+                {% if request.is_preview %}
+                    {% if page.translated.regions.title %}
+                        {{page.translated.regions.title|safe}}
+                    {% else %}
+                        <h1>Proin at urna et risus.</h1>
+                        <p>Duis tincidunt sed justo eget ultricies. Proin lobortis magna tortor, ac malesuada leo congue a. Nam metus nulla, vulputate ut nibh ac, commodo viverra tortor. Fusce nec dolor mi. Nulla ipsum magna, placerat eu suscipit ullamcorper, luctus sit amet dui. Aenean sed elementum arcu, id consectetur nisl.</p>
+
+                        <p>Maecenas aliquet orci vel est cursus, ac faucibus lorem finibus. Sed porttitor laoreet nunc vitae dignissim. Nam nec fermentum ante. Sed euismod sagittis tortor, eget sagittis velit pulvinar vitae. Pellentesque justo felis, congue tristique iaculis sed, rhoncus sit amet orci. Interdum et malesuada fames ac ante ipsum primis in faucibus. Morbi ultrices risus vel dolor accumsan, et fermentum libero molestie. Sed eu tellus elementum nunc posuere semper. Vestibulum sem mi, condimentum eget augue quis, efficitur ullamcorper nibh.</p>
+
+                        <table class="table">
+                            <thead>
+                                <tr class="table-row">
+                                    <th class="table-head-cell">Tide</th>
+                                    <th class="table-head-cell">Time <span class="units">(UTC)</span></th>
+                                    <th class="table-head-cell">Height <span class="units">(metres)</span></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="table-row">
+                                    <td class="table-cell">Low</td>
+                                    <td class="table-cell">00:03</td>
+                                    <td class="table-cell">0.2</td>
+                                </tr>
+                                <tr class="table-row">
+                                    <td class="table-cell">High</td>
+                                    <td class="table-cell">05:59</td>
+                                    <td class="table-cell">5.7</td>
+                                </tr>
+                                <tr class="table-row">
+                                    <td class="table-cell">Low</td>
+                                    <td class="table-cell">12:25</td>
+                                    <td class="table-cell">0.2</td>
+                                </tr>
+                                <tr class="table-row">
+                                    <td class="table-cell">High</td>
+                                    <td class="table-cell">18:17</td>
+                                    <td class="table-cell">5.8</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    {% endif %}
+                {% else %}
+                    {{page.translated.regions.title|safe}}
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock main %}

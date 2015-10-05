@@ -1,0 +1,19 @@
+{% load i18n %}
+{% if perms.cms.change_page %}
+<div class="menu__section-header">
+    {% trans "CMS" %}
+</div>
+
+<a href="{% url 'cms-admin:page_list' %}" class="[ menu__item ] [ menu-item ]">
+    <span class="menu-item__icon fa fa-file-text"></span>
+    <span class="menu-item__text">{% trans "Pages" %}</span>
+</a>
+
+{% if perms.cms.change_image %}
+<a href="{% url 'cms-admin:image_list' %}" class="[ menu__item ] [ menu-item ]">
+    <span class="menu-item__icon fa fa-file-image-o"></span>
+    <span class="menu-item__text">{% trans "Images" %}</span>
+</a>
+{% endif %}
+
+{% endif %}

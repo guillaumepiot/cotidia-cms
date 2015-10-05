@@ -1,0 +1,39 @@
+{% load staticfiles i18n %}<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>{% block title %}No title set{% endblock %} | {{SITE_NAME}}</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+
+        <link rel="apple-touch-icon" href="apple-touch-icon.png">
+        <!-- Place favicon.ico in the root directory -->
+
+        <link rel="stylesheet" href="{% static "css/backend.min.css" %}">
+    </head>
+    <body>
+        <!--[if lt IE 8]>
+            <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+        <![endif]-->
+
+        <div class="modal modal--open">
+            <div class="modal__wrapper">
+                <div class="modal__content modal__content--small">
+                    <div class="modal__header">
+                        <h3>{{SITE_NAME}}</h3>
+                    </div>
+                    <div class="modal__body">
+                        <h4>{% trans "Congratulations!" %}</h4>
+                        <p>{% trans "You have successfully setup the CMS but there isn't any published pages yet to display." %}</p>
+                    </div>
+                    <div class="modal__footer">
+                        <a href="{% url 'cms-admin:page_add' %}" class="btn btn--create">
+                            {% trans "Add the first page" %}
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

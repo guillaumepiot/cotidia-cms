@@ -1,0 +1,40 @@
+{% extends "admin/account/page.html" %}{% load i18n staticfiles %}
+{% block title %}
+    {% trans "Images" %}
+{% endblock title %}
+
+{% block toolbar %}
+    <span class="toolbar__title">{% trans "Images" %}</span>
+{% endblock toolbar %}
+
+{% block content %}
+<div class="grid grid--collapse">
+    <div class="grid__span-12">
+        <div class="content__inner">
+            {% if object_list %}
+                {% for image in object_list %}
+                    <div class="thumbnail thumbnail--float">
+                        <img src="{{image.url}}">
+                        <a 
+                            href="{% url 'cms-admin:image_delete' image.id %}"
+                            title="{% trans "Delete" %}"
+                            class="thumbnail__delete">
+                            <span class="fa fa-times-circle"></span>
+                        </a>
+                    </div>
+                {% endfor %}
+            </table>
+            {% else %}
+                <p>{% trans "No images have been uploaded yet." %}</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% if object_list %}
+<div class="content__inner">
+    {% if perms.cms.add_image %}
+  
+    {% endif %}
+</div>
+{% endif %}
+{% endblock content %}

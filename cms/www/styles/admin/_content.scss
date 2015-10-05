@@ -1,0 +1,132 @@
+/**
+ * Defines the main content area.
+ * 
+ */
+
+body{
+    background-color: #f4f4f4;
+}
+
+.content{
+
+    position: relative;
+    padding-top: 60px;
+    margin-left: 60px;
+
+
+    &--menu-open{
+        @include media($tablet) {
+            margin-left: 240px;
+        }
+    }
+
+    &--menu-collapse{
+        @include media($tablet) {
+            margin-left: 60px;
+        }
+    }
+
+    &--menu-close{
+        margin-left: 0px;
+    }
+
+    &__inner{
+        margin: calc-em($vertical_padding) calc-em($horizontal_padding);
+    }
+}
+
+.content-inner{
+    padding: calc-em($vertical_padding) 0;
+}
+
+.box{
+    background-color: #fff;
+    // border-radius: $border_radius;
+
+    &--padded{
+        padding: calc-em($vertical_padding / 2) calc-em($horizontal_padding);
+    }
+    &--bordered{
+        border: 1px solid darken(#e7e7e7, 3%);
+    }
+}
+
+.fa{
+    &-red{
+        color: $red;
+    }
+    &-green{
+        color: $green;
+    }
+    &-orange{
+        color: $orange;
+    }
+}
+
+
+.table-row{
+    &--red{
+        background-color: tint($red, 80%);
+        &:hover{
+            background-color: tint($red, 85%);
+        }
+    }
+    &--green{
+        background-color: tint($green, 80%);
+        &:hover{
+            background-color: tint($green, 85%);
+        }
+    }
+    &--orange{
+        background-color: tint($orange, 80%);
+        &:hover{
+            background-color: tint($orange, 85%);
+        }
+    }
+}
+.table-head-cell{
+    background-color: #F9F9F9;
+    border-bottom: 1px solid darken(#e7e7e7, 3%);
+    font-weight: normal;
+}
+
+.text-muted{
+    color: $grey--medium;
+}
+
+.thumbnail{
+    display: inline-block;
+    position: relative;
+    background-color: #fff;
+    border: 1px solid $grey--light;
+    border-radius: 2px;
+    margin-right: calc-em($horizontal_padding);
+    margin-bottom: calc-em($vertical_padding);
+    padding: 4px;
+    min-height: 110px;
+
+    img{
+        max-height: 100px;
+        text-align: center;
+        display: block;
+    }
+
+    &--float{
+        float: left;
+    }
+
+    &__delete{
+        position: absolute;
+        top: -8px;
+        right: -6px;
+        color: $red;
+        font-size: 18px;
+        display: none;
+    }
+
+    &:hover{
+        .thumbnail__delete{
+            display: block;
+        }
+    }
+}

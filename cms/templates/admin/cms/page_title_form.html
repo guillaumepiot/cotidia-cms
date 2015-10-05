@@ -1,0 +1,74 @@
+{% extends "admin/account/page.html" %}{% load i18n %}
+{% block title %}
+    {% if object %}
+        {% trans "Edit Page Title" %}
+    {% else %}
+        {% trans "Add Page Title" %}
+    {% endif %}
+{% endblock title %}
+
+{% block toolbar %}
+    <span class="toolbar__title">{% trans "Pages" %}</span>
+{% endblock toolbar %}
+
+{% block content %}
+<div class="[ content__inner ]">
+    <p class="breadcrumb">
+        <a href="{% url 'cms-admin:page_list' %}">{% trans "Pages" %}</a>  
+        &nbsp;<span class="fa fa-angle-right"></span>&nbsp;
+        <a href="{% url 'cms-admin:page_detail' page.id %}">{{page.display_title}}</a>
+        &nbsp;<span class="fa fa-angle-right"></span>&nbsp;
+        {% if object %}
+            {% trans "Edit Page Title" %}
+        {% else %}
+            {% trans "Add Page Title" %}
+        {% endif %}
+    </p>
+</div>
+<form action="" method="post" class="form">
+{% csrf_token %}
+{% if form.non_field_errors %}
+    <div class="alert alert--error">
+    {% for error in form.non_field_errors %}
+        {{error}}<br>
+    {% endfor %}
+    </div>
+{% endif %}
+
+<div class="[ content__inner ] [ box box--padded box--bordered ]">
+    <fieldset>
+        <legend>{% trans "Page Title" %}</legend>
+        {% if page.parent and not page.parent.get_translations %}
+        <p>{% blocktrans %}
+            The parent page must have a URL before you can set a URL for 
+            this page.
+        {% endblocktrans %}</p>
+        <p><a href="{% url 'cms-admin:page_detail' page.parent.id %}">
+        {% blocktrans %}
+            Choose a URL for the parent page.
+        {% endblocktrans %}</a></p>
+        {% else %}
+        <div class="grid">
+            <div class="grid__span-2">
+                <span class="form__label--inline">
+                    {% trans "Choose a title" %}
+                </span>
+            </div>
+            <div class="grid__span-4">
+                {% with form.title as field %}
+                    {% include "admin/includes/text-field.html" %}
+                {% endwith %}
+            </div>      
+        </div>
+        {% endif %}
+    </fieldset>
+</div>
+
+<div class="content__inner">
+    <button type="submit" class="btn btn--primary">
+        {% trans "Save" %}
+    </button>
+</div>
+
+</form>
+{% endblock content %}

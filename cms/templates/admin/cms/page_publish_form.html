@@ -1,0 +1,72 @@
+{% extends "admin/account/page.html" %}{% load i18n %}
+{% block title %}
+	{% trans "Publish Page" %}
+{% endblock title %}
+
+{% block toolbar %}
+	<span class="toolbar__title">{% trans "Pages" %}</span>
+{% endblock toolbar %}
+
+{% block content %}
+<div class="[ content__inner ]">
+	<p class="breadcrumb">
+		<a href="{% url 'cms-admin:page_list' %}">{% trans "Pages" %}</a>  
+		&nbsp;<span class="fa fa-angle-right"></span>&nbsp;
+		<a href="{% url 'cms-admin:page_detail' page.id %}">{{page.display_title}}</a>
+		&nbsp;<span class="fa fa-angle-right"></span>&nbsp;
+		{% trans "Publish Page" %}
+	</p>
+</div>
+<form action="" method="post" class="form">
+{% csrf_token %}
+{% if form.non_field_errors %}
+    <div class="alert alert--error">
+    {% for error in form.non_field_errors %}
+        {{error}}<br>
+    {% endfor %}
+    </div>
+{% endif %}
+
+{% if page.get_translations %}
+<div class="[ content__inner ] [ box box--padded box--bordered ]">
+	<fieldset>
+		<h3>{% trans "Are you sure to publish the following page?" %}</h3>
+		<p class="text-strong">{{page.display_title}}</p>
+		<p>
+			{% trans "All translations available for that page will be published." %}
+		</p>
+		
+	</fieldset>
+</div>
+
+<div class="content__inner">
+	<form method="post" action=".">
+		<button type="submit" class="btn btn--primary">
+			{% trans "Publish" %}
+		</button>
+		<a href="{% url 'cms-admin:page_detail' page.id %}" class="btn btn--cancel btn--transparent">
+			{% trans "Cancel" %}
+		</a>
+	</form>
+</div>
+{% else %}
+<div class="[ content__inner ] [ box box--padded box--bordered ]">
+	<fieldset>
+		<p>
+			{% blocktrans %}
+			    This page can not be published because it doesn't have any 
+			    content.
+			{% endblocktrans %}
+		</p>
+		
+	</fieldset>
+</div>
+<div class="content__inner">
+	<a href="{% url 'cms-admin:page_detail' page.id %}" class="btn btn--cancel btn--transparent">
+		{% trans "Back to page details" %}
+	</a>
+</div>
+{% endif %}
+
+</form>
+{% endblock content %}
