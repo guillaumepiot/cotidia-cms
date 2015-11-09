@@ -1,0 +1,62 @@
+{% extends "admin/account/page.html" %}{% load i18n humanize event_tags %}
+{% block title %}
+    {% trans "Page dataset details" %}
+{% endblock title %}
+
+{% block toolbar %}
+    <a href="{% url 'cms-admin:pagedataset-update' object.id %}" 
+        class="[ toolbar__item ] [ btn btn--change btn--small pull-right ]">
+        <span class="fa fa-pencil"></span>
+        {% trans "Edit model" %}
+    </a>
+    <span class="toolbar__title">{% trans "Page datasets" %}</span>
+{% endblock toolbar %}
+
+{% block content %}
+<div class="[ content__inner ]">
+    <p class="breadcrumb">
+        <a href="{% url 'cms-admin:pagedataset-list' %}">{% trans "Page datasets" %}</a>  
+        &nbsp;<span class="fa fa-angle-right"></span>&nbsp;
+        {% trans "Page dataset details" %}
+    </p>
+</div>
+
+<div class="[ content__inner ] [ box box--padded box--bordered ]">
+    <fieldset>
+        <legend>{% trans "Page dataset details" %}</legend>
+        <div class="grid">
+            <div class="grid__span-2">
+                <span class="form__label--inline">
+                    {% trans "Name" %}
+                </span>
+            </div>
+            <div class="grid__span-3">
+                <p>{{object.name}}</p>
+            </div>  
+        </div>
+        <div class="grid">
+            <div class="grid__span-2">
+                <span class="form__label--inline">
+                    {% trans "Config" %}
+                </span>
+            </div>
+            <div class="grid__span-3">
+                <p>{{object.config}}</p>
+            </div>  
+        </div>
+    </fieldset>
+</div>
+
+<div class="content__inner">
+    {% if perms.cms.delete_pagedataset %}
+    <a href="{% url 'cms-admin:pagedataset-delete' object.id %}" class="btn btn--delete btn--transparent pull-right">
+        {% trans "Delete Page dataset" %}
+    </a>
+    {% endif %}
+    {% if perms.app.change_pagedataset %}
+    <a href="{% url 'cms-admin:pagedataset-update' object.id %}" class="btn btn--change">
+        {% trans "Edit Page dataset" %}
+    </a>
+    {% endif %}
+</div>      
+{% endblock content %}

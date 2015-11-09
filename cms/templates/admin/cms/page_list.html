@@ -4,6 +4,18 @@
 {% endblock title %}
 
 {% block toolbar %}
+    {% if perms.cms.add_pagedataset %}
+    <a href="{% url 'cms-admin:pagedataset-add' %}"
+        class="[ toolbar__item ] [ btn btn--create btn--small pull-right ]">
+        <span class="fa fa-plus"></span> {% trans "Add a page" %}
+    </a>
+    {% endif %}
+    {% if perms.cms.change_pagedataset %}
+    <a href="{% url 'cms-admin:pagedataset-list' %}"
+        class="[ toolbar__item ] [ btn btn--primary btn--small pull-right ]">
+        {% trans "Manage datasets" %}
+    </a>
+    {% endif %}
     <span class="toolbar__title">{% trans "Pages" %}</span>
 {% endblock toolbar %}
 
@@ -24,19 +36,19 @@
                 </tr>
                 {% for page in object_list %}
                 <tr 
-                    onClick="window.location = '{% url 'cms-admin:page_detail' page.id %}'"
+                    onClick="window.location = '{% url 'cms-admin:page-detail' page.id %}'"
                     class="table-row">
                     <td class="table-cell">{% if page.home %}
                             <span class="fa fa-home"></span>
                         {% endif %}
                     </td>
                     <td class="table-cell">
-                        <a href="{% url 'cms-admin:page_detail' page.id %}">
+                        <a href="{% url 'cms-admin:page-detail' page.id %}">
                             {{page.display_title}}
                         </a>
                     </td>
                     <td class="table-cell">
-                        <a href="{% url 'cms-admin:page_detail' page.id %}">
+                        <a href="{% url 'cms-admin:page-detail' page.id %}">
                             {{page.get_absolute_url}}
                         </a>
                     </td>
@@ -70,7 +82,7 @@
                                     style="width:16px; position: relative; top:3px;"/>
                             {% endfor %}
                         {% else %}
-                            <a href="{% url 'cms-admin:page_detail' page.id %}">
+                            <a href="{% url 'cms-admin:page-detail' page.id %}">
                                 + {% trans "Add content" %}
                             </a>
                         {% endif %}
@@ -91,15 +103,4 @@
         </div>
     </div>
 </div>
-{% if object_list %}
-<div class="content__inner">
-    {% if perms.cms.add_page %}
-        <a href="{% url 'cms-admin:page_add' %}"
-            class="btn btn--create">
-            <span class="fa fa-plus"></span>
-            {% trans "Add a page" %}
-        </a>    
-    {% endif %}
-</div>
-{% endif %}
 {% endblock content %}

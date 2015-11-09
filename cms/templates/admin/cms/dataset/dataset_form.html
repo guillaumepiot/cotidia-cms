@@ -1,0 +1,80 @@
+{% extends "admin/account/page.html" %}{% load i18n staticfiles %}
+{% block title %}
+    {% if object %}
+        {% trans "Edit Page dataset" %}
+    {% else %}
+        {% trans "Add a Page dataset" %}
+    {% endif %}
+{% endblock title %}
+
+{% block header_scripts %}
+    <link href="{% static "codemirror/lib/codemirror.css" %}" type="text/css" media="all" rel="stylesheet" />
+    <link href="{% static "codemirror/theme/cobalt.css" %}" type="text/css" media="all" rel="stylesheet" />
+    <script type="text/javascript" src="{% static "codemirror/lib/codemirror.js" %}"></script>
+    <script type="text/javascript" src="{% static "codemirror/mode/javascript/javascript.js" %}"></script>
+{% endblock header_scripts %}
+
+{% block toolbar %}
+    <span class="toolbar__title">{% trans "Page datasets" %}</span>
+{% endblock toolbar %}
+
+{% block content %}
+<div class="[ content__inner ]">
+    <p class="breadcrumb">
+        <a href="{% url 'cms-admin:pagedataset-list' %}">{% trans "Page datasets" %}</a>  
+        &nbsp;<span class="fa fa-angle-right"></span>&nbsp;
+        {% if object %}
+            <a href="{% url 'cms-admin:pagedataset-detail' object.id %}">{{object}}</a>  
+            &nbsp;<span class="fa fa-angle-right"></span>&nbsp;
+            {% trans "Edit Page dataset" %}
+        {% else %}
+            {% trans "Add a Page dataset" %}
+        {% endif %}
+    </p>
+</div>
+<form action="" method="post" class="form" enctype="multipart/form-data">
+{% csrf_token %}
+{% if form.non_field_errors %}
+    <div class="alert alert--error">
+    {% for error in form.non_field_errors %}
+        {{error}}<br>
+    {% endfor %}
+    </div>
+{% endif %}
+
+<div class="[ content__inner ] [ box box--padded box--bordered ]">
+    <fieldset>
+        <legend>{% trans "Page dataset detail" %}</legend>
+        <div class="grid">
+            <div class="grid__span-2">
+                <span class="form__label--inline">
+                    {% trans "Name" %}
+                </span>
+            </div>
+            <div class="grid__span-3">
+                {% with form.name as field %}
+                    {% include "admin/includes/text-field.html" %}
+                {% endwith %}
+            </div>  
+        </div>
+        <div class="grid">
+            <div class="grid__span-2">
+                <span class="form__label--inline">
+                    {% trans "Config" %}
+                </span>
+            </div>
+            <div class="grid__span-6">
+                <div class="form__group">
+                    {{form.config}}
+                </div>
+            </div>  
+        </div>
+    </fieldset>
+</div>
+<div class="content__inner">
+    <button type="submit" class="btn btn--primary">
+        {% trans "Save" %}
+    </button>
+</div>
+</form>
+{% endblock content %}

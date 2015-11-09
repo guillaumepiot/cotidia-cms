@@ -14,9 +14,9 @@
 {% block content %}
 <div class="[ content__inner ]">
     <p class="breadcrumb">
-        <a href="{% url 'cms-admin:page_list' %}">{% trans "Pages" %}</a>  
+        <a href="{% url 'cms-admin:page-list' %}">{% trans "Pages" %}</a>  
         &nbsp;<span class="fa fa-angle-right"></span>&nbsp;
-        <a href="{% url 'cms-admin:page_detail' page.id %}">{{page.display_title}}</a>
+        <a href="{% url 'cms-admin:page-detail' page.id %}">{{page.display_title}}</a>
         &nbsp;<span class="fa fa-angle-right"></span>&nbsp;
         {% if object %}
             {% trans "Edit Page Title" %}
@@ -43,7 +43,7 @@
             The parent page must have a URL before you can set a URL for 
             this page.
         {% endblocktrans %}</p>
-        <p><a href="{% url 'cms-admin:page_detail' page.parent.id %}">
+        <p><a href="{% url 'cms-admin:page-detail' page.parent.id %}">
         {% blocktrans %}
             Choose a URL for the parent page.
         {% endblocktrans %}</a></p>

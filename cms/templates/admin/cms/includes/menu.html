@@ -4,13 +4,13 @@
     {% trans "CMS" %}
 </div>
 
-<a href="{% url 'cms-admin:page_list' %}" class="[ menu__item ] [ menu-item ]">
+<a href="{% url 'cms-admin:page-list' %}" class="[ menu__item ] [ menu-item ]">
     <span class="menu-item__icon fa fa-file-text"></span>
     <span class="menu-item__text">{% trans "Pages" %}</span>
 </a>
 
 {% if perms.cms.change_image %}
-<a href="{% url 'cms-admin:image_list' %}" class="[ menu__item ] [ menu-item ]">
+<a href="{% url 'cms-admin:image-list' %}" class="[ menu__item ] [ menu-item ]">
     <span class="menu-item__icon fa fa-file-image-o"></span>
     <span class="menu-item__text">{% trans "Images" %}</span>
 </a>

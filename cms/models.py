@@ -536,9 +536,6 @@ class BaseDataSet(models.Model):
             raise Exception('JSON config could not be loaded from Page mask')
 
 
-
-
-
 #
 # Base translation model
 #
@@ -553,8 +550,8 @@ class BasePageTranslation(models.Model, PublishTranslation):
     regions = models.TextField(blank=True)
     images = models.TextField(blank=True)
 
-    date_created = models.DateTimeField(auto_now_add=True)
-    date_updated = models.DateTimeField(auto_now=True)
+    date_created = models.DateTimeField(default=datetime.datetime.now())
+    date_updated = models.DateTimeField(default=datetime.datetime.now())
 
     created_by = models.ForeignKey('account.User', 
         blank=True, null=True, related_name='translation_created_by')
@@ -636,7 +633,6 @@ reversion.register(Page, follow=["translations"])
 
 
 class PageDataSet(BaseDataSet):
-
     class Meta:
         verbose_name=_('Page data set')
         verbose_name_plural=_('Page data sets')

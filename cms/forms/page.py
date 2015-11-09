@@ -1,6 +1,7 @@
 import re
 from django import forms
 from django.utils.translation import ugettext_lazy as _
+from mptt.forms import TreeNodeChoiceField
 
 from cms.models import Page, PageTranslation, PageDataSet
 from cms.settings import CMS_PAGE_TEMPLATES
@@ -74,6 +75,51 @@ class PageAddForm(forms.ModelForm):
         
         return home
 
+class PageUpdateForm(PageAddForm):
+
+    
+    slug = forms.CharField(
+        label='',
+        help_text=_("A unique identifier to allow retrieving a page"),
+        widget=forms.TextInput(attrs={'class':'form__text'}),
+        required=False
+        )
+
+    dataset = forms.ModelChoiceField(
+        label="",
+        queryset=PageDataSet.objects.all(),
+        widget=forms.Select(attrs={'class':'form__select'}),
+        required=False
+        )
+
+    redirect_to = TreeNodeChoiceField(
+        label='', 
+        queryset=Page.objects.get_published_originals(), 
+        help_text=_('Redirect this page to another page in the system'), 
+        widget=forms.Select(attrs={'class':'form__select'}),
+        required=False)
+
+    
+    redirect_to_url = forms.CharField(
+        label='',
+        help_text=_("Enter the full web address."),
+        widget=forms.TextInput(attrs={'class':'form__text'}),
+        required=False
+        )
+
+    class Meta:
+        model = Page
+        fields = [
+            'home',
+            'display_title',
+            'template',
+            'parent',
+            'hide_from_nav',
+            'dataset',
+            'redirect_to',
+            'redirect_to_url',
+            'slug'
+            ]
 
 class PageURLForm(forms.ModelForm):
 

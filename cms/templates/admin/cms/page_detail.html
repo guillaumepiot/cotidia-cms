@@ -10,9 +10,9 @@
 {% block content %}
 <div class="[ content__inner ]">
     <p class="breadcrumb">
-        <a href="{% url 'cms-admin:page_list' %}">{% trans "Pages" %}</a>  
+        <a href="{% url 'cms-admin:page-list' %}">{% trans "Pages" %}</a>  
         &nbsp;<span class="fa fa-angle-right"></span>&nbsp;
-        <a href="{% url 'cms-admin:page_detail' page.id %}">{{page.display_title}}</a>
+        <a href="{% url 'cms-admin:page-detail' page.id %}">{{page.display_title}}</a>
         &nbsp;<span class="fa fa-angle-right"></span>&nbsp;
         {% trans "Page details" %}
     </p>
@@ -38,7 +38,7 @@
                             {{object.status_verbal}}
                         </span>
                         {% if perms.cms.publish_page %}
-                        <a href="{% url 'cms-admin:page_publish' object.id %}">
+                        <a href="{% url 'cms-admin:page-publish' object.id %}">
                             {% trans "Approve now" %}
                             <span class="fa fa-arrow-right"></span>
                         </a>
@@ -50,7 +50,7 @@
                             {{object.status_verbal}}
                         </span>
                         {% if perms.cms.publish_page %}
-                            <a href="{% url 'cms-admin:page_unpublish' object.id %}">
+                            <a href="{% url 'cms-admin:page-unpublish' object.id %}">
                                 {% trans "Unpublish" %}
                             </a>
                         
@@ -63,7 +63,7 @@
                         </span>
                         {% if perms.cms.publish_page %}
                             {% if page.get_translations %}
-                            <a href="{% url 'cms-admin:page_publish' object.id %}">
+                            <a href="{% url 'cms-admin:page-publish' object.id %}">
                                 {% trans "Publish now" %}
                                 <span class="fa fa-arrow-right"></span>
                             </a>
@@ -163,7 +163,7 @@
                                 {% if page.parent %}
                                 {% if page.title %}{{page.title}}{% endif %}
                                 <a 
-                                    href="{% url 'cms-admin:page_title_update' object.id page.language_code page.id %}" 
+                                    href="{% url 'cms-admin:page-title-update' object.id page.language_code page.id %}" 
                                     class="{% if not page.title %}[ btn btn--small btn--create ]{% endif %}"
                                     >
                                     {% if page.title %}
@@ -183,7 +183,7 @@
                         <td class="table-cell">
                             {% if page.parent %}
                                 {% if page.slug %}/{{page.slug}}/{% endif %}
-                                <a href="{% url 'cms-admin:page_url_update' object.id page.language_code page.id %}">
+                                <a href="{% url 'cms-admin:page-url-update' object.id page.language_code page.id %}">
                                     <span class="fa fa-pencil"></span>
                                     {% if not page.slug %}{% trans "Choose URL" %}{% endif %}
                                 </a>
@@ -215,6 +215,65 @@
                 {% endfor %}
                 </tbody>
             </table>
+        </div>
+    </fieldset>
+</div>
+
+<div class="[ content__inner ] [ box box--padded box--bordered ]">
+    <fieldset>
+        <legend>{% trans "Meta data" %}</legend>
+        <div class="grid">
+            <div class="grid__span-6">
+                <p>{% blocktrans %}Meta data is the content information that a user
+        can't see but a search engine to social website can. This data can be
+        used to add extra description about the page, and list of fields that
+        are used by social networks, such as open graph.{% endblocktrans %}</p>
+            </div>
+        </div>
+        <div class="content-inner">
+            {% if object.dataset %}
+                
+            
+            <table class="table">
+                <thead>
+                    <tr class="table-row">
+                        <th class="table-head-cell">{% trans "Language" %}</th>
+                        <th class="table-head-cell">{% trans "Data" %}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for page in object.languages %}
+                    <tr class="table-row">
+                        <td class="table-cell">
+                            <img src="{% static "img/flags/" %}{{page.language_code}}.png" style="width:16px; position: relative; top:3px;"/> 
+                            {{page.get_language}}
+                        </td>
+                        <td class="table-cell">
+                            {% if page.parent %}
+                                {% if perms.cms.change_page %}
+                                <a 
+                                    href="{% url 'cms-admin:page-metadata-update' page.id page.language_code %}" 
+                                    class="[ btn btn--small btn--primary ]">
+                                    <span class="fa fa-file-text"></span>
+                                    {% trans "Edit" %}
+                                </a>
+                                {% endif %}
+                            {% else %}
+                            <span class="text-muted">
+                                {% trans "You must set a title for that language before adding data." %}
+                            </span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+                <a href="{% url 'cms-admin:page-update' page.id %}#dataset"
+                    class="btn btn--small btn--create">
+                    {% trans "Select dataset" %}
+                </a>
+            {% endif %}
         </div>
     </fieldset>
 </div>
@@ -255,7 +314,7 @@
             </div>
             <div class="grid__span-8">
                 <p>{% if object.parent %}
-                    <a href="{% url 'cms-admin:page_detail' page.parent.id %}">
+                    <a href="{% url 'cms-admin:page-detail' page.parent.id %}">
                         {{object.parent.display_title}}
                     </a>
                 {% else %}
@@ -265,12 +324,6 @@
                 </p>
             </div>  
         </div>
-    </fieldset>
-</div>
-
-<div class="[ content__inner ] [ box box--padded box--bordered ]">
-    <fieldset>
-        <legend>{% trans "Template" %}</legend>
         <div class="grid">
             <div class="grid__span-2">
                 <span class="form__label--inline">
@@ -281,20 +334,52 @@
                 <p>{{object.get_template}}</p>
             </div>  
         </div>
+        <div class="grid">
+            <div class="grid__span-2">
+                <span class="form__label--inline">
+                    {% trans "Redirect to page" %}
+                </span>
+            </div>
+            <div class="grid__span-8">
+                {% if object.redirect_to %}
+                    <p>{{object.redirect_to}}</p>
+                {% endif %}
+            </div>  
+        </div>
+        <div class="grid">
+            <div class="grid__span-2">
+                <span class="form__label--inline">
+                    {% trans "Redirect to URL" %}
+                </span>
+            </div>
+            <div class="grid__span-8">
+                <p>{{object.redirect_to_url}}</p>
+            </div>  
+        </div>
+        <div class="grid">
+            <div class="grid__span-2">
+                <span class="form__label--inline">
+                    {% trans "Unique page identifier" %}
+                </span>
+            </div>
+            <div class="grid__span-8">
+                <p>{{object.slug}}</p>
+            </div>  
+        </div>
     </fieldset>
 </div>
 
 <div class="content__inner">
     {% if perms.cms.delete_page %}
     <a 
-        href="{% url 'cms-admin:page_delete' object.id %}" 
+        href="{% url 'cms-admin:page-delete' object.id %}" 
         class="btn btn--delete btn--transparent pull-right">
         {% trans "Delete Page" %}
     </a>
     {% endif %}
     {% if perms.cms.change_page %}
     <a 
-        href="{% url 'cms-admin:page_update' object.id %}" 
+        href="{% url 'cms-admin:page-update' object.id %}" 
         class="btn btn--change">
         {% trans "Edit Page Details" %}
     </a>
