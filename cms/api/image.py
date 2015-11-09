@@ -2,6 +2,8 @@ import json, urllib, re, os, io, decimal
 from PIL import Image as PILImage
 
 from django.conf import settings
+from django.core.files.storage import default_storage
+from django.core.files.base import ContentFile
 
 from rest_framework import generics, permissions, filters
 from rest_framework.parsers import FormParser, MultiPartParser
@@ -95,6 +97,28 @@ class ImageUpdate(ImageMixin, generics.UpdateAPIView):
         # Get image from image model instance
         image = instance.image
 
+        if len(image.name.split('.')) > 1:
+            file_ext = image.name.split('.')[-1]
+            if file_ext == 'jpg':
+                file_ext = "JPEG"
+        else:
+            file_ext = "JPEG"
+
+        if file_ext not in ['PNG', 'JPEG', 'GIF']:
+            file_ext = "JPEG"
+
+        try:
+            # Open the image with PIL locally
+            im = PILImage.open(image.path)
+            output = None
+            img_file = None
+        except:
+            # Try open with django storage, in case of external hosting (S3)
+            img_file = default_storage.open(image.name, 'rw')
+            im = io.BytesIO(img_file.read())
+            im = PILImage.open(im)
+            output = io.BytesIO()
+
         if hasattr(instance, '_crop'):
 
             crop_values = instance._crop.split(',')
@@ -107,16 +131,20 @@ class ImageUpdate(ImageMixin, generics.UpdateAPIView):
             bottom = round(decimal.Decimal(crop_values[2]) * image.height)
             right = round(decimal.Decimal(crop_values[3]) * image.width)
 
-            crop_box = (left, top, right, bottom)
-
-            # Open the image with PIL
-            im = PILImage.open(image.path)
+            crop_box = (int(left), int(top), int(right), int(bottom))
 
             # Action the image rotation
             im = im.crop(crop_box)
-            
-            # Save the image
-            im.save(image.path)
+
+            if output:
+                # Save cropped image to buffer
+                im.save(output, file_ext.upper())
+                # Save new image to storage
+                img_file.write(output.getvalue())
+                img_file.close()
+            else:
+                im.save(image.path)
+
 
             # Save the size against the image
             instance.width = im.width
@@ -126,15 +154,18 @@ class ImageUpdate(ImageMixin, generics.UpdateAPIView):
         elif hasattr(instance, '_direction'):
             
             angle = 270 if instance._direction == "CW" else 90
-            
-            # Open the image with PIL
-            im = PILImage.open(image.path)
 
             # Action the image rotation
             im = im.rotate(angle)
-            
-            # Save the image
-            im.save(image.path)
+
+            if output:
+                # Save rotated image to buffer
+                im.save(output, file_ext.upper())
+                # Save new image to storage
+                img_file.write(output.getvalue())
+                img_file.close()
+            else:
+                im.save(image.path)
 
             # Save the size against the image
             instance.width = im.width

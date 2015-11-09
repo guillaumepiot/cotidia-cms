@@ -1,4 +1,4 @@
-import datetime, json, reversion
+import datetime, json, reversion, decimal
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.conf import settings
@@ -694,6 +694,8 @@ class Image(models.Model):
 def set_image_meta_data(sender, instance=None, created=False, **kwargs):
     
     if instance.display_width:
-        ratio = instance.width / instance.height
+        width = decimal.Decimal(str(instance.width))
+        height = decimal.Decimal(str(instance.height))
+        ratio = width / height
         instance.display_height = int(instance.display_width / ratio)
 

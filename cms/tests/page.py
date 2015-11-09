@@ -8,11 +8,18 @@ from account.models import User
 class PageTests(TestCase):
 
 
-    fixtures = [
-        'account/fixtures/auth.json',
-        'account/fixtures/account.json',
-        ]
+    def setUp(self):
 
+        # Create a default user
+        self.user = User.objects.create(
+            username="page@editor.com",
+            email="page@editor.com",
+            is_staff=True,
+            is_active=True,
+            is_superuser=True)
+
+        self.user.set_password('demo')
+        self.user.save()
 
     def test_add_page(self):
         """
@@ -20,12 +27,11 @@ class PageTests(TestCase):
         """
         c = Client()
 
-        url = reverse('cms-admin:page_add')
+        url = reverse('cms-admin:page-add')
 
-        c.login(username='page@editor.com', password='demo')
+        c.login(username="page@editor.com", password='demo')
 
         response = c.get(url)
-
         # Test that the page load first
         self.assertEqual(response.status_code, 200)
 
@@ -75,9 +81,9 @@ class PageTests(TestCase):
         Test if we can add a translation in the admin
         """
         c = Client()
-        c.login(username='page@editor.com', password='demo')
+        c.login(username="page@editor.com", password='demo')
 
-        url = reverse('cms-admin:page_add')
+        url = reverse('cms-admin:page-add')
 
         data = {
             'display_title': "Home",
@@ -91,7 +97,7 @@ class PageTests(TestCase):
 
         page = Page.objects.filter().first()
 
-        url = reverse('cms-admin:page_update', kwargs={'pk':page.id})
+        url = reverse('cms-admin:page-update', kwargs={'pk':page.id})
 
         # Test that we can update the page details
         
@@ -109,7 +115,7 @@ class PageTests(TestCase):
 
         # Test that we can add a url
         url = reverse(
-            'cms-admin:page_url_add', 
+            'cms-admin:page-url-add', 
             kwargs={'page_id':page.id, 'lang':"en"}
             )
 
@@ -126,7 +132,7 @@ class PageTests(TestCase):
 
         # Test that we can update a url
         url = reverse(
-            'cms-admin:page_url_update', 
+            'cms-admin:page-url-update', 
             kwargs={'page_id':page.id, 'lang':"en", 'trans_id':translation.id}
             )
 
@@ -146,9 +152,9 @@ class PageTests(TestCase):
         Test if we can add a translation in the admin
         """
         c = Client()
-        c.login(username='page@editor.com', password='demo')
+        c.login(username="page@editor.com", password='demo')
 
-        url = reverse('cms-admin:page_add')
+        url = reverse('cms-admin:page-add')
 
         data = {
             'display_title': "Home",
@@ -164,7 +170,7 @@ class PageTests(TestCase):
 
         # Test that we can add a url
         url = reverse(
-            'cms-admin:page_url_add', 
+            'cms-admin:page-url-add', 
             kwargs={'page_id':page.id, 'lang':"en"}
             )
 
@@ -181,7 +187,7 @@ class PageTests(TestCase):
 
         # Test that we can publish the page
         url = reverse(
-            'cms-admin:page_publish', 
+            'cms-admin:page-publish', 
             kwargs={'page_id':page.id}
             )
 
@@ -195,7 +201,7 @@ class PageTests(TestCase):
 
         # Test that we can unpublish the page
         url = reverse(
-            'cms-admin:page_unpublish', 
+            'cms-admin:page-unpublish', 
             kwargs={'page_id':page.id}
             )
 

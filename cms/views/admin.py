@@ -49,7 +49,7 @@ class PageCreate(StaffPermissionRequiredMixin, CreateView):
 
     def get_success_url(self):
         messages.success(self.request, _('The page has been created.'))
-        return reverse('cms-admin:page_list')
+        return reverse('cms-admin:page-list')
 
 class PageUpdate(StaffPermissionRequiredMixin, UpdateView):
     model = Page
@@ -68,51 +68,8 @@ class PageUpdate(StaffPermissionRequiredMixin, UpdateView):
             self.object.save()
         return response
 
-# class PageMetaDataUpdate(StaffPermissionRequiredMixin, UpdateView):
-#     model = PageTranslation
-#     form_class = TranslationForm
-#     template_name = 'admin/cms/page_metadata_form.html'
-#     permission_required = 'cms.change_page'
-
-#     def get_form(self, form_class=None):
-#         """
-#         Returns an instance of the form with the page instance.
-#         """
-#         return TranslationForm(self.get_object().parent)
-
-#     def get_success_url(self):
-#         messages.success(self.request, _('The page meta data has been updated.'))
-#         return reverse('cms-admin:page-detail', kwargs={'pk':self.object.id})
-
-#     def get(self, request, *args, **kwargs):
-#         if not request.GET.get('language'):
-#             raise Exception("Please select a language code")
-#         return super(PageMetaDataUpdate, self).get(request, *args, **kwargs)
-
-#     def form_valid(self, form):
-#         """
-#         If the form is valid, redirect to the supplied URL.
-#         """
-#         print "form is valid"
-#         return HttpResponseRedirect(self.get_success_url())
-
-
-#     def post(self, request, *args, **kwargs):
-#         response = super(PageMetaDataUpdate, self).post(request, *args, **kwargs)
-
-#         # self.object.content = 
-#         self.object.language_code = request.GET.get('language')
-#         self.object.save()
-
-#         # Make parent page to be approved
-#         self.object.parent.approval_needed = True
-#         self.object.parent.save()
-        
-#         return response
-
 class PageDelete(StaffPermissionRequiredMixin, DeleteView):
     model = Page
-    success_url = reverse_lazy('cms-admin:page_list')
     permission_required = 'cms.delete_page'
     template_name = 'admin/cms/page_confirm_delete.html'
 

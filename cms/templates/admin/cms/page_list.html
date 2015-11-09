@@ -5,7 +5,7 @@
 
 {% block toolbar %}
     {% if perms.cms.add_pagedataset %}
-    <a href="{% url 'cms-admin:pagedataset-add' %}"
+    <a href="{% url 'cms-admin:page-add' %}"
         class="[ toolbar__item ] [ btn btn--create btn--small pull-right ]">
         <span class="fa fa-plus"></span> {% trans "Add a page" %}
     </a>
@@ -95,7 +95,7 @@
             </table>
             {% else %}
                 <p>{% trans "No pages have been created yet." %}</p>
-                <a href="{% url 'cms-admin:page_add' %}" class="btn btn--create">
+                <a href="{% url 'cms-admin:page-add' %}" class="btn btn--create">
                     <span class="fa fa-plus"></span> 
                     {% trans "Add the first page" %}
                 </a>

@@ -127,15 +127,40 @@ class PageDataSetTests(TestCase):
         # Send data
         data = {
             'name': 'other value',
-            'config': self.object.config
+            'config': """[
+  {
+    "fieldset":"Page content",
+    "fields":[
+        {
+            "name":"description",
+            "type":"editorfield",
+            "required":false
+        }
+    ]
+  },
+  {
+    "fieldset":"Meta data",
+    "fields":[
+        {
+            "name":"meta_title",
+            "type":"charfield",
+            "required":false
+        },
+        {
+            "name":"meta_description",
+            "type":"textfield",
+            "required":false
+        }
+    ]
+  }
+]"""
         }
         response = self.c.post(url, data)
-        print response
         self.assertEqual(response.status_code, 302)
 
         # Get the latest added object
         obj = PageDataSet.objects.get(id=self.object.id)
-        self.assertEqual(obj.attr, 'other value')
+        self.assertEqual(obj.name, 'other value')
 
     def test_retrieve_pagedataset(self):
         """
