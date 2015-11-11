@@ -51,6 +51,7 @@ class PageAddForm(forms.ModelForm):
         self.fields['parent'].label = ""
         self.fields['parent'].widget.attrs['class'] = 'form__text'
         self.fields['parent'].help_text = _("Leave blank if this a top level page.")
+        self.fields['parent'].queryset = Page.objects.get_originals()
 
 
     def clean_home(self):
