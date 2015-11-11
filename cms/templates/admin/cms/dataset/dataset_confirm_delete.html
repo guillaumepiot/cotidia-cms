@@ -1,0 +1,44 @@
+{% extends "admin/account/page.html" %}{% load i18n %}
+{% block title %}
+    {% trans "Delete page dataset" %}
+{% endblock title %}
+
+{% block toolbar %}
+    <span class="toolbar__title">{% trans "Page datasets" %}</span>
+{% endblock toolbar %}
+
+{% block content %}
+<div class="[ content__inner ]">
+    <p class="breadcrumb">
+        <a href="{% url 'accommodation-admin:accommodation-list' %}">
+            {% trans "Page datasets" %}
+        </a>  
+        &nbsp;<span class="fa fa-angle-right"></span>&nbsp;
+        <a href="{% url 'cms-admin:pagedataset-detail' object.id %}">
+            {{object}}
+        </a>   
+        &nbsp;<span class="fa fa-angle-right"></span>&nbsp;
+        {% trans "Confirm Delete" %}
+    </p>
+</div>
+
+<div class="[ content__inner ] [ box box--padded box--bordered ]">
+    <h3>{% trans "Are you sure to delete the following page dataset?" %}</h3>
+    <p>
+    {{object}}
+    </p>
+    <p>{% trans "The operation is not reversible." %}</p>
+</div>
+
+<div class="content__inner">
+    <form method="post" action=".">
+        {% csrf_token %}
+        <button type="submit" class="btn btn--delete">
+            {% trans "Confirm Delete" %}
+        </button>
+        <a href="{% url 'cms-admin:pagedataset-detail' object.id %}" class="btn btn--transparent">
+            {% trans "Cancel" %}
+        </a>
+    </form>
+</div>      
+{% endblock content %}

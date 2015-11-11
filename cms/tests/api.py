@@ -18,14 +18,20 @@ from cms.models import Page, PageTranslation, Image
 # Create your tests here.
 class PageTranslationTests(APITestCase):
 
-    fixtures = [
-        'account/fixtures/auth.json',
-        'account/fixtures/account.json',
-        ]
-
     def setUp(self):
-        # Add a default user and generate an authentication token
-        self.user = User.objects.get(email="page@editor.com")
+
+        # Create a default user
+        self.user = User.objects.create(
+            username="pageeditor",
+            email="page@editor.com",
+            is_staff=True,
+            is_active=True,
+            is_superuser=True)
+
+        self.user.set_password('demo')
+        self.user.save()
+        
+        # Ggenerate an authentication token
         self.token, created = Token.objects.get_or_create(user=self.user)
         self.client = APIClient()
 
@@ -41,7 +47,7 @@ class PageTranslationTests(APITestCase):
             'template': "cms/page.html"
         }
 
-        url = reverse('cms-admin:page_add')
+        url = reverse('cms-admin:page-add')
         response = c.post(url, data)
         self.assertEqual(response.status_code, 302)
 
@@ -55,7 +61,7 @@ class PageTranslationTests(APITestCase):
         }
 
         url = reverse(
-            'cms-admin:page_title_add', 
+            'cms-admin:page-title-add', 
             kwargs={'page_id': page.id, 'lang':"en"})
 
         response = c.post(url, data)
@@ -96,14 +102,20 @@ class PageTranslationTests(APITestCase):
 
 class ImageUploadTests(APITestCase):
 
-    fixtures = [
-        'account/fixtures/auth.json',
-        'account/fixtures/account.json',
-        ]
-
     def setUp(self):
-         # Add a default user and generate an authentication token
-        self.user = User.objects.get(email="page@editor.com")
+
+        # Create a default user
+        self.user = User.objects.create(
+            username="pageeditor",
+            email="page@editor.com",
+            is_staff=True,
+            is_active=True,
+            is_superuser=True)
+
+        self.user.set_password('demo')
+        self.user.save()
+
+        # Generate an authentication token
         self.token, created = Token.objects.get_or_create(user=self.user)
         self.client = APIClient()
         

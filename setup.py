@@ -20,7 +20,7 @@ install_requires = [
     'django-mptt==0.7.4',
     'django-reversion==1.9.3',
     'djangorestframework==3.2.4',
-    'djrill==1.4.0'
+    'django-codemirror-widget==0.4.0',
 ]
 
 # taken from django-registration

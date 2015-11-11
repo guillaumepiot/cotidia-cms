@@ -10,9 +10,9 @@
 {% block content %}
 <div class="[ content__inner ]">
 	<p class="breadcrumb">
-		<a href="{% url 'cms-admin:page_list' %}">{% trans "Pages" %}</a>  
+		<a href="{% url 'cms-admin:page-list' %}">{% trans "Pages" %}</a>  
 		&nbsp;<span class="fa fa-angle-right"></span>&nbsp;
-		<a href="{% url 'cms-admin:page_detail' page.id %}">{{page.display_title}}</a>
+		<a href="{% url 'cms-admin:page-detail' page.id %}">{{page.display_title}}</a>
 		&nbsp;<span class="fa fa-angle-right"></span>&nbsp;
 		{% trans "Publish Page" %}
 	</p>
@@ -44,7 +44,7 @@
 		<button type="submit" class="btn btn--primary">
 			{% trans "Publish" %}
 		</button>
-		<a href="{% url 'cms-admin:page_detail' page.id %}" class="btn btn--cancel btn--transparent">
+		<a href="{% url 'cms-admin:page-detail' page.id %}" class="btn btn--cancel btn--transparent">
 			{% trans "Cancel" %}
 		</a>
 	</form>
@@ -62,7 +62,7 @@
 	</fieldset>
 </div>
 <div class="content__inner">
-	<a href="{% url 'cms-admin:page_detail' page.id %}" class="btn btn--cancel btn--transparent">
+	<a href="{% url 'cms-admin:page-detail' page.id %}" class="btn btn--cancel btn--transparent">
 		{% trans "Back to page details" %}
 	</a>
 </div>

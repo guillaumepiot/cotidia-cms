@@ -69,7 +69,7 @@
         {% if request.is_preview %}
         <p class="text-center">
             {% trans "You are in preview and edit mode." %} 
-            <a href="{% url 'cms-admin:page_detail' page.id %}">{% trans "Back to admin" %}</a>
+            <a href="{% url 'cms-admin:page-detail' page.id %}">{% trans "Back to admin" %}</a>
             <a href="{{page|get_page_url}}">{% trans "View in normal mode" %}</a>
         </p>
         {% endif %}
