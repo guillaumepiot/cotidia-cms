@@ -18,6 +18,23 @@ class PageTranslationSerializer(serializers.ModelSerializer):
 
         return ret
 
+    def update(self, instance, validated_data):
+
+        current_data = dict(json.loads(instance.regions))
+        if not current_data:
+            current_data = {}
+
+        if validated_data.get('regions'):
+            new_data = dict(json.loads(validated_data.get('regions')))
+            for key, value in new_data.items():
+                print(key, value)
+                current_data[key] = value
+
+            validated_data['regions'] = json.dumps(current_data)
+
+        instance = super(PageTranslationSerializer, self).update(instance, validated_data)
+
+        return instance
 
 class ImageSerializer(serializers.ModelSerializer):
 
