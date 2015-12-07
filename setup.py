@@ -14,7 +14,7 @@ CLASSIFIERS = [
 ]
 
 install_requires = [
-    'Django==1.8.6',
+    'Django==1.9',
     'Pillow==2.9.0',
     'django-form-utils==1.0.3',
     'django-mptt==0.7.4',

@@ -20,7 +20,11 @@ class PageTranslationSerializer(serializers.ModelSerializer):
 
     def update(self, instance, validated_data):
 
-        current_data = dict(json.loads(instance.regions))
+        if instance.regions:
+            current_data = dict(json.loads(instance.regions))
+        else:
+            current_data = None
+            
         if not current_data:
             current_data = {}
 

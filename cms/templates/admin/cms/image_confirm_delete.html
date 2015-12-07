@@ -10,7 +10,7 @@
 {% block content %}
 <div class="[ content__inner ]">
 	<p class="breadcrumb">
-		<a href="{% url 'cms-admin:image_list' %}">{% trans "Images" %}</a>  
+		<a href="{% url 'cms-admin:image-list' %}">{% trans "Images" %}</a>  
 		&nbsp;<span class="fa fa-angle-right"></span>&nbsp;
 		{% trans "Confirm Delete" %}
 	</p>
@@ -30,7 +30,7 @@
 		<button type="submit" class="btn btn--delete">
 			{% trans "Confirm Delete" %}
 		</button>
-		<a href="{% url 'cms-admin:image_list' %}" class="btn btn--transparent">
+		<a href="{% url 'cms-admin:image-list' %}" class="btn btn--transparent">
 			{% trans "Cancel" %}
 		</a>
 	</form>

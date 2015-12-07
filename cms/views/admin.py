@@ -13,7 +13,7 @@ from django.utils.text import slugify
 from django.db import transaction
 from django.conf import settings
 
-from cms.settings import ADMIN_LOGIN_URL
+from cms.settings import ADMIN_LOGIN_URL, CMS_LANGUAGES
 from cms.models import Page, PageTranslation
 from cms.forms.page import (
     PageAddForm,
@@ -89,7 +89,7 @@ def add_edit_translation(
     translation_class=PageTranslation, 
     translation_form_class=TranslationForm):
 
-    if not language_code in [lang[0] for lang in settings.CMS_LANGUAGES]:
+    if not language_code in [lang[0] for lang in CMS_LANGUAGES]:
         raise ImproperlyConfigured('The language code "%s" is not included in the project settings.' % language_code)
     if not request.user.has_perm('cms.add_pagetranslation'):
         raise PermissionDenied

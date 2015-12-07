@@ -1,5 +1,20 @@
 {% extends 'cms/base.html' %}
 {% block title %}
-    {{page.translated.title}}
+	{{page.translated.title}}
 {% endblock title %}
-{% block main %}{{page}}{% endblock main %}
+{% block main %}
+<div class="[ editable ]"  data-name="content">
+    {% if request.is_preview %}
+        {% if page.translated.regions.content %}
+            {{page.translated.regions.content|safe}}
+        {% else %}
+            <h1>Proin at urna et risus.</h1>
+            <p>Duis tincidunt sed justo eget ultricies. Proin lobortis magna tortor, ac malesuada leo congue a. Nam metus nulla, vulputate ut nibh ac, commodo viverra tortor. Fusce nec dolor mi. Nulla ipsum magna, placerat eu suscipit ullamcorper, luctus sit amet dui. Aenean sed elementum arcu, id consectetur nisl.</p>
+
+            <p>Maecenas aliquet orci vel est cursus, ac faucibus lorem finibus. Sed porttitor laoreet nunc vitae dignissim. Nam nec fermentum ante. Sed euismod sagittis tortor, eget sagittis velit pulvinar vitae. Pellentesque justo felis, congue tristique iaculis sed, rhoncus sit amet orci. Interdum et malesuada fames ac ante ipsum primis in faucibus. Morbi ultrices risus vel dolor accumsan, et fermentum libero molestie. Sed eu tellus elementum nunc posuere semper. Vestibulum sem mi, condimentum eget augue quis, efficitur ullamcorper nibh.</p>
+        {% endif %}
+    {% else %}
+        {{page.translated.regions.content|safe}}
+    {% endif %}
+</div>
+{% endblock main %}
