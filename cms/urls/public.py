@@ -1,6 +1,6 @@
-from django.conf.urls import patterns, include, url
+from django.conf.urls import url
 
-urlpatterns = patterns('cms.views.public',
-	url(r'^$', 'page', name="home"),
-	url(r'^(?P<slug>[-\w\/]+)/$', 'page', name="page"),
-)
+urlpatterns = [
+	url(r'^$', 'cms.views.public.page', name="home"),
+	url(r'^(?P<slug>[-\w\/]+)/$', 'cms.views.public.page', name="page"),
+]

@@ -1,9 +1,9 @@
-from django.conf.urls import url, patterns
+from django.conf.urls import url
 
 from cms.api.image import *
 from cms.api.page import *
 
-urlpatterns = patterns('',
+urlpatterns = [
     
     url(r'^update/(?P<id>[-\d]+)/$', 
         PageTranslationUpdate.as_view(), name='update'),
@@ -16,4 +16,4 @@ urlpatterns = patterns('',
     
     url(r'^images/list/$', ImageList.as_view(), 
         name='image-list'),
-)
+]

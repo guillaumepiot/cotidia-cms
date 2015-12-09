@@ -1,11 +1,10 @@
-from django.conf.urls import url, patterns
+from django.conf.urls import url
 
 from cms.views.admin import *
 from cms.views.image import ImageList, ImageDelete
 from cms.views.dataset import *
 
-urlpatterns = patterns(
-    '',
+urlpatterns =[
     url(r'^$', PageList.as_view(), name='page-list'),
     url(r'^page/add/$', PageCreate.as_view(), name='page-add'),
     url(r'^page/(?P<pk>[\d]+)/$', PageDetail.as_view(), name='page-detail'),
@@ -38,5 +37,4 @@ urlpatterns = patterns(
     url(r'^dataset/(?P<pk>[\d]+)/$', PageDataSetDetail.as_view(), name='pagedataset-detail'),
     url(r'^dataset/(?P<pk>[\d]+)/update/$', PageDataSetUpdate.as_view(), name='pagedataset-update'),
     url(r'^dataset/(?P<pk>[\d]+)/delete/$', PageDataSetDelete.as_view(), name='pagedataset-delete'),
-
-)
+]
