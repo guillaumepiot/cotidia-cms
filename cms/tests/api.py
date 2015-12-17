@@ -82,14 +82,14 @@ class PageTranslationTests(APITestCase):
         # Create the add URL
         url = reverse('cms-api:update', kwargs={'id':translation.id})
 
-        regions = json.dumps([
+        regions = json.dumps(
             {
                 "article": """<h1>5 rules for naming variables</h1>
                     <p class=\"article__by-line\">
                         by <b>Anthony Blackshaw</b> 18th January 2015
                     </p>"""
             }
-        ])
+        )
 
         data = {
             'regions': regions,
