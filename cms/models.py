@@ -550,8 +550,8 @@ class BasePageTranslation(models.Model, PublishTranslation):
     regions = models.TextField(blank=True)
     images = models.TextField(blank=True)
 
-    date_created = models.DateTimeField(default=datetime.datetime.now())
-    date_updated = models.DateTimeField(default=datetime.datetime.now())
+    date_created = models.DateTimeField(auto_now_add=True)
+    date_updated = models.DateTimeField(auto_now=True)
 
     created_by = models.ForeignKey('account.User', 
         blank=True, null=True, related_name='translation_created_by')

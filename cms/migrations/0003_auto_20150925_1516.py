@@ -42,13 +42,13 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='pagetranslation',
             name='date_created',
-            field=models.DateTimeField(default=datetime.datetime(2015, 9, 25, 15, 16, 38, 599908), auto_now_add=True),
+            field=models.DateTimeField(auto_now_add=True),
             preserve_default=False,
         ),
         migrations.AddField(
             model_name='pagetranslation',
             name='date_updated',
-            field=models.DateTimeField(default=datetime.datetime(2015, 9, 25, 15, 16, 42, 852336), auto_now=True),
+            field=models.DateTimeField(auto_now=True),
             preserve_default=False,
         ),
         migrations.AddField(
