@@ -31,7 +31,6 @@ class PageTranslationSerializer(serializers.ModelSerializer):
         if validated_data.get('regions'):
             new_data = dict(json.loads(validated_data.get('regions')))
             for key, value in new_data.items():
-                print(key, value)
                 current_data[key] = value
 
             validated_data['regions'] = json.dumps(current_data)
