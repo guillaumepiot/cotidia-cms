@@ -11,8 +11,9 @@ from django.core.exceptions import PermissionDenied
 from django.http import HttpResponseRedirect 
 from django.utils.text import slugify
 
+from account.settings import ADMIN_LOGIN_URL
+
 from cms.utils import StaffPermissionRequiredMixin
-from cms.settings import ADMIN_LOGIN_URL
 from cms.models import Image
 
 #########

@@ -69,12 +69,6 @@ class BasePage(MPTTModel):
     date_created = models.DateTimeField(auto_now_add=True)
     date_updated = models.DateTimeField(auto_now=True)
 
-    created_by = models.ForeignKey('account.User', 
-        blank=True, null=True, related_name='created_by')
-    
-    updated_by = models.ForeignKey('account.User', 
-        blank=True, null=True, related_name='updated_by')
-
     # Optional redirect
     redirect_to = models.ForeignKey('self', 
         blank=True, null=True, related_name='redirect_to_page')
@@ -553,12 +547,6 @@ class BasePageTranslation(models.Model, PublishTranslation):
     date_created = models.DateTimeField(auto_now_add=True)
     date_updated = models.DateTimeField(auto_now=True)
 
-    created_by = models.ForeignKey('account.User', 
-        blank=True, null=True, related_name='translation_created_by')
-    
-    updated_by = models.ForeignKey('account.User', 
-        blank=True, null=True, related_name='translation_updated_by')
-
     class Meta:
         unique_together = ('parent', 'language_code')
         abstract = True
@@ -606,12 +594,24 @@ class BasePageTranslation(models.Model, PublishTranslation):
 class PageTranslation(BasePageTranslation):
     parent = models.ForeignKey('Page', related_name='translations')
 
+    created_by = models.ForeignKey('account.User', 
+        blank=True, null=True, related_name='translation_created_by')
+    
+    updated_by = models.ForeignKey('account.User', 
+        blank=True, null=True, related_name='translation_updated_by')
+
 reversion.register(PageTranslation)
 
 
 class Page(BasePage):
 
     dataset = models.ForeignKey('PageDataSet', blank=True, null=True)
+
+    created_by = models.ForeignKey('account.User', 
+        blank=True, null=True, related_name='created_by')
+    
+    updated_by = models.ForeignKey('account.User', 
+        blank=True, null=True, related_name='updated_by')
 
     class Meta:
         verbose_name=_('Page')

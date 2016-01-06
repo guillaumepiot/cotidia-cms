@@ -30,6 +30,3 @@ CMS_PREFIX = None
 # language. Set to False to not render if no language version available.
 
 DEFAULT_LANGUAGE_FALLBACK = False
-
-ADMIN_LOGIN_URL = getattr(settings, 'ADMIN_LOGIN_URL', '/admin/login/')
-PUBLIC_LOGIN_URL = getattr(settings, 'PUBLIC_LOGIN_URL', '/account/login/')

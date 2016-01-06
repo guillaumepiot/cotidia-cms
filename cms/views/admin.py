@@ -13,7 +13,10 @@ from django.utils.text import slugify
 from django.db import transaction
 from django.conf import settings
 
-from cms.settings import ADMIN_LOGIN_URL, CMS_LANGUAGES
+from account.settings import ADMIN_LOGIN_URL
+from account.utils import StaffPermissionRequiredMixin
+
+from cms.settings import CMS_LANGUAGES
 from cms.models import Page, PageTranslation
 from cms.forms.page import (
     PageAddForm,
@@ -22,7 +25,6 @@ from cms.forms.page import (
     PageTitleForm
     )
 from cms.forms.custom_form import TranslationForm
-from cms.utils import StaffPermissionRequiredMixin
 
 ########
 # Page #
