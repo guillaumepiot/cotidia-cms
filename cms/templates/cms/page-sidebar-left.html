@@ -1,4 +1,4 @@
-{% extends 'base.html' %}{% load mptt_tags cms_tags %}
+{% extends 'cms/base.html' %}{% load mptt_tags cms_tags %}
 {% block meta_data %}
 {% if request.is_preview %}
 <meta name="page-id" content="{{page.translated.id}}">
