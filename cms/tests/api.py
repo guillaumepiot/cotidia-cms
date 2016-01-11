@@ -91,13 +91,97 @@ class PageTranslationTests(APITestCase):
             }
         )
 
+        #
+        # Test error if no model name supplied
+        #
         data = {
+            'regions': regions,
+        }
+
+        response = self.client.post(url, data, format='multipart')
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(response.data['message'], 'Please specify the model name')
+
+        #
+        # Test saving for a custom model
+        #
+        data = {
+            'model': "cms.PageTranslation",
             'regions': regions,
         }
         
 
         response = self.client.post(url, data, format='multipart')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        #
+        # Test that the values have been saved against the model
+        #
+        page = PageTranslation.objects.get(id=translation.id)
+        self.assertEqual(page.regions, regions)
+
+    def test_change_one_region(self):
+        """ Test if we can add, retrieve and list """
+
+        #
+        # Authenticate the client
+        #
+        self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token.key)
+
+        translation = PageTranslation.objects.filter().first()
+        
+        # Create the add URL
+        url = reverse('cms-api:update', kwargs={'id':translation.id})
+
+        regions = json.dumps(
+            {
+                "title": "The page title",
+                "article": "Article text"
+            }
+        )
+
+        #
+        # Test saving for a custom model
+        #
+        data = {
+            'model': "cms.PageTranslation",
+            'regions': regions,
+        }
+        
+
+        response = self.client.post(url, data, format='multipart')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        
+
+
+        #
+        # Now update the region only
+        #
+
+        data['regions'] = json.dumps(
+            {
+                "title": "New title"
+            }
+        )
+
+        response = self.client.post(url, data, format='multipart')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        #
+        # Test that the values have been saved against the model
+        #
+        page = PageTranslation.objects.get(id=translation.id)
+
+        expected_regions = json.dumps(
+            {
+                "title": "New title",
+                "article": "Article text"
+            }
+        )
+
+        self.assertEqual(json.loads(page.regions)["title"], json.loads(expected_regions)["title"])
+        self.assertEqual(json.loads(page.regions)["article"], json.loads(expected_regions)["article"])
 
 
 class ImageUploadTests(APITestCase):

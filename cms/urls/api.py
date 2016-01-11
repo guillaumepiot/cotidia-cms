@@ -6,7 +6,7 @@ from cms.api.page import *
 urlpatterns = [
     
     url(r'^update/(?P<id>[-\d]+)/$', 
-        PageTranslationUpdate.as_view(), name='update'),
+        RegionUpdate.as_view(), name='update'),
 
     url(r'^images/add/$', ImageAdd.as_view(), 
         name='image-add'),

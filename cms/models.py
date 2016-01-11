@@ -281,21 +281,20 @@ class BasePage(MPTTModel):
         preview=False,
         parent_only=False):
 
-        from django.utils import translation
+        from django.utils.translation import get_language
 
         if not current_language:
-            current_language = translation.get_language()
+            current_language = get_language()
 
         if CMS_PREFIX and CMS_PREFIX.get(current_language, False):
             PREFIX = CMS_PREFIX[current_language]
         else:
             PREFIX = False
 
+        
 
         if PREFIX and not PREFIX[len(PREFIX)-1] == '/':
             PREFIX = PREFIX + '/'
-
-
 
         if self.home:
             if PREFIX:
@@ -304,7 +303,6 @@ class BasePage(MPTTModel):
                 url = reverse('cms-public:home')
         else:
             slug = ''
-
             # Get ancestor from original
             if self.get_published():
                 ancestors = self.get_ancestors()
@@ -312,6 +310,8 @@ class BasePage(MPTTModel):
                 ancestors = self.published_from.get_ancestors()
             else:
                 ancestors = []
+
+
 
             # Go through the ancestor to get slugs
             for ancestor in ancestors:
@@ -329,21 +329,28 @@ class BasePage(MPTTModel):
                     slug = "%s%s/" % (slug, translation.slug)
 
 
+
             translation = self.CMSMeta.translation_class.objects.filter(parent=self.id, language_code=current_language)
             
+            
+
             if translation.count() > 0:
                 translation = translation[0]
             else:
-                translation = self.CMSMeta.translation_class.objects.get(parent=self.id, language_code=CMS_DEFAULT_LANGUAGE[0])
+                translation = self.CMSMeta.translation_class.objects.filter(parent=self.id, language_code=CMS_DEFAULT_LANGUAGE[0]).first()
 
+            if not translation:
+                return None
+            
             slug = "%s%s" % (slug, translation.slug)
+
 
             # Add extra prefixes if required
             default_args = {'slug':slug}
             if urlargs:
-                reverse_args = dict(default_args.items() + urlargs.items())
-            else:
-                reverse_args = default_args
+                reverse_args = default_args.update(urlargs)
+            
+            reverse_args = default_args
 
             # Create the full url based on the pattern
             if PREFIX:
@@ -364,6 +371,9 @@ class BasePage(MPTTModel):
 
 
         return url
+
+    def get_admin_url(self):
+        return reverse(self.CMSMeta.admin_url_name, kwargs={'pk':self.id})
 
 
     def get_breadcrumbs(self):
@@ -434,11 +444,12 @@ class BasePage(MPTTModel):
         languages = []
 
         for lang in CMS_LANGUAGES:
+
             try:
-                page = PageTranslation.objects.get(parent=self, language_code=lang[0])
-            except PageTranslation.DoesNotExist:
-                page = PageTranslation(language_code=lang[0])
-            
+                page = self.CMSMeta.translation_class.objects.get(parent=self, language_code=lang[0])
+            except self.CMSMeta.translation_class.DoesNotExist:
+                page = self.CMSMeta.translation_class(language_code=lang[0])
+
             languages.append(page)
 
         return languages
@@ -627,6 +638,7 @@ class Page(BasePage):
         translation_class = PageTranslation
         # Provide the url name to create a url for that model
         model_url_name = 'cms-public:page'
+        admin_url_name = 'cms-admin:page-detail'
 
 
 reversion.register(Page, follow=["translations"])

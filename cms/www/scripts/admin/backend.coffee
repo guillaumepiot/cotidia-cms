@@ -62,6 +62,10 @@ onLoad = ->
         payload.append('images', JSON.stringify(getImages()))
         payload.append('regions', JSON.stringify(regions))
 
+        # Add the model name to the POST request
+        model = document.querySelector('meta[name="model"]')
+        payload.append('model', model.getAttribute('content'))
+
         onSuccess = ->
             new (ContentTools.FlashUI)('ok')
 

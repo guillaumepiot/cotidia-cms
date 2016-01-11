@@ -16,6 +16,13 @@ def get_page_url(page, lang=None):
     return page.get_absolute_url(lang)
 
 #
+# Return the admin URL for a specific language
+#
+@register.filter
+def get_admin_url(page, lang=None):
+    return page.get_admin_url()
+
+#
 # Build a Tree Node of published pages
 #
 @register.assignment_tag(takes_context=True)

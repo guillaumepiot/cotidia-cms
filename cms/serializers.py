@@ -2,42 +2,19 @@ import json, time
 
 from rest_framework import serializers
 
-from cms.models import PageTranslation, Image
+from cms.models import Image
 
-class PageTranslationSerializer(serializers.ModelSerializer):
+class RegionSerializer(serializers.Serializer):
 
-    class Meta:
-        model = PageTranslation
-        fields = ('id', 'regions', 'images')
+    regions = serializers.CharField(allow_null=True, required=False)
 
     def to_representation(self, instance):
-        ret = super(PageTranslationSerializer, self).to_representation(instance)
+        ret = super(RegionSerializer, self).to_representation(instance)
         
         if ret['regions']:
             ret['regions'] = json.loads(ret['regions'])
 
         return ret
-
-    def update(self, instance, validated_data):
-
-        if instance.regions:
-            current_data = dict(json.loads(instance.regions))
-        else:
-            current_data = None
-            
-        if not current_data:
-            current_data = {}
-
-        if validated_data.get('regions'):
-            new_data = dict(json.loads(validated_data.get('regions')))
-            for key, value in new_data.items():
-                current_data[key] = value
-
-            validated_data['regions'] = json.dumps(current_data)
-
-        instance = super(PageTranslationSerializer, self).update(instance, validated_data)
-
-        return instance
 
 class ImageSerializer(serializers.ModelSerializer):
 
