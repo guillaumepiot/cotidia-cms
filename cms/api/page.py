@@ -79,6 +79,10 @@ class RegionUpdate(APIView):
             content_model.regions = json.dumps(current_data)
             content_model.save()
 
+            # Mark the parent as approval needed
+            content_model.parent.approval_needed = True
+            content_model.parent.save()
+
             return Response(serializer.data, status=status.HTTP_200_OK)
         
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
