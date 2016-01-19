@@ -48,9 +48,21 @@
                         </a>
                     </td>
                     <td class="table-cell">
-                        <a href="{% url 'cms-admin:page-detail' page.id %}">
-                            {{page.get_absolute_url}}
-                        </a>
+                        {% if page.redirect_to %}
+                            <span class="fa fa-link"></span>
+                            <a href="{% url 'cms-admin:page-detail' page.id %}">
+                                {{page.redirect_to.get_absolute_url}}
+                            </a>
+                        {% elif page.redirect_to_url %}
+                            <span class="fa fa-link"></span>
+                            <a href="{% url 'cms-admin:page-detail' page.id %}">
+                                {{page.redirect_to_url}}
+                            </a>
+                        {% else %}
+                            <a href="{% url 'cms-admin:page-detail' page.id %}">
+                                {{page.get_absolute_url}}
+                            </a>
+                        {% endif %}
                     </td>
                     <td class="table-cell">
                     {% if page.hide_from_nav %}
