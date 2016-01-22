@@ -35,4 +35,4 @@ class ImageDelete(StaffPermissionRequiredMixin, DeleteView):
 
     def get_success_url(self):
         messages.success(self.request, _('The image has been deleted.'))
-        return reverse('cms-admin:image_list')
+        return reverse('cms-admin:image-list')
