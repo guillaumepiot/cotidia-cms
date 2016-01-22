@@ -30,7 +30,7 @@ class RegionUpdate(APIView):
         #
         # Retrieve the model path from the POST request
         #
-        model_str = request.POST.get('model')
+        model_str = request.data.get('model')
         if not model_str or model_str == "null":
             return Response({'message': "Please specify the model name"}, 
                 status=status.HTTP_400_BAD_REQUEST)
