@@ -26,8 +26,6 @@ def get_page(
 
         slugs = slug.split('/')
 
-        print('slugs', slugs)
-
         if CMS_PREFIX:
             if len(slugs) > 0 and slugs[0] == CMS_PREFIX:
                 slugs = slugs[1:]
@@ -41,13 +39,10 @@ def get_page(
 
         published = []
 
-        print('preview', preview)
         if preview:
             translation = translation_class.objects.filter(slug=last_slug, parent__published_from=None, **filter_args)
         else:
             translation = translation_class.objects.filter(slug=last_slug, parent__published=True, **filter_args).exclude(parent__published_from=None)
-
-        print('translation', translation)
         
         # fetch the page that correspond to the complete url - as they can be multiple page with same slug but in different branches
         if translation.count() > 0:
