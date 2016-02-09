@@ -152,12 +152,12 @@ class ImageUpdate(ImageMixin, generics.UpdateAPIView):
 
             
         elif hasattr(instance, '_direction'):
-            
+
             angle = 270 if instance._direction == "CW" else 90
 
             # Action the image rotation
             im = im.rotate(angle)
-
+            
             if output:
                 # Save rotated image to buffer
                 im.save(output, file_ext.upper())
@@ -168,8 +168,10 @@ class ImageUpdate(ImageMixin, generics.UpdateAPIView):
                 im.save(image.path)
 
             # Save the size against the image
-            instance.width = im.width
-            instance.height = im.height
+            # Invert the width and height since we are rotating either 90 or
+            # 270 degrees
+            instance.width = im.height
+            instance.height = im.width
 
         else:
             # Save the size against the image
