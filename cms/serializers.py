@@ -7,12 +7,16 @@ from cms.models import Image
 class RegionSerializer(serializers.Serializer):
 
     regions = serializers.CharField(allow_null=True, required=False)
+    images = serializers.CharField(allow_null=True, required=False)
 
     def to_representation(self, instance):
         ret = super(RegionSerializer, self).to_representation(instance)
         
         if ret['regions']:
             ret['regions'] = json.loads(ret['regions'])
+
+        if ret['images']:
+            ret['images'] = json.loads(ret['images'])
 
         return ret
 

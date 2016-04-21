@@ -60,6 +60,7 @@ class RegionUpdate(APIView):
         serializer = RegionSerializer(data=request.data)
         if serializer.is_valid():
             regions = serializer.data['regions']
+            images = serializer.data['images']
             
             #
             # Combine the existing regions with the submitted regions
@@ -75,6 +76,9 @@ class RegionUpdate(APIView):
             if regions:
                 for key, value in regions.items():
                     current_data[key] = value
+
+            if images:
+                content_model.images = json.dumps(images)
 
             content_model.regions = json.dumps(current_data)
             content_model.save()
