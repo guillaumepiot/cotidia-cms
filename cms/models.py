@@ -284,15 +284,15 @@ class BasePage(MPTTModel):
         from django.utils.translation import get_language
 
         # Handle redirect
-        if self.redirect_to_url:
-            return self.redirect_to_url
+        # if self.redirect_to_url:
+        #     return self.redirect_to_url
 
-        if self.redirect_to:
-            return self.redirect_to.get_absolute_url(
-                current_language,
-                urlargs,
-                preview,
-                parent_only)
+        # if self.redirect_to:
+        #     return self.redirect_to.get_absolute_url(
+        #         current_language,
+        #         urlargs,
+        #         preview,
+        #         parent_only)
 
         if not current_language:
             current_language = get_language()
