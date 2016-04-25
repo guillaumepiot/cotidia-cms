@@ -59,8 +59,8 @@ class RegionUpdate(APIView):
         #
         serializer = RegionSerializer(data=request.data)
         if serializer.is_valid():
-            regions = serializer.data['regions']
-            images = serializer.data['images']
+            regions = serializer.data.get('regions')
+            images = serializer.data.get('images')
             
             #
             # Combine the existing regions with the submitted regions

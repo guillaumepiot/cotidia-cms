@@ -12,10 +12,10 @@ class RegionSerializer(serializers.Serializer):
     def to_representation(self, instance):
         ret = super(RegionSerializer, self).to_representation(instance)
         
-        if ret['regions']:
+        if ret.get('regions'):
             ret['regions'] = json.loads(ret['regions'])
 
-        if ret['images']:
+        if ret.get('images'):
             ret['images'] = json.loads(ret['images'])
 
         return ret
