@@ -261,7 +261,6 @@ class ImageUploadTests(APITestCase):
         url = reverse('cms-api:image-update', args=[image_id])
 
         data = {
-            'width': 5,
             'direction': 'CW'
             }
         

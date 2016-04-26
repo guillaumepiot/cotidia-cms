@@ -44,12 +44,13 @@ class ImageAdd(ImageMixin, generics.CreateAPIView):
 
         instance = serializer.instance
 
-        if hasattr(instance, '_width'):
-            instance.display_width = instance._width
-
         # Save the size against the image
         instance.width = instance.read_size()[0]
         instance.height = instance.read_size()[1]
+
+        if hasattr(instance, '_width'):
+            instance.display_width = instance._width
+            instance.display_height = instance.calculate_display_height()
 
         instance.save()
 
@@ -173,14 +174,20 @@ class ImageUpdate(ImageMixin, generics.UpdateAPIView):
             instance.width = im.height
             instance.height = im.width
 
+            original_display_width = instance.display_width
+            original_display_height = instance.display_height
+
+            instance.display_width = original_display_height
+            instance.display_height = original_display_width
+
         else:
             # Save the size against the image
             instance.width = instance.read_size()[0]
             instance.height = instance.read_size()[1]
 
-
         if hasattr(instance, '_width'):
             instance.display_width = instance._width
+            instance.display_height = instance.calculate_display_height()
 
         instance.save()
 

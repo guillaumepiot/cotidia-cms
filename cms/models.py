@@ -706,19 +706,25 @@ class Image(models.Model):
     def delete(self, *args, **kwargs):
         self.image.delete()
         super(Image, self).delete(*args, **kwargs)
-    
+
+    def calculate_display_height(self):
+        if self.display_width:
+            width = decimal.Decimal(str(self.width))
+            height = decimal.Decimal(str(self.height))
+            ratio = width / height
+            return int(self.display_width / ratio)
 
     class Meta:
         ordering = ('-created',)
         verbose_name = "Image"
         verbose_name_plural = "Images"
 
-@receiver(post_save, sender=Image)
-def set_image_meta_data(sender, instance=None, created=False, **kwargs):
+# @receiver(post_save, sender=Image)
+# def set_image_meta_data(sender, instance=None, created=False, **kwargs):
     
-    if instance.display_width:
-        width = decimal.Decimal(str(instance.width))
-        height = decimal.Decimal(str(instance.height))
-        ratio = width / height
-        instance.display_height = int(instance.display_width / ratio)
+#     if instance.display_width:
+#         width = decimal.Decimal(str(instance.width))
+#         height = decimal.Decimal(str(instance.height))
+#         ratio = width / height
+#         instance.display_height = int(instance.display_width / ratio)
 
