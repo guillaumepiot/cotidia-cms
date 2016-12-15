@@ -1,18 +1,17 @@
 from django.views.generic import ListView, DetailView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
-from django.core.urlresolvers import reverse_lazy
 from django.contrib.auth.decorators import login_required, permission_required
 from django.core.urlresolvers import reverse
 from django.contrib import messages
 from django.utils.translation import ugettext_lazy as _
-from django.shortcuts import render_to_response, get_object_or_404
+from django.shortcuts import render, get_object_or_404
 from django.template import RequestContext
 from django.core.exceptions import PermissionDenied
 from django.http import HttpResponseRedirect
 from django.utils.text import slugify
 from django.db import transaction
-from django.conf import settings
 
+from cotidia.account.conf import settings
 from cotidia.account.utils import StaffPermissionRequiredMixin
 
 from cotidia.cms.settings import CMS_LANGUAGES
@@ -159,13 +158,13 @@ def add_edit_translation(
         #'model_name':page._meta.model_name,
         #'verbose_name_plural':page._meta.verbose_name_plural
     }
-    return render_to_response(template, context, context_instance=RequestContext(request))
+    return render(request, template, context)
 
 ##############
 # Publishing #
 ##############
 
-@permission_required('cms.publish_page', settings.ADMIN_LOGIN_URL)
+@permission_required('cms.publish_page', settings.ACCOUNT_ADMIN_LOGIN_URL)
 def PagePublish(request, page_id):
 
     page = get_object_or_404(Page, id=page_id)
@@ -186,10 +185,10 @@ def PagePublish(request, page_id):
 
     template = 'admin/cms/page_publish_form.html'
 
-    return render_to_response(template, {'page':page},
-        context_instance=RequestContext(request))
+    return render(request, template, {'page': page})
 
-@permission_required('cms.publish_page', settings.ADMIN_LOGIN_URL)
+
+@permission_required('cms.publish_page', settings.ACCOUNT_ADMIN_LOGIN_URL)
 def PageUnpublish(request, page_id):
 
     page = get_object_or_404(Page, id=page_id)
@@ -209,14 +208,13 @@ def PageUnpublish(request, page_id):
 
     template = 'admin/cms/page_unpublish_form.html'
 
-    return render_to_response(template, {'page':page},
-        context_instance=RequestContext(request))
+    return render(request, template, {'page':page})
 
 ###########
 # Content #
 ###########
 
-@permission_required('cms.add_pagetranslation', settings.ADMIN_LOGIN_URL)
+@permission_required('cms.add_pagetranslation', settings.ACCOUNT_ADMIN_LOGIN_URL)
 def PageURLCreate(request, page_id, lang):
 
     page = get_object_or_404(Page, id=page_id)
@@ -242,10 +240,9 @@ def PageURLCreate(request, page_id, lang):
 
     template = 'admin/cms/page_url_form.html'
 
-    return render_to_response(template, {'form':form, 'page':page},
-        context_instance=RequestContext(request))
+    return render(request, template, {'form':form, 'page':page})
 
-@permission_required('cms.change_pagetranslation', settings.ADMIN_LOGIN_URL)
+@permission_required('cms.change_pagetranslation', settings.ACCOUNT_ADMIN_LOGIN_URL)
 def PageURLUpdate(request, page_id, lang, trans_id):
 
     page = get_object_or_404(Page, id=page_id)
@@ -272,14 +269,13 @@ def PageURLUpdate(request, page_id, lang, trans_id):
 
     template = 'admin/cms/page_url_form.html'
 
-    return render_to_response(template, {
-        'form':form, 'page':page, 'translation':translation},
-        context_instance=RequestContext(request))
+    return render(request, template, {
+        'form':form, 'page':page, 'translation':translation})
 
 #
 # Manage the page title for a language
 #
-@permission_required('cms.change_page', settings.ADMIN_LOGIN_URL)
+@permission_required('cms.change_page', settings.ACCOUNT_ADMIN_LOGIN_URL)
 def PageTitleUpdate(request, page_id, lang, trans_id=None):
 
     page = get_object_or_404(Page, id=page_id)
@@ -317,5 +313,4 @@ def PageTitleUpdate(request, page_id, lang, trans_id=None):
 
     template = 'admin/cms/page_title_form.html'
 
-    return render_to_response(template, {'form':form, 'page':page},
-        context_instance=RequestContext(request))
+    return render(request, template, {'form':form, 'page':page})
