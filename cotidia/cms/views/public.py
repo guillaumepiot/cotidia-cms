@@ -2,7 +2,7 @@ import json
 
 from django.utils.translation import ugettext_lazy as _
 from django.http import HttpResponse, HttpRequest, HttpResponseRedirect, Http404
-from django.shortcuts import render_to_response, get_object_or_404
+from django.shortcuts import render, get_object_or_404
 from django.template.context import RequestContext
 from django.conf import settings
 from django.utils import translation
@@ -152,7 +152,7 @@ def page_processor(model_class=Page, translation_class=PageTranslation):
 @page_processor(model_class=Page, translation_class=PageTranslation)
 def page(request, page, slug, *args, **kwargs):
 
-    context = {'page':page}
+    context = {'page': page}
 
     # Process kwargs to be passed back to the page context
     for key, value in iter(kwargs.items()):
@@ -161,14 +161,16 @@ def page(request, page, slug, *args, **kwargs):
     # Get the root page and then all its descendants, including self
     if hasattr(page, 'empty') and page.empty:
         nodes = []
-    elif page.published_from == None:
-        nodes = page.get_root().get_descendants(include_self=True)
+    elif page.published_from is None:
+        nodes = page.get_root().get_descendants(
+            include_self=True)
     else:
-        nodes = page.published_from.get_root().get_descendants(include_self=True)
+        nodes = page.published_from.get_root().get_descendants(
+            include_self=True)
 
     context['nodes'] = nodes
 
-    return render_to_response(page.template, context, context_instance=RequestContext(request))
+    return render(request, page.template, context)
 
 
 # def search(request, directory=False):
