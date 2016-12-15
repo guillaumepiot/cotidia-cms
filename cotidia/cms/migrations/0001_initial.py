@@ -2,7 +2,7 @@
 from __future__ import unicode_literals
 
 from django.db import models, migrations
-import cms.models
+import cotidia.cms.models
 import mptt.fields
 
 
@@ -69,7 +69,7 @@ class Migration(migrations.Migration):
                 'abstract': False,
                 'verbose_name_plural': 'Translations',
             },
-            bases=(models.Model, cms.models.PublishTranslation),
+            bases=(models.Model, cotidia.cms.models.PublishTranslation),
         ),
         migrations.AddField(
             model_name='page',

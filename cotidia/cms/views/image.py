@@ -6,15 +6,13 @@ from django.core.urlresolvers import reverse
 from django.contrib import messages
 from django.utils.translation import ugettext_lazy as _
 from django.shortcuts import render_to_response, get_object_or_404
-from django.template import RequestContext  
+from django.template import RequestContext
 from django.core.exceptions import PermissionDenied
-from django.http import HttpResponseRedirect 
+from django.http import HttpResponseRedirect
 from django.utils.text import slugify
 
-from account.settings import ADMIN_LOGIN_URL
-from account.utils import StaffPermissionRequiredMixin
-
-from cms.models import Image
+from cotidia.account.utils import StaffPermissionRequiredMixin
+from cotidia.cms.models import Image
 
 #########
 # Image #

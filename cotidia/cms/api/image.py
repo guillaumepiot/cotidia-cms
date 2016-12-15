@@ -1,18 +1,16 @@
-import json, urllib, re, os, io, decimal
+import io
+import decimal
+
 from PIL import Image as PILImage
 
-from django.conf import settings
 from django.core.files.storage import default_storage
-from django.core.files.base import ContentFile
 
-from rest_framework import generics, permissions, filters
-from rest_framework.parsers import FormParser, MultiPartParser
-from rest_framework.viewsets import ModelViewSet
+from rest_framework import generics, status
 from rest_framework.response import Response
-from rest_framework import status
+from rest_framework.exceptions import PermissionDenied
 
-from cms.serializers import ImageSerializer
-from cms.models import Image
+from cotidia.cms.serializers import ImageSerializer
+from cotidia.cms.models import Image
 
 
 #
@@ -30,16 +28,16 @@ class ImageMixin(object):
 
 
 class ImageAdd(ImageMixin, generics.CreateAPIView):
-    
+
     def perform_create(self, serializer):
-        obj = serializer.save(
-            image = self.request.data['image'], 
-            name = self.request.data['image'].name)
+        serializer.save(
+            image=self.request.data['image'],
+            name=self.request.data['image'].name)
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        
+
         self.perform_create(serializer)
 
         instance = serializer.instance
@@ -56,8 +54,8 @@ class ImageAdd(ImageMixin, generics.CreateAPIView):
 
         headers = self.get_success_headers(serializer.data)
         return Response(
-            serializer.data, 
-            status=status.HTTP_201_CREATED, 
+            serializer.data,
+            status=status.HTTP_201_CREATED,
             headers=headers)
 
     def post(self, request, *args, **kwargs):
@@ -75,7 +73,7 @@ class ImageList(ImageMixin, generics.ListAPIView):
 class ImageUpdate(ImageMixin, generics.UpdateAPIView):
 
     lookup_field = 'id'
-    
+
     def post(self, request, *args, **kwargs):
 
         if not request.user.has_perm('cms.change_image'):
@@ -83,14 +81,14 @@ class ImageUpdate(ImageMixin, generics.UpdateAPIView):
 
         return self.partial_update(request, *args, **kwargs)
 
-
     def update(self, request, *args, **kwargs):
         partial = kwargs.pop('partial', False)
         instance = self.get_object()
-        serializer = self.get_serializer(instance, 
+        serializer = self.get_serializer(
+            instance,
             data=request.data, partial=partial)
         serializer.is_valid(raise_exception=True)
-        
+
         self.perform_update(serializer)
 
         instance = serializer.instance
@@ -146,19 +144,17 @@ class ImageUpdate(ImageMixin, generics.UpdateAPIView):
             else:
                 im.save(image.path)
 
-
             # Save the size against the image
             instance.width = im.width
             instance.height = im.height
 
-            
         elif hasattr(instance, '_direction'):
 
             angle = 270 if instance._direction == "CW" else 90
 
             # Action the image rotation
             im = im.rotate(angle)
-            
+
             if output:
                 # Save rotated image to buffer
                 im.save(output, file_ext.upper())

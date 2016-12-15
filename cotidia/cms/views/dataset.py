@@ -3,12 +3,12 @@ from django.views.generic import ListView, DetailView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.core.urlresolvers import reverse, reverse_lazy
 from django.utils.translation import ugettext_lazy as _
-from django.contrib import messages 
+from django.contrib import messages
 from django.conf import settings
 
-from account.utils import StaffPermissionRequiredMixin
-from cms.models import PageDataSet
-from cms.forms.dataset import (
+from cotidia.account.utils import StaffPermissionRequiredMixin
+from cotidia.cms.models import PageDataSet
+from cotidia.cms.forms.dataset import (
     PageDataSetAddForm,
     PageDataSetUpdateForm)
 

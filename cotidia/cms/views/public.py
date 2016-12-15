@@ -7,14 +7,14 @@ from django.template.context import RequestContext
 from django.conf import settings
 from django.utils import translation
 
-from cms.models import Page, PageTranslation
-from cms.settings import CMS_PREFIX, DEFAULT_LANGUAGE_FALLBACK
+from cotidia.cms.models import Page, PageTranslation
+from cotidia.cms.settings import CMS_PREFIX, DEFAULT_LANGUAGE_FALLBACK
 
 
 # Function to retrieve page object depending on previwe mode and language
 
 def get_page(
-    request, 
+    request,
     model_class=Page,
     translation_class=PageTranslation,
     slug=False,
@@ -43,7 +43,7 @@ def get_page(
             translation = translation_class.objects.filter(slug=last_slug, parent__published_from=None, **filter_args)
         else:
             translation = translation_class.objects.filter(slug=last_slug, parent__published=True, **filter_args).exclude(parent__published_from=None)
-        
+
         # fetch the page that correspond to the complete url - as they can be multiple page with same slug but in different branches
         if translation.count() > 0:
             for t in translation:
@@ -58,7 +58,7 @@ def get_page(
                 page_slugs = page_url.split('/')
                 # Count from the end
                 page_slugs = page_slugs[len(page_slugs)-slug_length:len(page_slugs)]
-                
+
                 # Are the slugs matching?
                 if page_slugs == slugs:
                     published.append(t.parent)
@@ -193,7 +193,7 @@ def page(request, page, slug, *args, **kwargs):
 #             with ix.searcher() as s:
 #                 parser = QueryParser("content", ix.schema)
 #                 myquery = parser.parse(query)
-                
+
 #                 # Filter results for our current language only
 #                 allow_q = And([Term("language", language_code) , ])
 
@@ -213,4 +213,3 @@ def page(request, page, slug, *args, **kwargs):
 #         form = SearchForm()
 
 #     return render_to_response(template, {'query':query, 'results':results_objects, 'form':form, }, context_instance=RequestContext(request))
-

@@ -1,16 +1,17 @@
-import datetime, json, reversion, decimal
+import json
+import reversion
+import decimal
+
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
 from django.utils.text import slugify
 from django.core.urlresolvers import reverse
-from django.db.models.signals import post_save
-from django.dispatch import receiver
 
 from mptt.models import MPTTModel, TreeForeignKey
 from mptt.managers import TreeManager
-from cms.settings import *
+from .settings import *
 
 TARGET_CHOICES = (
     ('_self', 'the same window'),
@@ -59,25 +60,25 @@ class BasePage(MPTTModel):
 
     # Publishing
     publish = models.BooleanField(
-        _('Publish this page. The page will also be set to Active.'), 
+        _('Publish this page. The page will also be set to Active.'),
         default=False)
-    
+
     approve = models.BooleanField(
-        _('Submit for approval'), 
+        _('Submit for approval'),
         default=False)
 
     date_created = models.DateTimeField(auto_now_add=True)
     date_updated = models.DateTimeField(auto_now=True)
 
     # Optional redirect
-    redirect_to = models.ForeignKey('self', 
+    redirect_to = models.ForeignKey('self',
         blank=True, null=True, related_name='redirect_to_page')
-    
-    redirect_to_url = models.URLField(_('Redirect to URL'), 
+
+    redirect_to_url = models.URLField(_('Redirect to URL'),
         blank=True, help_text=_('Redirect this page to a given URL'))
-    
+
     target = models.CharField(_('Open page in'), max_length=50, choices=TARGET_CHOICES, default='_self')
-    
+
     # Navigation
     hide_from_nav = models.BooleanField(_('Hide from navigation'), default=False)
 
@@ -86,7 +87,7 @@ class BasePage(MPTTModel):
 
     objects = BasePageManager()
 
-    
+
 
     class Meta:
         # Make this class a reference only with no database, all models must be subclass from this
@@ -132,11 +133,11 @@ class BasePage(MPTTModel):
             return _("Published")
         else:
             return _("Draft")
-    
+
     @property
     def get_template(self):
         return dict(CMS_PAGE_TEMPLATES).get(self.template)
-    
+
 
     def get_published(self):
         cls = self.__class__
@@ -178,7 +179,7 @@ class BasePage(MPTTModel):
 
 
         self.set_dynamic_attributes(translation)
-        
+
         try:
             translation.regions = json.loads(translation.regions)
         except:
@@ -222,7 +223,7 @@ class BasePage(MPTTModel):
         obj.parent = None
         obj.published_from = self
         obj.order_id = 0
-        
+
         obj.save()
 
         return obj
@@ -275,9 +276,9 @@ class BasePage(MPTTModel):
         return obj
 
 
-    def get_absolute_url(self, 
-        current_language=False, 
-        urlargs=False, 
+    def get_absolute_url(self,
+        current_language=False,
+        urlargs=False,
         preview=False,
         parent_only=False):
 
@@ -302,7 +303,7 @@ class BasePage(MPTTModel):
         else:
             PREFIX = False
 
-        
+
 
         if PREFIX and not PREFIX[len(PREFIX)-1] == '/':
             PREFIX = PREFIX + '/'
@@ -334,7 +335,7 @@ class BasePage(MPTTModel):
                     translation = translation[0]
                 else:
                     translation = self.CMSMeta.translation_class.objects.get(parent=ancestor.id, language_code=CMS_DEFAULT_LANGUAGE[0])
-                
+
                 # Only add slug if the ansector is not home
                 if not ancestor.home:
                     slug = "%s%s/" % (slug, translation.slug)
@@ -342,8 +343,8 @@ class BasePage(MPTTModel):
 
 
             translation = self.CMSMeta.translation_class.objects.filter(parent=self.id, language_code=current_language)
-            
-            
+
+
 
             if translation.count() > 0:
                 translation = translation[0]
@@ -352,7 +353,7 @@ class BasePage(MPTTModel):
 
             if not translation:
                 return None
-            
+
             slug = "%s%s" % (slug, translation.slug)
 
 
@@ -360,7 +361,7 @@ class BasePage(MPTTModel):
             default_args = {'slug':slug}
             if urlargs:
                 reverse_args = default_args.update(urlargs)
-            
+
             reverse_args = default_args
 
             # Create the full url based on the pattern
@@ -601,7 +602,7 @@ class BasePageTranslation(models.Model, PublishTranslation):
 
     def translation_edit_url(self):
         return reverse('admin:add_edit_translation_'+self.parent._meta.model_name, kwargs={'page_id':self.parent.id, 'language_code':self.language_code})
-    
+
     def translation_revision_url(self):
         return reverse('admin:translation_revision_'+self.parent._meta.model_name, kwargs={'page_id':self.parent.id, 'language_code':self.language_code, 'translation_id':self.id})
 
@@ -616,10 +617,10 @@ class BasePageTranslation(models.Model, PublishTranslation):
 class PageTranslation(BasePageTranslation):
     parent = models.ForeignKey('Page', related_name='translations')
 
-    created_by = models.ForeignKey('account.User', 
+    created_by = models.ForeignKey('account.User',
         blank=True, null=True, related_name='translation_created_by')
-    
-    updated_by = models.ForeignKey('account.User', 
+
+    updated_by = models.ForeignKey('account.User',
         blank=True, null=True, related_name='translation_updated_by')
 
 reversion.register(PageTranslation)
@@ -629,10 +630,10 @@ class Page(BasePage):
 
     dataset = models.ForeignKey('PageDataSet', blank=True, null=True)
 
-    created_by = models.ForeignKey('account.User', 
+    created_by = models.ForeignKey('account.User',
         blank=True, null=True, related_name='created_by')
-    
-    updated_by = models.ForeignKey('account.User', 
+
+    updated_by = models.ForeignKey('account.User',
         blank=True, null=True, related_name='updated_by')
 
     class Meta:
@@ -721,10 +722,9 @@ class Image(models.Model):
 
 # @receiver(post_save, sender=Image)
 # def set_image_meta_data(sender, instance=None, created=False, **kwargs):
-    
+
 #     if instance.display_width:
 #         width = decimal.Decimal(str(instance.width))
 #         height = decimal.Decimal(str(instance.height))
 #         ratio = width / height
 #         instance.display_height = int(instance.display_width / ratio)
-

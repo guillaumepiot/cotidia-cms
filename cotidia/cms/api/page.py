@@ -1,6 +1,5 @@
 import json
 
-from rest_framework import generics, permissions, filters
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.parsers import FormParser, MultiPartParser
@@ -9,17 +8,15 @@ from rest_framework import status
 
 from django.apps import apps
 
-from cms.serializers import RegionSerializer
-from cms.models import PageTranslation, Image
+from cotidia.cms.serializers import RegionSerializer
 
-#
-# Define a view for region handling
-#
+
 class RegionUpdate(APIView):
+    """Define a view for region handling."""
 
     parser_classes = (FormParser, MultiPartParser, )
     serializer_class = RegionSerializer
-    
+
     # def perform_update(self, serializer):
     #     serializer.save()
     #     serializer.instance.parent.approval_needed = True
@@ -32,9 +29,11 @@ class RegionUpdate(APIView):
         #
         model_str = request.data.get('model')
         if not model_str or model_str == "null":
-            return Response({'message': "Please specify the model name"}, 
-                status=status.HTTP_400_BAD_REQUEST)
-        
+            return Response(
+                {'message': "Please specify the model name"},
+                status=status.HTTP_400_BAD_REQUEST
+                )
+
         #
         # Define permission string
         #
@@ -52,8 +51,10 @@ class RegionUpdate(APIView):
         try:
             content_model = ContentModel.objects.get(id=kwargs['id'])
         except ContentModel.DoesNotExist:
-            return Response({'message': "The model instance was not found"}, 
-                status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                {'message': "The model instance was not found"},
+                status=status.HTTP_400_BAD_REQUEST
+                )
         #
         # Instantiate serializer
         #
@@ -61,7 +62,7 @@ class RegionUpdate(APIView):
         if serializer.is_valid():
             regions = serializer.data.get('regions')
             images = serializer.data.get('images')
-            
+
             #
             # Combine the existing regions with the submitted regions
             #
@@ -69,7 +70,7 @@ class RegionUpdate(APIView):
                 current_data = dict(json.loads(content_model.regions))
             else:
                 current_data = None
-                
+
             if not current_data:
                 current_data = {}
 
@@ -88,6 +89,5 @@ class RegionUpdate(APIView):
             content_model.parent.save()
 
             return Response(serializer.data, status=status.HTTP_200_OK)
-        
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

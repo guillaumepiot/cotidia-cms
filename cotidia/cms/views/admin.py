@@ -6,25 +6,24 @@ from django.core.urlresolvers import reverse
 from django.contrib import messages
 from django.utils.translation import ugettext_lazy as _
 from django.shortcuts import render_to_response, get_object_or_404
-from django.template import RequestContext  
+from django.template import RequestContext
 from django.core.exceptions import PermissionDenied
-from django.http import HttpResponseRedirect 
+from django.http import HttpResponseRedirect
 from django.utils.text import slugify
 from django.db import transaction
 from django.conf import settings
 
-from account.settings import ADMIN_LOGIN_URL
-from account.utils import StaffPermissionRequiredMixin
+from cotidia.account.utils import StaffPermissionRequiredMixin
 
-from cms.settings import CMS_LANGUAGES
-from cms.models import Page, PageTranslation
-from cms.forms.page import (
+from cotidia.cms.settings import CMS_LANGUAGES
+from cotidia.cms.models import Page, PageTranslation
+from cotidia.cms.forms.page import (
     PageAddForm,
     PageUpdateForm,
     PageURLForm,
     PageTitleForm
     )
-from cms.forms.custom_form import TranslationForm
+from cotidia.cms.forms.custom_form import TranslationForm
 
 ########
 # Page #
@@ -84,11 +83,11 @@ class PageDelete(StaffPermissionRequiredMixin, DeleteView):
 @login_required
 @transaction.atomic()
 def add_edit_translation(
-    request, 
-    page_id, 
-    language_code, 
-    model_class=Page, 
-    translation_class=PageTranslation, 
+    request,
+    page_id,
+    language_code,
+    model_class=Page,
+    translation_class=PageTranslation,
     translation_form_class=TranslationForm):
 
     if not language_code in [lang[0] for lang in CMS_LANGUAGES]:
@@ -166,14 +165,14 @@ def add_edit_translation(
 # Publishing #
 ##############
 
-@permission_required('cms.publish_page', ADMIN_LOGIN_URL)
+@permission_required('cms.publish_page', settings.ADMIN_LOGIN_URL)
 def PagePublish(request, page_id):
 
     page = get_object_or_404(Page, id=page_id)
 
     if request.method == 'POST':
         if page.get_translations():
-            
+
             page.approval_needed = False
             page.published = True
             page.save()
@@ -184,20 +183,20 @@ def PagePublish(request, page_id):
 
         return HttpResponseRedirect(
             reverse('cms-admin:page-detail', kwargs={'pk': page.id}))
-    
+
     template = 'admin/cms/page_publish_form.html'
 
     return render_to_response(template, {'page':page},
         context_instance=RequestContext(request))
 
-@permission_required('cms.publish_page', ADMIN_LOGIN_URL)
+@permission_required('cms.publish_page', settings.ADMIN_LOGIN_URL)
 def PageUnpublish(request, page_id):
 
     page = get_object_or_404(Page, id=page_id)
 
     if request.method == 'POST':
         if page.get_translations():
-            
+
             page.approval_needed = False
             page.published = False
             page.save()
@@ -207,7 +206,7 @@ def PageUnpublish(request, page_id):
 
         return HttpResponseRedirect(
             reverse('cms-admin:page-detail', kwargs={'pk': page.id}))
-    
+
     template = 'admin/cms/page_unpublish_form.html'
 
     return render_to_response(template, {'page':page},
@@ -217,7 +216,7 @@ def PageUnpublish(request, page_id):
 # Content #
 ###########
 
-@permission_required('cms.add_pagetranslation', ADMIN_LOGIN_URL)
+@permission_required('cms.add_pagetranslation', settings.ADMIN_LOGIN_URL)
 def PageURLCreate(request, page_id, lang):
 
     page = get_object_or_404(Page, id=page_id)
@@ -240,13 +239,13 @@ def PageURLCreate(request, page_id, lang):
 
             return HttpResponseRedirect(
                 reverse('cms-admin:page-detail', kwargs={'pk': page.id}))
-    
+
     template = 'admin/cms/page_url_form.html'
 
     return render_to_response(template, {'form':form, 'page':page},
         context_instance=RequestContext(request))
 
-@permission_required('cms.change_pagetranslation', ADMIN_LOGIN_URL)
+@permission_required('cms.change_pagetranslation', settings.ADMIN_LOGIN_URL)
 def PageURLUpdate(request, page_id, lang, trans_id):
 
     page = get_object_or_404(Page, id=page_id)
@@ -270,7 +269,7 @@ def PageURLUpdate(request, page_id, lang, trans_id):
 
             return HttpResponseRedirect(
                 reverse('cms-admin:page-detail', kwargs={'pk': page.id}))
-    
+
     template = 'admin/cms/page_url_form.html'
 
     return render_to_response(template, {
@@ -280,7 +279,7 @@ def PageURLUpdate(request, page_id, lang, trans_id):
 #
 # Manage the page title for a language
 #
-@permission_required('cms.change_page', ADMIN_LOGIN_URL)
+@permission_required('cms.change_page', settings.ADMIN_LOGIN_URL)
 def PageTitleUpdate(request, page_id, lang, trans_id=None):
 
     page = get_object_or_404(Page, id=page_id)
@@ -299,7 +298,7 @@ def PageTitleUpdate(request, page_id, lang, trans_id=None):
             form = PageTitleForm(data=request.POST)
 
         if form.is_valid():
-            
+
             translation = form.save(commit=False)
             translation.parent = page
             translation.language_code = lang
@@ -315,7 +314,7 @@ def PageTitleUpdate(request, page_id, lang, trans_id=None):
 
             return HttpResponseRedirect(
                 reverse('cms-admin:page-detail', kwargs={'pk': page.id}))
-    
+
     template = 'admin/cms/page_title_form.html'
 
     return render_to_response(template, {'form':form, 'page':page},

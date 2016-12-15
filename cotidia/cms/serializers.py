@@ -1,8 +1,10 @@
-import json, time
+import json
+import time
 
 from rest_framework import serializers
 
-from cms.models import Image
+from cotidia.cms.models import Image
+
 
 class RegionSerializer(serializers.Serializer):
 
@@ -11,7 +13,7 @@ class RegionSerializer(serializers.Serializer):
 
     def to_representation(self, instance):
         ret = super(RegionSerializer, self).to_representation(instance)
-        
+
         if ret.get('regions'):
             ret['regions'] = json.loads(ret['regions'])
 
@@ -19,6 +21,7 @@ class RegionSerializer(serializers.Serializer):
             ret['images'] = json.loads(ret['images'])
 
         return ret
+
 
 class ImageSerializer(serializers.ModelSerializer):
 
@@ -38,20 +41,18 @@ class ImageSerializer(serializers.ModelSerializer):
                   'display_width',
                   )
 
-
     def to_representation(self, instance):
         ret = super(ImageSerializer, self).to_representation(instance)
-        
+
         if ret['image']:
-            
+
             # Modify the image URL by adding an _ignore param
             # This will force the browser to reload the image
             ret['image'] = "%s?_ignore=%s" % (ret['image'], time.time())
 
         ret['original_size'] = instance.original_size()
-        
-        return ret
 
+        return ret
 
     def create(self, validated_data):
 
@@ -74,11 +75,10 @@ class ImageSerializer(serializers.ModelSerializer):
 
         return instance
 
-
     def update(self, instance, validated_data):
 
         # Pop up the role, we only use it for the Profile object
-        
+
         if validated_data.get('crop'):
             crop = validated_data.pop('crop')
         else:
@@ -92,11 +92,10 @@ class ImageSerializer(serializers.ModelSerializer):
         if validated_data.get('direction'):
             direction = validated_data.pop('direction')
         else:
-            direction = None 
+            direction = None
 
         # Call default save
-        instance = super(ImageSerializer, self).update(instance, validated_data)
-
+        instance = super().update(instance, validated_data)
 
         if crop:
             instance._crop = crop
@@ -107,5 +106,4 @@ class ImageSerializer(serializers.ModelSerializer):
         if width:
             instance._width = width
 
-        
         return instance

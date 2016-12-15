@@ -3,8 +3,8 @@ from django.utils.translation import get_language
 
 register = template.Library()
 
-from cms.settings import CMS_DEFAULT_LANGUAGE
-from cms.models import Page
+from cotidia.cms.settings import CMS_DEFAULT_LANGUAGE
+from cotidia.cms.models import Page
 
 #
 # Return the page URL for a specific language
@@ -70,5 +70,5 @@ def get_page_by_unique_identifier(parser, token):
         tag_name, slug, conjonction, varname  = token.split_contents()
     except ValueError:
         raise template.TemplateSyntaxError("%r tag must be in the following format: {% get_page_by_slug 'page-slug' as pagevar %}" % token.contents.split()[0])
-    
+
     return PageBySlugNode(slug, varname)

@@ -1,6 +1,6 @@
 from django.conf.urls import url
 
-from cms.views.public import page
+from cotidia.cms.views.public import page
 
 urlpatterns = [
 	url(r'^$', page, name="home"),
