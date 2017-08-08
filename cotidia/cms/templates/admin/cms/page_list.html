@@ -1,4 +1,4 @@
-{% extends "admin/account/page.html" %}{% load i18n staticfiles %}
+{% extends "admin/page.html" %}{% load i18n staticfiles %}
 {% block title %}
     {% trans "Pages" %}
 {% endblock title %}
@@ -16,103 +16,97 @@
         {% trans "Manage datasets" %}
     </a>
     {% endif %}
-    <span class="toolbar__title">{% trans "Pages" %}</span>
+    <span class="toolbar__breadcrumbs">{% trans "Pages" %}</span>
 {% endblock toolbar %}
 
-{% block content %}
-<div class="grid grid--collapse">
-    <div class="grid__span-12">
-        <div class="content__inner">
-            {% if object_list %}
-            <table class="table table--clickable">
-                <tr class="table-row">
-                    <th class="table-head-cell">&nbsp;</th>
-                    <th class="table-head-cell">{% trans "Page" %}</th>
-                    <th class="table-head-cell">{% trans "URL" %}</th>
-                    <th class="table-head-cell">{% trans "Menu" %}</th>
-                    <th class="table-head-cell">{% trans "Status" %}</th>
-                    <th class="table-head-cell">{% trans "Content" %}</th>
-                    <th class="table-head-cell">{% trans "Template" %}</th>
-                </tr>
-                {% for page in object_list %}
-                <tr 
-                    onClick="window.location = '{% url 'cms-admin:page-detail' page.id %}'"
-                    class="table-row">
-                    <td class="table-cell">{% if page.home %}
-                            <span class="fa fa-home"></span>
-                        {% endif %}
-                    </td>
-                    <td class="table-cell">
-                        <a href="{% url 'cms-admin:page-detail' page.id %}">
-                            {{page.display_title}}
-                        </a>
-                    </td>
-                    <td class="table-cell">
-                        {% if page.redirect_to %}
-                            <span class="fa fa-link"></span>
-                            <a href="{% url 'cms-admin:page-detail' page.id %}">
-                                {{page.redirect_to.get_absolute_url}}
-                            </a>
-                        {% elif page.redirect_to_url %}
-                            <span class="fa fa-link"></span>
-                            <a href="{% url 'cms-admin:page-detail' page.id %}">
-                                {{page.redirect_to_url}}
-                            </a>
-                        {% else %}
-                            <a href="{% url 'cms-admin:page-detail' page.id %}">
-                                {{page.get_absolute_url}}
-                            </a>
-                        {% endif %}
-                    </td>
-                    <td class="table-cell">
-                    {% if page.hide_from_nav %}
-                        <span class="fa fa-close"></span>
-                    {% else %}
-                        <span class="fa fa-check"></span>
-                    {% endif %}
-                    </td>
-                    <td class="table-cell">
-                    {% if page.status == 'APPROVAL_NEEDED' %}
-                        <span class="label label--warning">
-                            {{page.status_verbal}}
-                        </span>
-                    {% elif page.status == 'PUBLISHED' %}
-                        <span class="label label--success">
-                            {{page.status_verbal}}
-                        </span>
-                    {% else %}
-                        <span class="label">
-                            {% trans "Draft" %}
-                        </span>
-                    {% endif %}
-                    </td>
-                    <td class="table-cell">
-                        {% if page.get_translations %}
-                            {% for t in page.get_translations %}
-                                <img 
-                                    src="{% static "img/flags/" %}{{t.language_code}}.png"
-                                    style="width:16px; position: relative; top:3px;"/>
-                            {% endfor %}
-                        {% else %}
-                            <a href="{% url 'cms-admin:page-detail' page.id %}">
-                                + {% trans "Add content" %}
-                            </a>
-                        {% endif %}
-                    </td>
-                    <td class="table-cell">
-                        {{page.get_template}}
-                    </td>
-                </tr>
-                {% endfor %}
-            </table>
+{% block page_content %}
+{% if object_list %}
+<table class="table table--clickable">
+    <tr class="table-row">
+        <th class="table-head-cell">&nbsp;</th>
+        <th class="table-head-cell">{% trans "Page" %}</th>
+        <th class="table-head-cell">{% trans "URL" %}</th>
+        <th class="table-head-cell">{% trans "Menu" %}</th>
+        <th class="table-head-cell">{% trans "Status" %}</th>
+        <th class="table-head-cell">{% trans "Content" %}</th>
+        <th class="table-head-cell">{% trans "Template" %}</th>
+    </tr>
+    {% for page in object_list %}
+    <tr
+        onClick="window.location = '{% url 'cms-admin:page-detail' page.id %}'"
+        class="table-row">
+        <td class="table-cell">{% if page.home %}
+                <span class="fa fa-home"></span>
+            {% endif %}
+        </td>
+        <td class="table-cell">
+            <a href="{% url 'cms-admin:page-detail' page.id %}">
+                {{page.display_title}}
+            </a>
+        </td>
+        <td class="table-cell">
+            {% if page.redirect_to %}
+                <span class="fa fa-link"></span>
+                <a href="{% url 'cms-admin:page-detail' page.id %}">
+                    {{page.redirect_to.get_absolute_url}}
+                </a>
+            {% elif page.redirect_to_url %}
+                <span class="fa fa-link"></span>
+                <a href="{% url 'cms-admin:page-detail' page.id %}">
+                    {{page.redirect_to_url}}
+                </a>
             {% else %}
-                <p>{% trans "No pages have been created yet." %}</p>
-                <a href="{% url 'cms-admin:page-add' %}" class="btn btn--create">
-                    <span class="fa fa-plus"></span> 
-                    {% trans "Add the first page" %}
+                <a href="{% url 'cms-admin:page-detail' page.id %}">
+                    {{page.get_absolute_url}}
                 </a>
             {% endif %}
-        </div>
-    </div>
-</div>
-{% endblock content %}
+        </td>
+        <td class="table-cell">
+        {% if page.hide_from_nav %}
+            <span class="fa fa-close"></span>
+        {% else %}
+            <span class="fa fa-check"></span>
+        {% endif %}
+        </td>
+        <td class="table-cell">
+        {% if page.status == 'APPROVAL_NEEDED' %}
+            <span class="label label--warning">
+                {{page.status_verbal}}
+            </span>
+        {% elif page.status == 'PUBLISHED' %}
+            <span class="label label--success">
+                {{page.status_verbal}}
+            </span>
+        {% else %}
+            <span class="label">
+                {% trans "Draft" %}
+            </span>
+        {% endif %}
+        </td>
+        <td class="table-cell">
+            {% if page.get_translations %}
+                {% for t in page.get_translations %}
+                    <img
+                        src="{% static "img/flags/" %}{{t.language_code}}.png"
+                        style="width:16px; position: relative; top:3px;"/>
+                {% endfor %}
+            {% else %}
+                <a href="{% url 'cms-admin:page-detail' page.id %}">
+                    + {% trans "Add content" %}
+                </a>
+            {% endif %}
+        </td>
+        <td class="table-cell">
+            {{page.get_template}}
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+{% else %}
+    <p>{% trans "No pages have been created yet." %}</p>
+    <a href="{% url 'cms-admin:page-add' %}" class="btn btn--create">
+        <span class="fa fa-plus"></span>
+        {% trans "Add the first page" %}
+    </a>
+{% endif %}
+{% endblock %}

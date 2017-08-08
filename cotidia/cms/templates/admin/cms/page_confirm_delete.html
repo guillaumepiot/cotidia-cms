@@ -1,38 +1,34 @@
-{% extends "admin/account/page.html" %}{% load i18n %}
+{% extends "admin/cms/base_form.html" %}{% load i18n %}
 {% block title %}
-	{% trans "Confirm Delete Page" %}
+    {% trans "Confirm Delete Page" %}
 {% endblock title %}
 
 {% block toolbar %}
-	<span class="toolbar__title">{% trans "Pages" %}</span>
+    <span class="toolbar__breadcrumbs">
+        <a href="{% url 'cms-admin:page-list' %}">{% trans "Pages" %}</a>
+        &nbsp;<span class="fa fa-angle-right"></span>&nbsp;
+        <a href="{% url 'cms-admin:page-detail' page.id %}">{{page.display_title}}</a>
+        &nbsp;<span class="fa fa-angle-right"></span>&nbsp;
+        {% trans "Confirm Delete" %}
+    </span>
 {% endblock toolbar %}
 
-{% block content %}
-<div class="[ content__inner ]">
-	<p class="breadcrumb">
-		<a href="{% url 'cms-admin:page-list' %}">{% trans "Pages" %}</a>  
-		&nbsp;<span class="fa fa-angle-right"></span>&nbsp;
-		<a href="{% url 'cms-admin:page-detail' page.id %}">{{page.display_title}}</a>
-		&nbsp;<span class="fa fa-angle-right"></span>&nbsp;
-		{% trans "Confirm Delete" %}
-	</p>
-</div>
+{% block page_content %}
+<fieldset>
+    <h3>{% trans "Are you sure to delete the following page?" %}</h3>
+    <p class="text-strong">{{object.display_title}}</p>
+    <p>{% trans "The operation is not reversible." %}</p>
+</fieldset>
 
-<div class="[ content__inner ] [ box box--padded box--bordered ]">
-	<h3>{% trans "Are you sure to delete the following page?" %}</h3>
-	<p class="text-strong">{{object.display_title}}</p>
-	<p>{% trans "The operation is not reversible." %}</p>
+<div class="form__actions">
+    <form method="post" action=".">
+        {% csrf_token %}
+        <button type="submit" class="btn btn--delete">
+            {% trans "Confirm Delete" %}
+        </button>
+        <a href="{% url 'cms-admin:page-detail' object.id %}" class="btn btn--transparent">
+            {% trans "Cancel" %}
+        </a>
+    </form>
 </div>
-
-<div class="content__inner">
-	<form method="post" action=".">
-		{% csrf_token %}
-		<button type="submit" class="btn btn--delete">
-			{% trans "Confirm Delete" %}
-		</button>
-		<a href="{% url 'cms-admin:page-detail' object.id %}" class="btn btn--transparent">
-			{% trans "Cancel" %}
-		</a>
-	</form>
-</div>		
-{% endblock content %}
+{% endblock %}

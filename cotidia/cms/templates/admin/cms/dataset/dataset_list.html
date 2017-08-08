@@ -1,4 +1,4 @@
-{% extends "admin/account/page.html" %}{% load i18n %}
+{% extends "admin/page.html" %}{% load i18n %}
 {% block title %}
     {% trans "Page datasets" %}
 {% endblock title %}
@@ -10,10 +10,10 @@
         <span class="fa fa-plus"></span> {% trans "Add a page dataset" %}
     </a>
     {% endif %}
-    <span class="toolbar__title">{% trans "Page datasets" %}</span>
+    <span class="toolbar__breadcrumbs">{% trans "Page datasets" %}</span>
 {% endblock toolbar %}
 
-{% block content %}
+{% block page_content %}
 <div class="grid grid--collapse">
     <div class="grid__span-12">
         <div class="content__inner">
@@ -23,7 +23,7 @@
                     <th class="table-head-cell"></th>
                 </tr>
                 {% for object in object_list %}
-                <tr class="table-row" 
+                <tr class="table-row"
                     onClick="window.location = '{% url 'cms-admin:pagedataset-detail' object.id %}'">
                     <td class="table-cell">{{object.name}}</td>
                     <td class="table-cell">
@@ -37,4 +37,4 @@
         </div>
     </div>
 </div>
-{% endblock content %}
+{% endblock %}

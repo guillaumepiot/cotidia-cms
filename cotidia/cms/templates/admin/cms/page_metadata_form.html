@@ -1,4 +1,4 @@
-{% extends "admin/account/page.html" %}{% load i18n staticfiles %}
+{% extends "admin/cms/base_form.html" %}{% load i18n staticfiles %}
 {% block title %}
     {% if object %}
         {% trans "Edit Page meta data" %}
@@ -15,16 +15,16 @@
 {% endblock header_scripts %}
 
 {% block toolbar %}
-    <span class="toolbar__title">{% trans "Page meta data" %}</span>
+    <span class="toolbar__breadcrumbs">{% trans "Page meta data" %}</span>
 {% endblock toolbar %}
 
-{% block content %}
+{% block page_content %}
 <div class="[ content__inner ]">
     <p class="breadcrumb">
-        <a href="{% url 'cms-admin:page-list' %}">{% trans "Pages" %}</a>  
+        <a href="{% url 'cms-admin:page-list' %}">{% trans "Pages" %}</a>
         &nbsp;<span class="fa fa-angle-right"></span>&nbsp;
         {% if translation %}
-            <a href="{% url 'cms-admin:page-detail' translation.id %}">{{translation}}</a>  
+            <a href="{% url 'cms-admin:page-detail' translation.id %}">{{translation}}</a>
             &nbsp;<span class="fa fa-angle-right"></span>&nbsp;
             {% trans "Edit Page meta data" %}
         {% else %}
@@ -55,8 +55,8 @@
             </div>
             <div class="grid__span-3">
                 {% include "admin/includes/text-field.html" %}
-            </div> 
-        </div> 
+            </div>
+        </div>
     {% endfor %}
     </fieldset>
 </div>
@@ -68,4 +68,4 @@
     </button>
 </div>
 </form>
-{% endblock content %}
+{% endblock %}
