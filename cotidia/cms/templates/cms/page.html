@@ -1,14 +1,33 @@
 {% extends 'cms/base.html' %}
 {% block meta_data %}
 {% if request.is_preview %}
-<meta name="page-id" content="{{page.translated.id}}">
-<meta name="model" content="cms.PageTranslation">
+<meta name="object_id" content="{{page.translated.id}}">
+<meta name="content_type_id" content="{{page.translated.content_type.id}}">
 {% endif %}
 {% endblock meta_data %}
 {% block title %}
-	{{page.translated.title}}
+    {{page.translated.title}}
 {% endblock title %}
 {% block content %}
+<style>
+    .page-image div{
+        height:400px;
+        width: 100%;
+        background-position: center;
+        background-size: cover;
+    }
+</style>
+<div style="position: relative;">
+    <div class="page-image editable parallax"  data-name="article_image">
+        {% if page.translated.regions.article_image %}
+            {{page.translated.regions.article_image|safe}}
+        {% else %}
+            <div
+           data-ce-tag="bkgimg"
+           style="background-image:url('http://via.placeholder.com/1600x400');"></div>
+        {% endif %}
+    </div>
+</div>
 <div class="[ editable ]"  data-name="content">
     {% if request.is_preview %}
         {% if page.translated.regions.content %}
