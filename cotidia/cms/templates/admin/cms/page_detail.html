@@ -9,9 +9,7 @@
     <span class="toolbar__breadcrumbs">
         <a href="{% url 'cms-admin:page-list' %}">{% trans "Pages" %}</a>
         &nbsp;<span class="fa fa-angle-right"></span>&nbsp;
-        <a href="{% url 'cms-admin:page-detail' page.id %}">{{page.display_title}}</a>
-        &nbsp;<span class="fa fa-angle-right"></span>&nbsp;
-        {% trans "Page details" %}
+        {{page.display_title}}
     </span>
 {% endblock toolbar %}
 

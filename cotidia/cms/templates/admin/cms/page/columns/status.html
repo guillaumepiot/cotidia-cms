@@ -1,0 +1,13 @@
+{% if object.status == 'APPROVAL_NEEDED' %}
+    <span class="label label--warning">
+        {{object.status_verbal}}
+    </span>
+{% elif object.status == 'PUBLISHED' %}
+    <span class="label label--success">
+        {{object.status_verbal}}
+    </span>
+{% else %}
+    <span class="label">
+        {{object.status_verbal}}
+    </span>
+{% endif %}

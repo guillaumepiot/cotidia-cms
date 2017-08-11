@@ -1,15 +1,10 @@
-{% extends "admin/page.html" %}{% load i18n staticfiles %}
+{% extends "admin/page.html" %}{% load i18n staticfiles admin_toolbar_tags %}
 {% block title %}
     {% trans "Pages" %}
 {% endblock title %}
 
 {% block toolbar %}
-    {% if perms.cms.add_pagedataset %}
-    <a href="{% url 'cms-admin:page-add' %}"
-        class="[ toolbar__item ] [ btn btn--create btn--small pull-right ]">
-        <span class="fa fa-plus"></span> {% trans "Add a page" %}
-    </a>
-    {% endif %}
+    {% toolbar_action_button app_label model_name "add" "Add page" %}
     {% if perms.cms.change_pagedataset %}
     <a href="{% url 'cms-admin:pagedataset-list' %}"
         class="[ toolbar__item ] [ btn btn--primary btn--small pull-right ]">

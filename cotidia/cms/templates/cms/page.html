@@ -8,7 +8,7 @@
 {% block title %}
 	{{page.translated.title}}
 {% endblock title %}
-{% block main %}
+{% block content %}
 <div class="[ editable ]"  data-name="content">
     {% if request.is_preview %}
         {% if page.translated.regions.content %}
@@ -23,4 +23,4 @@
         {{page.translated.regions.content|safe}}
     {% endif %}
 </div>
-{% endblock main %}
+{% endblock %}

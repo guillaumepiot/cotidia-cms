@@ -72,6 +72,8 @@
         </p>
         {% endif %}
 
+        {% include "cms/menu.html" %}
+
         <div class="wrapper">
 
             <div class="header">
@@ -79,7 +81,7 @@
                 <h2>Content Tools Integration Demo</h2>
             </div>
 
-            {% block main %}{% endblock main %}
+            {% block content %}{% endblock %}
             <div class="footer">
                 <!-- Language picker -->
                 {% for lang in LANGUAGES %}
