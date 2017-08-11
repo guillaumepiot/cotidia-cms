@@ -88,15 +88,13 @@ class BasePage(MPTTModel):
 
     objects = BasePageManager()
 
-
-
     class Meta:
         # Make this class a reference only with no database, all models must be subclass from this
         abstract = True
 
     class MPTTMeta:
-        #level_attr = 'mptt_level'
-        order_insertion_by=['order_id']
+        # level_attr = 'mptt_level'
+        order_insertion_by = ['order_id']
 
     class CMSMeta:
         templates = CMS_PAGE_TEMPLATES
@@ -104,14 +102,12 @@ class BasePage(MPTTModel):
         #translation_class = PageTranslation
         model_url_name = 'cms:page'
 
-
     def __str__(self):
         return self.display_title
 
     def get_content_type(self):
         content_type = ContentType.objects.get_for_model(self.__class__)
         return content_type
-
 
     @property
     def title(self):
@@ -576,6 +572,10 @@ class BasePageTranslation(models.Model, PublishTranslation):
     @property
     def get_content(self):
         return json.loads(self.content)
+
+    @property
+    def content_type(self):
+        return ContentType.objects.get_for_model(self.__class__)
 
     def get_attr(self, attr_name):
         try:

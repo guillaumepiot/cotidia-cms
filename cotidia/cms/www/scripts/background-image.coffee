@@ -102,14 +102,14 @@ class ContentEdit.BackgroundImage extends ContentEdit.Element
                 detail = ev.detail()
                 imageURL = detail.imageURL
                 imageSize = detail.imageSize
-                imageAttrs = detail.imageAttrs
+                # imageAttrs = detail.imageAttrs
 
                 if not imageAttrs
                     imageAttrs = {}
 
-                imageAttrs.height = imageSize[1]
+                # imageAttrs.height = imageSize[1]
                 imageAttrs.src = imageURL
-                imageAttrs.width = imageSize[0]
+                # imageAttrs.width = imageSize[0]
 
                 # node = document.querySelector('[data-name="page_image"]')
                 # element.style.backgroundImage = "url('#{imageURL}')";

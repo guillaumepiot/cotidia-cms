@@ -85,8 +85,8 @@ onLoad = ->
         payload.append('regions', JSON.stringify(regions))
 
         # Add the model name to the POST request
-        model = document.querySelector('meta[name="model"]')
-        payload.append('model', model.getAttribute('content'))
+        model = document.querySelector('meta[name="content_type_id"]')
+        payload.append('content_type_id', model.getAttribute('content'))
 
         onSuccess = ->
             new (ContentTools.FlashUI)('ok')
@@ -94,7 +94,7 @@ onLoad = ->
         onError = ->
             new (ContentTools.FlashUI)('no')
 
-        element = document.querySelector('meta[name="page-id"]')
+        element = document.querySelector('meta[name="object_id"]')
         page_id = element.getAttribute('content')
 
         url = "/api/cms/update/#{page_id}/"

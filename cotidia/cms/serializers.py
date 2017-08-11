@@ -12,7 +12,7 @@ class RegionSerializer(serializers.Serializer):
     images = serializers.CharField(allow_null=True, required=False)
 
     def to_representation(self, instance):
-        ret = super(RegionSerializer, self).to_representation(instance)
+        ret = super().to_representation(instance)
 
         if ret.get('regions'):
             ret['regions'] = json.loads(ret['regions'])

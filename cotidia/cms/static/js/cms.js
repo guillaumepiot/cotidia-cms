@@ -2148,13 +2148,10 @@ ContentEdit.BackgroundImage = (function(superClass) {
           detail = ev.detail();
           imageURL = detail.imageURL;
           imageSize = detail.imageSize;
-          imageAttrs = detail.imageAttrs;
           if (!imageAttrs) {
             imageAttrs = {};
           }
-          imageAttrs.height = imageSize[1];
           imageAttrs.src = imageURL;
-          imageAttrs.width = imageSize[0];
           style = "background-image: url('" + imageURL + "')";
           _this.attr('style', style);
           modal.hide();
@@ -2230,15 +2227,15 @@ onLoad = function() {
     payload = new FormData();
     payload.append('images', JSON.stringify(getImages()));
     payload.append('regions', JSON.stringify(regions));
-    model = document.querySelector('meta[name="model"]');
-    payload.append('model', model.getAttribute('content'));
+    model = document.querySelector('meta[name="content_type_id"]');
+    payload.append('content_type_id', model.getAttribute('content'));
     onSuccess = function() {
       return new ContentTools.FlashUI('ok');
     };
     onError = function() {
       return new ContentTools.FlashUI('no');
     };
-    element = document.querySelector('meta[name="page-id"]');
+    element = document.querySelector('meta[name="object_id"]');
     page_id = element.getAttribute('content');
     url = "/api/cms/update/" + page_id + "/";
     return API.call('post', url, payload, false, onSuccess, onError, null, 'formData');
@@ -2278,34 +2275,35 @@ ImageUploader = function(dialog) {
       return _this.r = API.call('post', url, payload, false, onSuccess, onError, null, 'formData');
     };
   })(this);
-  dialog.bind('imageUploader.cancelUpload', (function(_this) {
+  dialog.addEventListener('imageuploader.cancelupload', (function(_this) {
     return function() {
       _this.r.abort();
       return dialog.state('empty');
     };
   })(this));
-  dialog.bind('imageUploader.clear', (function(_this) {
+  dialog.addEventListener('imageuploader.clear', (function(_this) {
     return function() {
       dialog.clear();
       return image = null;
     };
   })(this));
-  dialog.bind('imageUploader.fileReady', (function(_this) {
-    return function(file) {
-      var formData, onError, onProgress, onSuccess, payload, url;
+  dialog.addEventListener('imageuploader.fileready', (function(_this) {
+    return function(ev) {
+      var content_type, file, formData, object_id, onError, onProgress, onSuccess, payload, url;
+      file = ev.detail().file;
       formData = void 0;
       onProgress = function(ev) {
-        return dialog.progress(ev.loaded / ev.total * 100);
+        console.log('onProgress');
+        return dialog.progress(50);
       };
       onSuccess = function(data) {
         image = {
-          id: data.id,
+          id: data.uuid,
           name: data.name,
-          size: data.size,
-          width: data.display_width,
-          url: data.image
+          size: null,
+          width: null,
+          url: data.f
         };
-        console.log(image);
         return dialog.populate(image.url, image.size);
       };
       onError = function(data) {
@@ -2313,43 +2311,25 @@ ImageUploader = function(dialog) {
       };
       dialog.state('uploading');
       dialog.progress(0);
+      content_type = document.querySelector('meta[name="content_type_id"]');
+      object_id = document.querySelector('meta[name="object_id"]');
       payload = new FormData;
-      payload.append('image', file);
-      payload.append('width', 600);
-      url = '/api/cms/images/add/';
+      payload.append('f', file);
+      payload.append('content_type', content_type.getAttribute('content'));
+      payload.append('object_id', object_id.getAttribute('content'));
+      url = '/api/file/upload';
       return _this.r = API.call('post', url, payload, false, onSuccess, onError, onProgress, 'formData');
     };
   })(this));
-  dialog.bind('imageUploader.save', (function(_this) {
+  dialog.addEventListener('imageuploader.save', (function(_this) {
     return function() {
-      var crop, cropRegion, formData, onError, onSuccess, payload, url;
-      crop = void 0;
-      cropRegion = void 0;
-      formData = void 0;
-      onSuccess = function(data) {
-        dialog.busy(false);
-        console.log(data);
-        return dialog.save(data.image, data.size, {
-          'alt': data.name,
-          'data-ce-max-width': image.size[0]
-        });
-      };
-      onError = function(data) {
-        return new ContentTools.FlashUI('no');
-      };
-      dialog.busy(true);
-      payload = new FormData;
-      if (dialog.cropRegion()) {
-        payload.append('crop', dialog.cropRegion());
-      }
-      url = "/api/cms/images/update/" + image.id + "/";
-      return _this.r = API.call('post', url, payload, false, onSuccess, onError, null, 'formData');
+      return dialog.save(image.url, image.size);
     };
   })(this));
-  dialog.bind('imageUploader.rotateCCW', function() {
+  dialog.addEventListener('imageuploader.rotateccw', function() {
     return rotateImage('CCW');
   });
-  return dialog.bind('imageUploader.rotateCW', function() {
+  return dialog.addEventListener('imageuploader.rotatecw', function() {
     return rotateImage('CW');
   });
 };

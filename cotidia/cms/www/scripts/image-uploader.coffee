@@ -44,7 +44,7 @@ ImageUploader = (dialog) ->
         this.r = API.call('post', url, payload, false, onSuccess, onError, null, 'formData')
 
 
-    dialog.bind 'imageUploader.cancelUpload', =>
+    dialog.addEventListener 'imageuploader.cancelupload', =>
 
         # Cancel the current upload
         this.r.abort()
@@ -53,34 +53,36 @@ ImageUploader = (dialog) ->
         dialog.state 'empty'
 
 
-    dialog.bind 'imageUploader.clear', =>
+    dialog.addEventListener 'imageuploader.clear', =>
 
         # Clear the current image
         dialog.clear()
         image = null
 
 
-    dialog.bind 'imageUploader.fileReady', (file) =>
+    dialog.addEventListener 'imageuploader.fileready', (ev) =>
+
+        file = ev.detail().file
 
         # Upload a file to the server
         formData = undefined
 
         # Define functions to handle upload progress and completion
         onProgress = (ev) ->
+            console.log 'onProgress'
             # Set the progress for the upload
-            dialog.progress ev.loaded / ev.total * 100
+            # dialog.progress ev.loaded / ev.total * 100
+            dialog.progress 50
 
         onSuccess = (data) ->
 
             # Store the image details
             image =
-                id: data.id
+                id: data.uuid
                 name: data.name
-                size: data.size
-                width: data.display_width
-                url: data.image
-
-            console.log image
+                size: null
+                width: null
+                url: data.f
 
             # Populate the dialog
             dialog.populate image.url, image.size
@@ -95,64 +97,76 @@ ImageUploader = (dialog) ->
         dialog.progress 0
 
         # Build the form data to post to the server
+
+        content_type = document.querySelector('meta[name="content_type_id"]')
+        object_id = document.querySelector('meta[name="object_id"]')
+
         payload = new FormData
-        payload.append 'image', file
+        payload.append 'f', file
+        payload.append('content_type', content_type.getAttribute('content'))
+        payload.append('object_id', object_id.getAttribute('content'))
 
         # Set the width of the image when it's inserted, this is a default
         # the user will be able to resize the image afterwards.
-        payload.append 'width', 600
+        # payload.append 'width', 600
 
         # Make the request
-        url = '/api/cms/images/add/'
+        url = '/api/file/upload'
         this.r = API.call('post', url, payload, false, onSuccess, onError, onProgress,  'formData')
 
 
-    dialog.bind 'imageUploader.save', =>
+    dialog.addEventListener 'imageuploader.save', =>
 
-        crop = undefined
-        cropRegion = undefined
-        formData = undefined
+        dialog.save image.url, image.size
 
-        # Define a function to handle the request completion
-        onSuccess = (data) ->
+        # Trigger the save event against the dialog with details of the
+        # image to be inserted.
+        # dialog.save data.image, data.size,
+        #     'alt': data.name
+        #     'data-ce-max-width': image.size[0]
 
-            # Free the dialog from its busy state
-            dialog.busy false
+        # crop = undefined
+        # cropRegion = undefined
+        # formData = undefined
 
-            console.log data
+        # # Define a function to handle the request completion
+        # onSuccess = (data) ->
 
-            # Trigger the save event against the dialog with details of the
-            # image to be inserted.
-            dialog.save data.image, data.size,
-                'alt': data.name
-                'data-ce-max-width': image.size[0]
+        #     # Free the dialog from its busy state
+        #     dialog.busy false
 
-        # Define a function to handle on error
-        onError = (data) ->
-            # The request failed, notify the user
-            new (ContentTools.FlashUI)('no')
+        #     # Trigger the save event against the dialog with details of the
+        #     # image to be inserted.
+        #     dialog.save data.image, data.size,
+        #         'alt': data.name
+        #         'data-ce-max-width': image.size[0]
 
-        # Set the dialog to busy while the rotate is performed
-        dialog.busy true
+        # # Define a function to handle on error
+        # onError = (data) ->
+        #     # The request failed, notify the user
+        #     new (ContentTools.FlashUI)('no')
 
-        # Build the form data to post to the server
-        payload = new FormData
+        # # Set the dialog to busy while the rotate is performed
+        # dialog.busy true
 
-        # Check if a crop region has been defined by the user
-        if dialog.cropRegion()
-            payload.append 'crop', dialog.cropRegion()
+        # # Build the form data to post to the server
+        # payload = new FormData
+
+        # # Check if a crop region has been defined by the user
+        # if dialog.cropRegion()
+        #     payload.append 'crop', dialog.cropRegion()
 
 
         # Make the request
-        url = "/api/cms/images/update/#{image.id}/"
-        this.r = API.call('post', url, payload, false, onSuccess, onError, null,  'formData')
+        # url = "/api/cms/images/update/#{image.id}/"
+        # this.r = API.call('post', url, payload, false, onSuccess, onError, null,  'formData')
 
 
-    dialog.bind 'imageUploader.rotateCCW', ->
+    dialog.addEventListener 'imageuploader.rotateccw', ->
         rotateImage 'CCW'
 
 
-    dialog.bind 'imageUploader.rotateCW', ->
+    dialog.addEventListener 'imageuploader.rotatecw', ->
         rotateImage 'CW'
 
 
