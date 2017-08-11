@@ -466,6 +466,10 @@ class BasePage(MPTTModel):
 
         return languages
 
+    @property
+    def template_label(self):
+        if self.template:
+            return dict(CMS_PAGE_TEMPLATES).get(self.template)
 
 
 
