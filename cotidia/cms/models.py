@@ -18,6 +18,7 @@ TARGET_CHOICES = (
     ('_blank', 'a new window'),
 )
 
+
 class BasePageManager(TreeManager):
 
     def get_published_live(self):
@@ -275,25 +276,15 @@ class BasePage(MPTTModel):
 
         return obj
 
-
-    def get_absolute_url(self,
+    def get_absolute_url(
+        self,
         current_language=False,
         urlargs=False,
         preview=False,
-        parent_only=False):
+        parent_only=False
+    ):
 
         from django.utils.translation import get_language
-
-        # Handle redirect
-        # if self.redirect_to_url:
-        #     return self.redirect_to_url
-
-        # if self.redirect_to:
-        #     return self.redirect_to.get_absolute_url(
-        #         current_language,
-        #         urlargs,
-        #         preview,
-        #         parent_only)
 
         if not current_language:
             current_language = get_language()
@@ -302,8 +293,6 @@ class BasePage(MPTTModel):
             PREFIX = CMS_PREFIX[current_language]
         else:
             PREFIX = False
-
-
 
         if PREFIX and not PREFIX[len(PREFIX)-1] == '/':
             PREFIX = PREFIX + '/'
@@ -381,12 +370,10 @@ class BasePage(MPTTModel):
                 slugs[1] = current_language
                 url = "/".join(slugs)
 
-
         return url
 
     def get_admin_url(self):
-        return reverse(self.CMSMeta.admin_url_name, kwargs={'pk':self.id})
-
+        return reverse(self.CMSMeta.admin_url_name, kwargs={'pk': self.id})
 
     def get_breadcrumbs(self):
         if self.home:
@@ -472,12 +459,8 @@ class BasePage(MPTTModel):
             return dict(CMS_PAGE_TEMPLATES).get(self.template)
 
 
-
-
-#
-# Handle the publising workflow of a translation model
-#
 class PublishTranslation(object):
+    """Handle the publising workflow of a translation model."""
 
     def save(self):
 
