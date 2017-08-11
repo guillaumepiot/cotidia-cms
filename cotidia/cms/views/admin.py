@@ -1,18 +1,18 @@
-from django.views.generic import ListView, DetailView
+from django.views.generic import DetailView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.contrib.auth.decorators import login_required, permission_required
 from django.core.urlresolvers import reverse
 from django.contrib import messages
 from django.utils.translation import ugettext_lazy as _
 from django.shortcuts import render, get_object_or_404
-from django.template import RequestContext
 from django.core.exceptions import PermissionDenied
 from django.http import HttpResponseRedirect
 from django.utils.text import slugify
 from django.db import transaction
 
 from cotidia.account.conf import settings
-from cotidia.account.utils import StaffPermissionRequiredMixin
+from cotidia.admin.views import AdminListView
+from cotidia.admin.utils import StaffPermissionRequiredMixin
 
 from cotidia.cms.settings import CMS_LANGUAGES
 from cotidia.cms.models import Page, PageTranslation
@@ -21,25 +21,42 @@ from cotidia.cms.forms.page import (
     PageUpdateForm,
     PageURLForm,
     PageTitleForm
-    )
+)
 from cotidia.cms.forms.custom_form import TranslationForm
+
 
 ########
 # Page #
 ########
 
-class PageList(StaffPermissionRequiredMixin, ListView):
+
+class PageList(AdminListView):
     model = Page
-    template_name = 'admin/cms/page_list.html'
-    permission_required = 'cms.change_page'
+    columns = (
+        ('Title', 'display_title'),
+        ('URL', 'get_absolute_url'),
+        ('Status', 'status'),
+        ('Hide from nav', 'hide_from_nav'),
+        ('Template', 'template_label'),
+    )
+    template_type = "centered"
+
+    # <th class="table-head-cell">{% trans "Page" %}</th>
+    # <th class="table-head-cell">{% trans "URL" %}</th>
+    # <th class="table-head-cell">{% trans "Menu" %}</th>
+    # <th class="table-head-cell">{% trans "Status" %}</th>
+    # <th class="table-head-cell">{% trans "Content" %}</th>
+    # <th class="table-head-cell">{% trans "Template" %}</th>
 
     def get_queryset(self):
         return Page.objects.get_originals()
+
 
 class PageDetail(StaffPermissionRequiredMixin, DetailView):
     model = Page
     template_name = 'admin/cms/page_detail.html'
     permission_required = 'cms.change_page'
+
 
 class PageCreate(StaffPermissionRequiredMixin, CreateView):
     model = Page
