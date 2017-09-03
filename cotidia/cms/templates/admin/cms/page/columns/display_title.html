@@ -1,0 +1,10 @@
+{% if object.parent %}
+    {% for a in object.get_ancestors %}
+        {% if forloop.last %}
+            <span class="fa fa-long-arrow-right"></span>
+        {% else %}
+            &nbsp; &nbsp;&nbsp;
+        {% endif %}
+    {% endfor %}
+{% endif %}
+{{object.display_title}}

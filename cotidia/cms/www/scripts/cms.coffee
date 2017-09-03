@@ -50,7 +50,7 @@ onLoad = ->
         new ContentTools.Style('Text gray light', 'text-gray-light', ['h1', 'h2', 'h3', 'h4', 'h5', 'p', 'a'])
         new ContentTools.Style('Text blue', 'text-blue', ['h1', 'h2', 'h3', 'h4', 'h5', 'p', 'a'])
         new ContentTools.Style('Text blue dark', 'text-blue-dark', ['h1', 'h2', 'h3', 'h4', 'h5', 'p', 'a'])
-        new ContentTools.Style('Text bold', 'text-bold', ['h1', 'h2', 'h3', 'h4', 'h5', 'p', 'a'])
+        new ContentTools.Style('Text bold', 'text-strong', ['h1', 'h2', 'h3', 'h4', 'h5', 'p', 'a'])
         new ContentTools.Style('Text italic', 'text-italic', ['h1', 'h2', 'h3', 'h4', 'h5', 'p', 'a'])
         new ContentTools.Style('Blockquote', 'text-blockquote', ['h1', 'h2', 'h3', 'h4', 'h5', 'p', 'a'])
 

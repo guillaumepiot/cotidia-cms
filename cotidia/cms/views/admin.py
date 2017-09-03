@@ -1,3 +1,5 @@
+import django_filters
+
 from django.views.generic import DetailView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.contrib.auth.decorators import login_required, permission_required
@@ -29,6 +31,16 @@ from cotidia.cms.forms.custom_form import TranslationForm
 # Page #
 ########
 
+class PageFilter(django_filters.FilterSet):
+    display_title = django_filters.CharFilter(
+        lookup_expr="icontains",
+        label="Title"
+    )
+
+    class Meta:
+        model = Page
+        fields = ['display_title']
+
 
 class PageList(AdminListView):
     model = Page
@@ -36,17 +48,11 @@ class PageList(AdminListView):
         ('Title', 'display_title'),
         ('URL', 'get_absolute_url'),
         ('Status', 'status'),
-        ('Hide from nav', 'hide_from_nav'),
+        ('Show in menu', 'hide_from_nav'),
         ('Template', 'template_label'),
     )
     template_type = "centered"
-
-    # <th class="table-head-cell">{% trans "Page" %}</th>
-    # <th class="table-head-cell">{% trans "URL" %}</th>
-    # <th class="table-head-cell">{% trans "Menu" %}</th>
-    # <th class="table-head-cell">{% trans "Status" %}</th>
-    # <th class="table-head-cell">{% trans "Content" %}</th>
-    # <th class="table-head-cell">{% trans "Template" %}</th>
+    filterset = PageFilter
 
     def get_queryset(self):
         return Page.objects.get_originals()
@@ -68,6 +74,7 @@ class PageCreate(StaffPermissionRequiredMixin, CreateView):
         messages.success(self.request, _('The page has been created.'))
         return reverse('cms-admin:page-list')
 
+
 class PageUpdate(StaffPermissionRequiredMixin, UpdateView):
     model = Page
     form_class = PageUpdateForm
@@ -85,6 +92,7 @@ class PageUpdate(StaffPermissionRequiredMixin, UpdateView):
             self.object.save()
         return response
 
+
 class PageDelete(StaffPermissionRequiredMixin, DeleteView):
     model = Page
     permission_required = 'cms.delete_page'
@@ -93,7 +101,6 @@ class PageDelete(StaffPermissionRequiredMixin, DeleteView):
     def get_success_url(self):
         messages.success(self.request, _('The page has been deleted.'))
         return reverse('cms-admin:page-list')
-
 
 
 @login_required
@@ -106,7 +113,7 @@ def add_edit_translation(
     translation_class=PageTranslation,
     translation_form_class=TranslationForm):
 
-    if not language_code in [lang[0] for lang in CMS_LANGUAGES]:
+    if language_code not in [lang[0] for lang in CMS_LANGUAGES]:
         raise ImproperlyConfigured('The language code "%s" is not included in the project settings.' % language_code)
     if not request.user.has_perm('cms.add_pagetranslation'):
         raise PermissionDenied

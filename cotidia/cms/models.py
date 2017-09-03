@@ -470,7 +470,6 @@ class PublishTranslation(object):
 
         super(PageTranslation, self).save()
 
-
     def publish_version(self):
 
         parent_cls = self.parent.__class__
@@ -478,7 +477,6 @@ class PublishTranslation(object):
 
         # Fields to ignore in duplication
         ignore_fields = ['id', 'parent_id', ]
-
 
         published_page = parent_cls.objects.filter(published_from=self.parent)
         if len(published_page)>0:
@@ -495,7 +493,6 @@ class PublishTranslation(object):
 
             obj.parent = published_page
             obj.save()
-
 
     def duplicate(self, parent):
         # We create a copy of the current object and attach it to a new parent
@@ -557,11 +554,11 @@ class BasePageTranslation(models.Model, PublishTranslation):
         unique_together = ('parent', 'language_code')
         abstract = True
         if len(CMS_LANGUAGES) > 1:
-            verbose_name=_('Translation')
-            verbose_name_plural=_('Translations')
+            verbose_name = _('Translation')
+            verbose_name_plural = _('Translations')
         else:
-            verbose_name=_('Content')
-            verbose_name_plural=_('Content')
+            verbose_name = _('Content')
+            verbose_name_plural = _('Content')
 
     def __str__(self):
         return u'%s - %s' % (self.title, dict(CMS_LANGUAGES).get(self.language_code))
@@ -707,11 +704,3 @@ class Image(models.Model):
         verbose_name = "Image"
         verbose_name_plural = "Images"
 
-# @receiver(post_save, sender=Image)
-# def set_image_meta_data(sender, instance=None, created=False, **kwargs):
-
-#     if instance.display_width:
-#         width = decimal.Decimal(str(instance.width))
-#         height = decimal.Decimal(str(instance.height))
-#         ratio = width / height
-#         instance.display_height = int(instance.display_width / ratio)

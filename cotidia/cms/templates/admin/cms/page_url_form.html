@@ -50,12 +50,10 @@
                 {{SITE_URL}}/<span id="slug" class="text-strong">{% if translation.slug %}{{translation.slug}}/{% endif %}</span>
                 {% endif %}
             </p>
-            <div class="grid">
-                <div class="grid__span-6">
-                    {% with form.slug as field %}
-                        {% include "admin/includes/text-field.html" %}
-                    {% endwith %}
-                </div>
+            <div class="form__group">
+                {% with form.slug as field %}
+                    {% include "admin/generic/form/form_group.html" %}
+                {% endwith %}
             </div>
         {% endif %}
     </fieldset>

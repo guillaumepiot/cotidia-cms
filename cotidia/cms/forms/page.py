@@ -10,11 +10,11 @@ from cotidia.cms.settings import CMS_PAGE_TEMPLATES
 class PageAddForm(forms.ModelForm):
 
     home = forms.BooleanField(
-        label=_("<span class=\"fa fa-home\"></span> Home page"),
+        label="Home page",
         required=False)
 
     display_title = forms.CharField(
-        label='',
+        label='Title',
         help_text=_(
             "The display title is only used to represent the page "
             "within the CMS. This value should not be used for the title "
@@ -24,7 +24,6 @@ class PageAddForm(forms.ModelForm):
     )
 
     template = forms.ChoiceField(
-        label='',
         help_text=_(
             "The template defines the layout of page, as well as the "
             "editable areas."
@@ -34,8 +33,8 @@ class PageAddForm(forms.ModelForm):
     )
 
     parent = forms.ModelChoiceField(
-        label='',
-        help_text=("Leave blank if this a top level page."),
+        label='Parent page',
+        help_text="Leave blank if this a top level page.",
         queryset=Page.objects.get_originals(),
         widget=forms.Select(attrs={'class': 'form__select'}),
         required=False
@@ -133,13 +132,11 @@ class PageUpdateForm(PageAddForm):
 class PageURLForm(forms.ModelForm):
 
     slug = forms.CharField(
-        label='',
         help_text=_(
             "The URL should only contain lowercase letters, "
             "numbers and dashes (-)."
         ),
         widget=forms.TextInput(attrs={
-            'class': 'form__text',
             'onKeyUp': 'updateSlug(this)'
         })
     )
@@ -186,9 +183,7 @@ class PageURLForm(forms.ModelForm):
 class PageTitleForm(forms.ModelForm):
 
     title = forms.CharField(
-        label='',
-        help_text=_("The title will be used for navigation items."),
-        widget=forms.TextInput(attrs={'class': 'form__text'})
+        help_text=_("The title will be used for navigation items.")
     )
 
     class Meta:

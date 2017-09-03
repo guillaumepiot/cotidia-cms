@@ -20,9 +20,6 @@
 {% endblock toolbar %}
 
 {% block page_content %}
-{% if not page %}
-<h1>{% trans "New page" %}</h1>
-{% endif %}
 <form action="" method="post" class="form form--action-fixed-bottom">
     {% csrf_token %}
     {% if form.non_field_errors %}
@@ -34,72 +31,31 @@
     {% endif %}
     <fieldset>
         <legend>{% trans "Title" %}</legend>
-        <div class="grid">
-            <div class="grid__span-2">
-                <span class="form__label--inline">
-                    {% trans "Choose a title" %}
-                </span>
-            </div>
-            <div class="grid__span-6">
-                {% with form.display_title as field %}
-                    {% include "admin/includes/text-field.html" %}
-                {% endwith %}
-            </div>
-        </div>
-        <div class="grid">
-            <div class="grid__span-2">
-                &nbsp;
-            </div>
-            <div class="grid__span-4">
-                {% with form.home as field %}
-                    {% include "admin/includes/checkbox-field.html" %}
-                {% endwith %}
-            </div>
-        </div>
+        {% with form.display_title as field %}
+            {% include "admin/generic/form/form_group.html" %}
+        {% endwith %}
+        {% with form.home as field %}
+            {% include "admin/generic/form/form_group.html" %}
+        {% endwith %}
     </fieldset>
     <fieldset>
         <legend>{% trans "Template" %}</legend>
-        <div class="grid">
-            <div class="grid__span-2">
-                <span class="form__label--inline">
-                    {% trans "Choose a template" %}
-                </span>
-            </div>
-            <div class="grid__span-3">
-                {% with form.template as field %}
-                    {% include "admin/includes/select-field.html" %}
-                {% endwith %}
-            </div>
-        </div>
+        {% with form.template as field %}
+            {% include "admin/generic/form/form_group.html" %}
+        {% endwith %}
     </fieldset>
     <fieldset>
         <legend>{% trans "Hierarchy" %}</legend>
-        <div class="grid">
-            <div class="grid__span-2">
-                <span class="form__label--inline">
-                    {% trans "Parent page" %}
-                </span>
-            </div>
-            <div class="grid__span-3">
-                {% with form.parent as field %}
-                    {% include "admin/includes/select-field.html" %}
-                {% endwith %}
-            </div>
-        </div>
+        {% with form.parent as field %}
+            {% include "admin/generic/form/form_group.html" %}
+        {% endwith %}
     </fieldset>
     <fieldset>
         <legend>{% trans "Navigation Menu" %}</legend>
-        <div class="grid">
-            <div class="grid__span-2">
-                <span class="form__label--inline">
-                    &nbsp;
-                </span>
-            </div>
-            <div class="grid__span-3">
-                {% with form.hide_from_nav as field %}
-                    {% include "admin/includes/checkbox-field.html" %}
-                {% endwith %}
-            </div>
+        <div class="form__row">
+        {% with form.hide_from_nav as field %}
+            {% include "admin/generic/form/form_group.html" %}
+        {% endwith %}
         </div>
     </fieldset>
     {% if object %}
@@ -113,7 +69,7 @@
             </div>
             <div class="grid__span-3">
                 {% with form.dataset as field %}
-                    {% include "admin/includes/select-field.html" %}
+                    {% include "admin/generic/form/form_group.html" %}
                 {% endwith %}
                 <p><a href="{% url 'cms-admin:pagedataset-add' %}">+ {% trans "Add a new dataset" %}</a></p>
             </div>
@@ -129,7 +85,7 @@
             </div>
             <div class="grid__span-3">
                 {% with form.redirect_to as field %}
-                    {% include "admin/includes/select-field.html" %}
+                    {% include "admin/generic/form/form_group.html" %}
                 {% endwith %}
             </div>
         </div>
@@ -141,7 +97,7 @@
             </div>
             <div class="grid__span-6">
                 {% with form.redirect_to_url as field %}
-                    {% include "admin/includes/text-field.html" %}
+                    {% include "admin/generic/form/form_group.html" %}
                 {% endwith %}
             </div>
         </div>
@@ -156,7 +112,7 @@
             </div>
             <div class="grid__span-3">
                 {% with form.slug as field %}
-                    {% include "admin/includes/text-field.html" %}
+                    {% include "admin/generic/form/form_group.html" %}
                 {% endwith %}
             </div>
         </div>
