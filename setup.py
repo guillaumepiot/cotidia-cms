@@ -23,12 +23,12 @@ setup(
     include_package_data=True,
     install_requires=[
         'django>=1.10.2',
-        'django-form-utils==1.0.3',
+        'django-form-utils>=1.0.3',
         'djangorestframework>=3.5.1',
-        'django-mptt==0.8.6',
-        'django-reversion==2.0.8',
-        'Pillow==3.1.1',
-        'django-codemirror-widget==0.4.0',
+        'django-mptt>=0.8.6',
+        'django-reversion>=2.0.8',
+        'Pillow>=4.2.1',
+        'django-codemirror-widget>=0.4.0',
     ],
     classifiers=[
         'Framework :: Django',
