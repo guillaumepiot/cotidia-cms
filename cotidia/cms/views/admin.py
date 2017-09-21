@@ -51,7 +51,7 @@ class PageList(AdminListView):
         ('Show in menu', 'hide_from_nav'),
         ('Template', 'template_label'),
     )
-    template_type = "centered"
+    template_type = "fluid"
     filterset = PageFilter
 
     def get_queryset(self):
