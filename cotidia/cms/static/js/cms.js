@@ -2109,7 +2109,6 @@ ContentEdit.BackgroundImage = (function(superClass) {
 
   BackgroundImage.prototype.mount = function() {
     var buttonText, classes, rect, style;
-    console.log("Mount bkgimg");
     this._domElement = document.createElement('div');
     classes = '';
     if (this._attributes['class']) {
@@ -2220,7 +2219,6 @@ onLoad = function() {
   return editor.addEventListener('saved', function(ev) {
     var element, model, onError, onStateChange, onSuccess, page_id, payload, regions, url, xhr;
     regions = ev.detail().regions;
-    console.log("regions", regions);
     onStateChange = void 0;
     payload = void 0;
     xhr = void 0;

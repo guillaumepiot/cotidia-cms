@@ -73,8 +73,6 @@ onLoad = ->
 
         regions = ev.detail().regions
 
-        console.log "regions", regions
-
         onStateChange = undefined
         payload = undefined
         xhr = undefined

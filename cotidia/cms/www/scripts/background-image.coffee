@@ -43,7 +43,6 @@ class ContentEdit.BackgroundImage extends ContentEdit.Element
 
     mount: () ->
         # Mount the element on to the DOM
-        console.log "Mount bkgimg"
 
         # Create the DOM element to mount
         @_domElement = document.createElement('div')
