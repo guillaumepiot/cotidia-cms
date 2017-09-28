@@ -67,7 +67,7 @@ onLoad = ->
 
     ])
 
-    editor.init '.editable', 'data-name'
+    editor.init('[data-editable], [data-fixture]', 'data-name')
 
     editor.addEventListener 'saved', (ev) ->
 
