@@ -2,7 +2,6 @@ import json
 from django import forms
 from django.utils.translation import ugettext_lazy as _
 from django.utils.text import slugify
-from django.contrib.contenttypes.models import ContentType
 
 from mptt.forms import TreeNodeChoiceField
 
@@ -15,26 +14,27 @@ from cotidia.cms.models import Page, PageTranslation
 
 FIELD_CLASS_MAP = {
     'charfield': {
-        'field_class':forms.CharField,
-        'field_widget':forms.TextInput,
-        'max_length':250,
+        'field_class': forms.CharField,
+        'field_widget': forms.TextInput,
+        'max_length': 250,
     },
     'textfield': {
-        'field_class':forms.CharField,
-        'field_widget':forms.Textarea,
-        'max_length':50000,
+        'field_class': forms.CharField,
+        'field_widget': forms.Textarea,
+        'max_length': 50000,
     },
     'pagelinkfield': {
-        'field_class':TreeNodeChoiceField,
-        'field_widget':forms.Select,
-        'field_choices':Page.objects.get_published_originals()
+        'field_class': TreeNodeChoiceField,
+        'field_widget': forms.Select,
+        'field_choices': Page.objects.get_published_originals()
     },
     'choicefield': {
-        'field_class':forms.ChoiceField,
-        'field_widget':forms.Select,
-        'choices': (('','No choices'),)
+        'field_class': forms.ChoiceField,
+        'field_widget': forms.Select,
+        'choices': (('', 'No choices'),)
     }
 }
+
 
 class TranslationForm(BetterModelForm):
     required_css_class = 'required'
@@ -54,19 +54,22 @@ class TranslationForm(BetterModelForm):
             'created_by',
             'updated_by',
             'images'
-            ]
+        ]
 
     def __init__(self, page, *args, **kwargs):
 
-        super(TranslationForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
         self._fieldsets = []
 
         self.json_fields = page.dataset.get_fields() if page.dataset else []
 
+        print(page.dataset)
+        print(self.json_fields)
+
         # Go through each fieldset
         for fieldset in self.json_fields:
-            fieldset_id = slugify(fieldset['fieldset']).replace('-','_')
+            fieldset_id = slugify(fieldset['fieldset']).replace('-', '_')
             _fields = []
             for field in fieldset['fields']:
 
@@ -145,9 +148,8 @@ class TranslationForm(BetterModelForm):
                         # Set the initial value from the current data
                         self.fields[field_name].initial = mask_data.get(field_name, '')
 
-
     def save(self, *args, **kwargs):
-        super(TranslationForm, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
 
         mask_data = {}
 
@@ -159,7 +161,7 @@ class TranslationForm(BetterModelForm):
                 # Get the field type
                 field_type = field['type']
                 # Get the name of the field
-                field_name = '%s_%s' % (fieldset_id,field['name'])
+                field_name = '%s_%s' % (fieldset_id, field['name'])
 
                 if field_type in ['pagelinkfield']:
                     if self.cleaned_data[field_name]:
@@ -175,8 +177,10 @@ class TranslationForm(BetterModelForm):
 
         return self.instance
 
+
 class TranslationContentForm(BetterModelForm):
     live_content = forms.CharField(widget=forms.Textarea, required=True)
+
     class Meta:
         model = PageTranslation
         fields = ['live_content']

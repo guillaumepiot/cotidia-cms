@@ -122,8 +122,8 @@ def add_edit_translation(
     translation = translation_class.objects.filter(parent=page, language_code=language_code).first()
 
     initial = {
-        'parent':page,
-        'language_code':language_code
+        'parent': page,
+        'language_code': language_code
     }
 
     # Check is we are in revision mode
@@ -139,10 +139,8 @@ def add_edit_translation(
     #     recover = False
 
     if not translation:
-        title = _('Add translation')
         form = translation_form_class(page=page, initial=initial)
     else:
-        title = _('Edit translation')
         if not request.user.has_perm('cmsbase.change_pagetranslation'):
             raise PermissionDenied
 
@@ -168,15 +166,14 @@ def add_edit_translation(
             messages.add_message(request, messages.SUCCESS, _('The meta data for "%s" has been saved' % translation.title))
             return HttpResponseRedirect(reverse('cms-admin:page-detail', kwargs={'pk':page.id}))
 
-
-
+    print("form", form)
 
     template = 'admin/cms/page_metadata_form.html'
-    context={
-        'form':form,
-        #'title':title,
-        'page':page,
-        'translation':translation,
+
+    context = {
+        'form': form,
+        'page': page,
+        'translation': translation,
         #'recover':recover,
         #'app_label':page._meta.app_label,
         #'model_name':page._meta.model_name,

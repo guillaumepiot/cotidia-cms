@@ -71,6 +71,7 @@ def get_page_by_unique_identifier(parser, token):
                 "{} tag must be in the following format: "
                 "{% get_page_by_slug 'page-slug' as pagevar %}"
             ).format(token.contents.split()[0])
-            )
+        )
 
     return PageBySlugNode(slug, varname)
+
