@@ -59,7 +59,7 @@ class PageDataSetAddForm(forms.ModelForm):
         try:
             json.loads(config)
         except:
-            raise forms.ValidationError(_('The JSON string is invalid'))
+            raise forms.ValidationError(('The JSON string is invalid'))
 
 
         ############################
