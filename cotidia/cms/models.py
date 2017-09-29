@@ -182,6 +182,11 @@ class BasePage(MPTTModel):
         except:
             pass
 
+        try:
+            translation.content = json.loads(translation.content)
+        except:
+            pass
+
         return translation
 
 
