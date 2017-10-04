@@ -99,7 +99,7 @@ class BasePage(MPTTModel):
     class CMSMeta:
         templates = CMS_PAGE_TEMPLATES
         # Must be provided on model extension
-        #translation_class = PageTranslation
+        # translation_class = PageTranslation
         model_url_name = 'cms:page'
 
     def __str__(self):
@@ -135,7 +135,6 @@ class BasePage(MPTTModel):
     def get_template(self):
         return dict(CMS_PAGE_TEMPLATES).get(self.template)
 
-
     def get_published(self):
         cls = self.__class__
         published = cls.objects.filter(published_from=self)
@@ -144,20 +143,17 @@ class BasePage(MPTTModel):
         else:
             return None
 
-
     def set_dynamic_attributes(self, translation):
-        dynamic_attrs = []
         # Go through each fieldset
         if hasattr(self, 'dataset') and self.dataset:
             for fieldset in self.dataset.get_fields():
-                fieldset_id = slugify(fieldset['fieldset']).replace('-','_')
+                fieldset_id = slugify(fieldset['fieldset']).replace('-', '_')
                 for field in fieldset['fields']:
 
                     # Get the name of the field
                     field_name = '%s_%s' % (fieldset_id, field['name'])
                     # Assign the value of the field to the translation object
                     setattr(translation, field_name, translation.get_attr(field_name))
-
 
     def translated(self):
         from django.utils.translation import get_language
@@ -174,7 +170,6 @@ class BasePage(MPTTModel):
             else:
                 return None
 
-
         self.set_dynamic_attributes(translation)
 
         try:
@@ -189,10 +184,8 @@ class BasePage(MPTTModel):
 
         return translation
 
-
     def get_translations(self):
         return self.CMSMeta.translation_class.objects.filter(parent=self)
-
 
     def publish_translations(self):
         # Get translations

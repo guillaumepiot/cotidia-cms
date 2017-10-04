@@ -6,6 +6,7 @@ from codemirror import CodeMirrorTextarea
 
 from cotidia.cms.models import PageDataSet
 
+
 class PageDataSetAddForm(forms.ModelForm):
     required_css_class = 'required'
     error_css_class = 'errorfield'
@@ -40,17 +41,20 @@ class PageDataSetAddForm(forms.ModelForm):
     name = forms.CharField(
         label='',
         max_length=255,
-        widget=forms.TextInput(attrs={'class':'form__text'})
-        )
+        widget=forms.TextInput(attrs={'class': 'form__text'})
+    )
 
     config = forms.CharField(
         widget=CodeMirrorTextarea(
             mode="javascript",
             theme="cobalt",
-            config={ 'fixedGutter': True, 'lineNumbers': True }),
-        initial=initial)
+            config={'fixedGutter': True, 'lineNumbers': True}
+        ),
+        initial=initial
+    )
+
     class Meta:
-        model=PageDataSet
+        model = PageDataSet
         exclude = ()
 
     def clean_config(self):
@@ -61,14 +65,13 @@ class PageDataSetAddForm(forms.ModelForm):
         except:
             raise forms.ValidationError(('The JSON string is invalid'))
 
-
         ############################
         # TO-DO                    #
         # Validate all fields data #
         ############################
 
-
         return config
+
 
 class PageDataSetUpdateForm(PageDataSetAddForm):
     pass
