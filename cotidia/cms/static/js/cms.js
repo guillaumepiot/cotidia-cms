@@ -2298,8 +2298,7 @@ ImageUploader = function(dialog) {
         image = {
           id: data.uuid,
           name: data.name,
-          size: null,
-          width: null,
+          size: [data.width, data.height],
           url: data.f
         };
         return dialog.populate(image.url, image.size);

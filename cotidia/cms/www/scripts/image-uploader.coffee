@@ -80,8 +80,7 @@ ImageUploader = (dialog) ->
             image =
                 id: data.uuid
                 name: data.name
-                size: null
-                width: null
+                size: [data.width, data.height]
                 url: data.f
 
             # Populate the dialog
