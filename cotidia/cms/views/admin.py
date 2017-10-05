@@ -16,7 +16,7 @@ from cotidia.account.conf import settings
 from cotidia.admin.views import AdminListView
 from cotidia.admin.utils import StaffPermissionRequiredMixin
 
-from cotidia.cms.settings import CMS_LANGUAGES
+from cotidia.cms.conf import settings
 from cotidia.cms.models import Page, PageTranslation
 from cotidia.cms.forms.page import (
     PageAddForm,
@@ -50,6 +50,7 @@ class PageList(AdminListView):
         ('Status', 'status'),
         ('Show in menu', 'hide_from_nav'),
         ('Template', 'template_label'),
+        ('Order', 'order'),
     )
     template_type = "fluid"
     filterset = PageFilter
@@ -83,7 +84,7 @@ class PageUpdate(StaffPermissionRequiredMixin, UpdateView):
 
     def get_success_url(self):
         messages.success(self.request, _('The page details have been updated.'))
-        return reverse('cms-admin:page-detail', kwargs={'pk':self.object.id})
+        return reverse('cms-admin:page-detail', kwargs={'pk': self.object.id})
 
     def post(self, request, *args, **kwargs):
         response = super(PageUpdate, self).post(request, *args, **kwargs)
@@ -106,20 +107,23 @@ class PageDelete(StaffPermissionRequiredMixin, DeleteView):
 @login_required
 @transaction.atomic()
 def add_edit_translation(
-    request,
-    page_id,
-    language_code,
-    model_class=Page,
-    translation_class=PageTranslation,
-    translation_form_class=TranslationForm):
+        request,
+        page_id,
+        language_code,
+        model_class=Page,
+        translation_class=PageTranslation,
+        translation_form_class=TranslationForm):
 
-    if language_code not in [lang[0] for lang in CMS_LANGUAGES]:
+    if language_code not in [lang[0] for lang in settings.CMS_LANGUAGES]:
         raise ImproperlyConfigured('The language code "%s" is not included in the project settings.' % language_code)
     if not request.user.has_perm('cms.add_pagetranslation'):
         raise PermissionDenied
     page = get_object_or_404(model_class, id=page_id)
 
-    translation = translation_class.objects.filter(parent=page, language_code=language_code).first()
+    translation = translation_class.objects.filter(
+        parent=page,
+        language_code=language_code
+    ).first()
 
     initial = {
         'parent': page,
@@ -174,12 +178,9 @@ def add_edit_translation(
         'form': form,
         'page': page,
         'translation': translation,
-        #'recover':recover,
-        #'app_label':page._meta.app_label,
-        #'model_name':page._meta.model_name,
-        #'verbose_name_plural':page._meta.verbose_name_plural
     }
     return render(request, template, context)
+
 
 ##############
 # Publishing #
@@ -229,7 +230,8 @@ def PageUnpublish(request, page_id):
 
     template = 'admin/cms/page_unpublish_form.html'
 
-    return render(request, template, {'page':page})
+    return render(request, template, {'page': page})
+
 
 ###########
 # Content #
@@ -261,7 +263,8 @@ def PageURLCreate(request, page_id, lang):
 
     template = 'admin/cms/page_url_form.html'
 
-    return render(request, template, {'form':form, 'page':page})
+    return render(request, template, {'form': form, 'page': page})
+
 
 @permission_required('cms.change_pagetranslation', settings.ACCOUNT_ADMIN_LOGIN_URL)
 def PageURLUpdate(request, page_id, lang, trans_id):
@@ -290,8 +293,16 @@ def PageURLUpdate(request, page_id, lang, trans_id):
 
     template = 'admin/cms/page_url_form.html'
 
-    return render(request, template, {
-        'form':form, 'page':page, 'translation':translation})
+    return render(
+        request,
+        template,
+        {
+            'form': form,
+            'page': page,
+            'translation': translation
+        }
+    )
+
 
 #
 # Manage the page title for a language
@@ -323,7 +334,6 @@ def PageTitleUpdate(request, page_id, lang, trans_id=None):
                 translation.slug = slugify(translation.title.lower())
             translation.save()
 
-
             page.approval_needed = True
             page.save()
 
@@ -334,4 +344,4 @@ def PageTitleUpdate(request, page_id, lang, trans_id=None):
 
     template = 'admin/cms/page_title_form.html'
 
-    return render(request, template, {'form':form, 'page':page})
+    return render(request, template, {'form': form, 'page': page})

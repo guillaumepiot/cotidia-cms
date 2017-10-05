@@ -1,0 +1,9 @@
+<form action="{% url 'generic-admin:order' object.get_content_type.id object.id %}" method="post">
+    {% csrf_token %}
+    <button type="input" value="move-up" name="action" class="btn btn--small"{% if not object.previous_siblings %} disabled{% endif %} title="Move above {{object.previous_siblings.0}}">
+        <span class="fa fa-angle-up fa-lg"></span>
+    </button>
+    <button type="input" value="move-down" name="action" class="btn btn--small"{% if not object.next_siblings %} disabled{% endif %} title="Move below {{object.next_siblings.0}}">
+        <span class="fa fa-angle-down fa-lg"></span>
+    </button>
+</form>

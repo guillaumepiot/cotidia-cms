@@ -1,33 +1,28 @@
-import json
-
-from django.utils.translation import ugettext_lazy as _
-from django.http import HttpResponse, HttpRequest, HttpResponseRedirect, Http404
-from django.shortcuts import render, get_object_or_404
-from django.template.context import RequestContext
-from django.conf import settings
-from django.utils import translation
+from django.http import HttpResponseRedirect, Http404
+from django.shortcuts import render
 
 from cotidia.cms.models import Page, PageTranslation
-from cotidia.cms.settings import CMS_PREFIX, DEFAULT_LANGUAGE_FALLBACK
+from cotidia.cms.conf import settings
 
 
 # Function to retrieve page object depending on previwe mode and language
 
 def get_page(
-    request,
-    model_class=Page,
-    translation_class=PageTranslation,
-    slug=False,
-    preview=False,
-    filter_args={}):
+        request,
+        model_class=Page,
+        translation_class=PageTranslation,
+        slug=False,
+        preview=False,
+        filter_args={}):
 
-    # Deconstruct the slug to get the last element corresponding to the page we are looking for
-    if slug and slug != CMS_PREFIX:
+    # Deconstruct the slug to get the last element corresponding to the
+    # page we are looking for
+    if slug and slug != settings.CMS_PREFIX:
 
         slugs = slug.split('/')
 
-        if CMS_PREFIX:
-            if len(slugs) > 0 and slugs[0] == CMS_PREFIX:
+        if settings.CMS_PREFIX:
+            if len(slugs) > 0 and slugs[0] == settings.CMS_PREFIX:
                 slugs = slugs[1:]
 
         if len(slugs) == 1:
@@ -57,7 +52,7 @@ def get_page(
                 page_url = t.parent.get_absolute_url().strip('/')
                 page_slugs = page_url.split('/')
                 # Count from the end
-                page_slugs = page_slugs[len(page_slugs)-slug_length:len(page_slugs)]
+                page_slugs = page_slugs[len(page_slugs) - slug_length:len(page_slugs)]
 
                 # Are the slugs matching?
                 if page_slugs == slugs:
@@ -69,7 +64,7 @@ def get_page(
                     for lang in t.parent.get_translations():
                         page_url = lang.parent.get_absolute_url(lang.language_code).strip('/')
                         page_slugs = page_url.split('/')
-                        page_slugs = page_slugs[len(page_slugs)-slug_length:len(page_slugs)]
+                        page_slugs = page_slugs[len(page_slugs) - slug_length:len(page_slugs)]
                         if page_slugs == slugs:
                             published.append(t.parent)
                             continue
@@ -84,9 +79,9 @@ def get_page(
             if not published:
                 published = model_class.objects.filter(published=True).exclude(published_from=None)[:1]
 
-    if len(published)> 0:
+    if len(published) > 0:
         published = published[0]
-        if published.translated() or DEFAULT_LANGUAGE_FALLBACK:
+        if published.translated() or settings.DEFAULT_LANGUAGE_FALLBACK:
             return published
 
     return None
@@ -105,7 +100,7 @@ def page_processor(model_class=Page, translation_class=PageTranslation):
             is_preview = False
 
             # Make sure the user has the right to see the preview
-            if request.user.is_authenticated() and not preview == False:
+            if request.user.is_authenticated() and preview is not False:
                 is_preview = True
 
             # Is it home page or not?
@@ -138,7 +133,7 @@ def page_processor(model_class=Page, translation_class=PageTranslation):
                 # So we need to redirect to the right translated slug if not on it already
                 page_url = page.get_absolute_url()
 
-                if not page_url == request.path and slug and not CMS_PREFIX:
+                if not page_url == request.path and slug and not settings.CMS_PREFIX:
                     return HttpResponseRedirect(page_url)
 
             # Assign is_preview to the request object for cleanliness

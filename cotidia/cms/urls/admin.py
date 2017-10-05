@@ -1,10 +1,9 @@
 from django.conf.urls import url
 
 from cotidia.cms.views.admin import *
-from cotidia.cms.views.image import ImageList, ImageDelete
 from cotidia.cms.views.dataset import *
 
-urlpatterns =[
+urlpatterns = [
     url(r'^$', PageList.as_view(), name='page-list'),
     url(r'^page/add/$', PageCreate.as_view(), name='page-add'),
     url(r'^page/(?P<pk>[\d]+)/$', PageDetail.as_view(), name='page-detail'),
@@ -29,8 +28,8 @@ urlpatterns =[
     url(r'^page/(?P<page_id>[\d]+)/unpublish/$',
         PageUnpublish, name='page-unpublish'),
 
-    url(r'^image/$', ImageList.as_view(), name='image-list'),
-    url(r'^image/(?P<pk>[\d]+)/delete/$', ImageDelete.as_view(), name='image-delete'),
+    # url(r'^image/$', ImageList.as_view(), name='image-list'),
+    # url(r'^image/(?P<pk>[\d]+)/delete/$', ImageDelete.as_view(), name='image-delete'),
 
     url(r'^dataset/$', PageDataSetList.as_view(), name='pagedataset-list'),
     url(r'^dataset/add/$', PageDataSetCreate.as_view(), name='pagedataset-add'),

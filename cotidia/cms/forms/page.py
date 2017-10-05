@@ -4,7 +4,7 @@ from django.utils.translation import ugettext_lazy as _
 from mptt.forms import TreeNodeChoiceField
 
 from cotidia.cms.models import Page, PageTranslation, PageDataSet
-from cotidia.cms.settings import CMS_PAGE_TEMPLATES
+from cotidia.cms.conf import settings
 
 
 class PageAddForm(forms.ModelForm):
@@ -28,7 +28,7 @@ class PageAddForm(forms.ModelForm):
             "The template defines the layout of page, as well as the "
             "editable areas."
         ),
-        choices=CMS_PAGE_TEMPLATES,
+        choices=settings.CMS_PAGE_TEMPLATES,
         widget=forms.Select(attrs={'class': 'form__select'})
     )
 

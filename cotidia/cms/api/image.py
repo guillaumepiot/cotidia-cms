@@ -1,190 +1,190 @@
-import io
-import decimal
+# import io
+# import decimal
 
-from PIL import Image as PILImage
+# from PIL import Image as PILImage
 
-from django.core.files.storage import default_storage
+# from django.core.files.storage import default_storage
 
-from rest_framework import generics, status
-from rest_framework.response import Response
-from rest_framework.exceptions import PermissionDenied
+# from rest_framework import generics, status
+# from rest_framework.response import Response
+# from rest_framework.exceptions import PermissionDenied
 
-from cotidia.cms.serializers import ImageSerializer
-from cotidia.cms.models import Image
-
-
-#
-# Mixin for all company views.
-# Defines serializers, queryset and permissions
-#
-
-class ImageMixin(object):
-
-    def get_queryset(self):
-        return Image.objects.filter()
-
-    def get_serializer_class(self):
-        return ImageSerializer
+# from cotidia.cms.serializers import ImageSerializer
+# from cotidia.cms.models import Image
 
 
-class ImageAdd(ImageMixin, generics.CreateAPIView):
+# #
+# # Mixin for all company views.
+# # Defines serializers, queryset and permissions
+# #
 
-    def perform_create(self, serializer):
-        serializer.save(
-            image=self.request.data['image'],
-            name=self.request.data['image'].name)
+# class ImageMixin(object):
 
-    def create(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
+#     def get_queryset(self):
+#         return Image.objects.filter()
 
-        self.perform_create(serializer)
-
-        instance = serializer.instance
-
-        # Save the size against the image
-        instance.width = instance.read_size()[0]
-        instance.height = instance.read_size()[1]
-
-        if hasattr(instance, '_width'):
-            instance.display_width = instance._width
-            instance.display_height = instance.calculate_display_height()
-
-        instance.save()
-
-        headers = self.get_success_headers(serializer.data)
-        return Response(
-            serializer.data,
-            status=status.HTTP_201_CREATED,
-            headers=headers)
-
-    def post(self, request, *args, **kwargs):
-
-        if not request.user.has_perm('cms.add_image'):
-            raise PermissionDenied
-
-        return self.create(request, *args, **kwargs)
+#     def get_serializer_class(self):
+#         return ImageSerializer
 
 
-class ImageList(ImageMixin, generics.ListAPIView):
-    pass
+# class ImageAdd(ImageMixin, generics.CreateAPIView):
+
+#     def perform_create(self, serializer):
+#         serializer.save(
+#             image=self.request.data['image'],
+#             name=self.request.data['image'].name)
+
+#     def create(self, request, *args, **kwargs):
+#         serializer = self.get_serializer(data=request.data)
+#         serializer.is_valid(raise_exception=True)
+
+#         self.perform_create(serializer)
+
+#         instance = serializer.instance
+
+#         # Save the size against the image
+#         instance.width = instance.read_size()[0]
+#         instance.height = instance.read_size()[1]
+
+#         if hasattr(instance, '_width'):
+#             instance.display_width = instance._width
+#             instance.display_height = instance.calculate_display_height()
+
+#         instance.save()
+
+#         headers = self.get_success_headers(serializer.data)
+#         return Response(
+#             serializer.data,
+#             status=status.HTTP_201_CREATED,
+#             headers=headers)
+
+#     def post(self, request, *args, **kwargs):
+
+#         if not request.user.has_perm('cms.add_image'):
+#             raise PermissionDenied
+
+#         return self.create(request, *args, **kwargs)
 
 
-class ImageUpdate(ImageMixin, generics.UpdateAPIView):
+# class ImageList(ImageMixin, generics.ListAPIView):
+#     pass
 
-    lookup_field = 'id'
 
-    def post(self, request, *args, **kwargs):
+# class ImageUpdate(ImageMixin, generics.UpdateAPIView):
 
-        if not request.user.has_perm('cms.change_image'):
-            raise PermissionDenied
+#     lookup_field = 'id'
 
-        return self.partial_update(request, *args, **kwargs)
+#     def post(self, request, *args, **kwargs):
 
-    def update(self, request, *args, **kwargs):
-        partial = kwargs.pop('partial', False)
-        instance = self.get_object()
-        serializer = self.get_serializer(
-            instance,
-            data=request.data, partial=partial)
-        serializer.is_valid(raise_exception=True)
+#         if not request.user.has_perm('cms.change_image'):
+#             raise PermissionDenied
 
-        self.perform_update(serializer)
+#         return self.partial_update(request, *args, **kwargs)
 
-        instance = serializer.instance
+#     def update(self, request, *args, **kwargs):
+#         partial = kwargs.pop('partial', False)
+#         instance = self.get_object()
+#         serializer = self.get_serializer(
+#             instance,
+#             data=request.data, partial=partial)
+#         serializer.is_valid(raise_exception=True)
 
-        # Get image from image model instance
-        image = instance.image
+#         self.perform_update(serializer)
 
-        if len(image.name.split('.')) > 1:
-            file_ext = image.name.split('.')[-1]
-            if file_ext == 'jpg':
-                file_ext = "JPEG"
-        else:
-            file_ext = "JPEG"
+#         instance = serializer.instance
 
-        if file_ext not in ['PNG', 'JPEG', 'GIF']:
-            file_ext = "JPEG"
+#         # Get image from image model instance
+#         image = instance.image
 
-        try:
-            # Open the image with PIL locally
-            im = PILImage.open(image.path)
-            output = None
-            img_file = None
-        except:
-            # Try open with django storage, in case of external hosting (S3)
-            img_file = default_storage.open(image.name, 'rw')
-            im = io.BytesIO(img_file.read())
-            im = PILImage.open(im)
-            output = io.BytesIO()
+#         if len(image.name.split('.')) > 1:
+#             file_ext = image.name.split('.')[-1]
+#             if file_ext == 'jpg':
+#                 file_ext = "JPEG"
+#         else:
+#             file_ext = "JPEG"
 
-        if hasattr(instance, '_crop'):
+#         if file_ext not in ['PNG', 'JPEG', 'GIF']:
+#             file_ext = "JPEG"
 
-            crop_values = instance._crop.split(',')
+#         try:
+#             # Open the image with PIL locally
+#             im = PILImage.open(image.path)
+#             output = None
+#             img_file = None
+#         except:
+#             # Try open with django storage, in case of external hosting (S3)
+#             img_file = default_storage.open(image.name, 'rw')
+#             im = io.BytesIO(img_file.read())
+#             im = PILImage.open(im)
+#             output = io.BytesIO()
 
-            # Crop values are percentages, so we need to convert them into
-            # pixel values
+#         if hasattr(instance, '_crop'):
 
-            top = round(decimal.Decimal(crop_values[0]) * image.height)
-            left = round(decimal.Decimal(crop_values[1]) * image.width)
-            bottom = round(decimal.Decimal(crop_values[2]) * image.height)
-            right = round(decimal.Decimal(crop_values[3]) * image.width)
+#             crop_values = instance._crop.split(',')
 
-            crop_box = (int(left), int(top), int(right), int(bottom))
+#             # Crop values are percentages, so we need to convert them into
+#             # pixel values
 
-            # Action the image rotation
-            im = im.crop(crop_box)
+#             top = round(decimal.Decimal(crop_values[0]) * image.height)
+#             left = round(decimal.Decimal(crop_values[1]) * image.width)
+#             bottom = round(decimal.Decimal(crop_values[2]) * image.height)
+#             right = round(decimal.Decimal(crop_values[3]) * image.width)
 
-            if output:
-                # Save cropped image to buffer
-                im.save(output, file_ext.upper())
-                # Save new image to storage
-                img_file.write(output.getvalue())
-                img_file.close()
-            else:
-                im.save(image.path)
+#             crop_box = (int(left), int(top), int(right), int(bottom))
 
-            # Save the size against the image
-            instance.width = im.width
-            instance.height = im.height
+#             # Action the image rotation
+#             im = im.crop(crop_box)
 
-        elif hasattr(instance, '_direction'):
+#             if output:
+#                 # Save cropped image to buffer
+#                 im.save(output, file_ext.upper())
+#                 # Save new image to storage
+#                 img_file.write(output.getvalue())
+#                 img_file.close()
+#             else:
+#                 im.save(image.path)
 
-            angle = 270 if instance._direction == "CW" else 90
+#             # Save the size against the image
+#             instance.width = im.width
+#             instance.height = im.height
 
-            # Action the image rotation
-            im = im.rotate(angle)
+#         elif hasattr(instance, '_direction'):
 
-            if output:
-                # Save rotated image to buffer
-                im.save(output, file_ext.upper())
-                # Save new image to storage
-                img_file.write(output.getvalue())
-                img_file.close()
-            else:
-                im.save(image.path)
+#             angle = 270 if instance._direction == "CW" else 90
 
-            # Save the size against the image
-            # Invert the width and height since we are rotating either 90 or
-            # 270 degrees
-            instance.width = im.height
-            instance.height = im.width
+#             # Action the image rotation
+#             im = im.rotate(angle)
 
-            original_display_width = instance.display_width
-            original_display_height = instance.display_height
+#             if output:
+#                 # Save rotated image to buffer
+#                 im.save(output, file_ext.upper())
+#                 # Save new image to storage
+#                 img_file.write(output.getvalue())
+#                 img_file.close()
+#             else:
+#                 im.save(image.path)
 
-            instance.display_width = original_display_height
-            instance.display_height = original_display_width
+#             # Save the size against the image
+#             # Invert the width and height since we are rotating either 90 or
+#             # 270 degrees
+#             instance.width = im.height
+#             instance.height = im.width
 
-        else:
-            # Save the size against the image
-            instance.width = instance.read_size()[0]
-            instance.height = instance.read_size()[1]
+#             original_display_width = instance.display_width
+#             original_display_height = instance.display_height
 
-        if hasattr(instance, '_width'):
-            instance.display_width = instance._width
-            instance.display_height = instance.calculate_display_height()
+#             instance.display_width = original_display_height
+#             instance.display_height = original_display_width
 
-        instance.save()
+#         else:
+#             # Save the size against the image
+#             instance.width = instance.read_size()[0]
+#             instance.height = instance.read_size()[1]
 
-        return Response(serializer.data)
+#         if hasattr(instance, '_width'):
+#             instance.display_width = instance._width
+#             instance.display_height = instance.calculate_display_height()
+
+#         instance.save()
+
+#         return Response(serializer.data)
