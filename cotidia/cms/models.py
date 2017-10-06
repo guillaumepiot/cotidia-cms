@@ -147,7 +147,7 @@ class BasePage(MPTTModel, OrderableMixin):
             return None
 
     def orderable_queryset(self):
-        return self.get_siblings()
+        return self.get_siblings(include_self=True)
 
     def set_dynamic_attributes(self, translation):
         # Go through each fieldset
