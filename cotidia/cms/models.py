@@ -316,7 +316,7 @@ class BasePage(MPTTModel, OrderableMixin):
                 if translation.count() > 0:
                     translation = translation[0]
                 else:
-                    translation = self.CMSMeta.translation_class.objects.get(parent=ancestor.id, language_code=CMS_DEFAULT_LANGUAGE[0])
+                    translation = self.CMSMeta.translation_class.objects.get(parent=ancestor.id, language_code=settings.CMS_DEFAULT_LANGUAGE[0])
 
                 # Only add slug if the ansector is not home
                 if not ancestor.home:
@@ -327,7 +327,7 @@ class BasePage(MPTTModel, OrderableMixin):
             if translation.count() > 0:
                 translation = translation[0]
             else:
-                translation = self.CMSMeta.translation_class.objects.filter(parent=self.id, language_code=CMS_DEFAULT_LANGUAGE[0]).first()
+                translation = self.CMSMeta.translation_class.objects.filter(parent=self.id, language_code=settings.CMS_DEFAULT_LANGUAGE[0]).first()
 
             if not translation:
                 return None
