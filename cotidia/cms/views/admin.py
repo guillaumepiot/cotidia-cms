@@ -345,3 +345,4 @@ def PageTitleUpdate(request, page_id, lang, trans_id=None):
     template = 'admin/cms/page_title_form.html'
 
     return render(request, template, {'form': form, 'page': page})
+

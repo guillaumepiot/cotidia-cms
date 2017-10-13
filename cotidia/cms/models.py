@@ -56,9 +56,6 @@ class BasePage(MPTTModel, OrderableMixin):
     # A unique identifier
     slug = models.SlugField(max_length=60, verbose_name="Unique Page Identifier", blank=True, null=True)
 
-    # Ordering
-    order_id = models.IntegerField(default=0)
-
     # Publishing
     publish = models.BooleanField(
         _('Publish this page. The page will also be set to Active.'),
@@ -98,10 +95,6 @@ class BasePage(MPTTModel, OrderableMixin):
     class Meta:
         # Make this class a reference only with no database, all models must be subclass from this
         abstract = True
-
-    class MPTTMeta:
-        # level_attr = 'mptt_level'
-        order_insertion_by = ['order_id']
 
     class CMSMeta:
         templates = settings.CMS_PAGE_TEMPLATES
@@ -405,21 +398,6 @@ class BasePage(MPTTModel, OrderableMixin):
             else:
                 return self.get_root()
 
-    # Since the MPTT method get_siblings doesn't include self by default
-    # We need to use this method to all siblings including self in a template
-    # view
-    @property
-    def siblings(self):
-        return self.get_siblings(include_self=True)
-
-    @property
-    def previous_siblings(self):
-        return self.get_siblings().filter(order_id__lt=self.order_id).order_by("-order_id")
-
-    @property
-    def next_siblings(self):
-        return self.get_siblings().filter(order_id__gt=self.order_id).order_by("order_id")
-
     @property
     def has_published_version(self):
         try:
@@ -452,6 +430,20 @@ class BasePage(MPTTModel, OrderableMixin):
     def template_label(self):
         if self.template:
             return dict(settings.CMS_PAGE_TEMPLATES).get(self.template)
+
+    @property
+    def previous_sibling(self):
+        return self.get_previous_sibling(published_from=None)
+
+    @property
+    def next_sibling(self):
+        return self.get_next_sibling(published_from=None)
+
+    def move_up(self):
+        self.move_to(self.previous_sibling, position="left")
+
+    def move_down(self):
+        self.move_to(self.next_sibling, position="right")
 
 
 class PublishTranslation(object):

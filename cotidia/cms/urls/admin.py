@@ -36,4 +36,5 @@ urlpatterns = [
     url(r'^dataset/(?P<pk>[\d]+)/$', PageDataSetDetail.as_view(), name='pagedataset-detail'),
     url(r'^dataset/(?P<pk>[\d]+)/update/$', PageDataSetUpdate.as_view(), name='pagedataset-update'),
     url(r'^dataset/(?P<pk>[\d]+)/delete/$', PageDataSetDelete.as_view(), name='pagedataset-delete'),
+
 ]
