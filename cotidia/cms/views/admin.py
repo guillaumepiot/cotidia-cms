@@ -56,7 +56,16 @@ class PageList(AdminListView):
     filterset = PageFilter
 
     def get_queryset(self):
-        return Page.objects.get_originals()
+        queryset = Page.objects.get_originals()
+
+        if self.filterset:
+            self.filter = self.filterset(
+                self.request.GET,
+                queryset=queryset
+            )
+            queryset = self.filter.qs
+
+        return queryset
 
 
 class PageDetail(StaffPermissionRequiredMixin, DetailView):
