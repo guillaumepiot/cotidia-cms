@@ -2314,6 +2314,7 @@ ImageUploader = function(dialog) {
       payload.append('f', file);
       payload.append('content_type', content_type.getAttribute('content'));
       payload.append('object_id', object_id.getAttribute('content'));
+      payload.append('public', true);
       url = '/api/file/upload';
       return _this.r = API.call('post', url, payload, false, onSuccess, onError, onProgress, 'formData');
     };

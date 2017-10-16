@@ -104,6 +104,7 @@ ImageUploader = (dialog) ->
         payload.append 'f', file
         payload.append('content_type', content_type.getAttribute('content'))
         payload.append('object_id', object_id.getAttribute('content'))
+        payload.append('public', true)
 
         # Set the width of the image when it's inserted, this is a default
         # the user will be able to resize the image afterwards.
