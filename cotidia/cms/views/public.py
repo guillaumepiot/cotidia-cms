@@ -100,7 +100,7 @@ def page_processor(model_class=Page, translation_class=PageTranslation):
             is_preview = False
 
             # Make sure the user has the right to see the preview
-            if request.user.is_authenticated() and preview is not False:
+            if request.user.is_authenticated() and request.user.has_perm("cms.change_page") and preview is not False:
                 is_preview = True
 
             # Is it home page or not?
