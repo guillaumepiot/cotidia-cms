@@ -5,10 +5,12 @@
 API = require './api.coffee'
 ImageUploader = require './image-uploader.coffee'
 BackgroundImage = require './background-image.coffee'
+Underline = require './underline.coffee'
 
 onLoad = ->
 
     ContentTools.IMAGE_UPLOADER = ImageUploader
+    ContentTools.DEFAULT_TOOLS[1].push('underline')
 
     editor = ContentTools.EditorApp.get()
 

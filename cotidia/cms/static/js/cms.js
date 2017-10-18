@@ -2179,7 +2179,7 @@ ContentEdit.TagNames.get().register(ContentEdit.BackgroundImage, 'bkgimg');
 
 
 },{}],11:[function(require,module,exports){
-var API, BackgroundImage, ImageUploader, onLoad;
+var API, BackgroundImage, ImageUploader, Underline, onLoad;
 
 API = require('./api.coffee');
 
@@ -2187,9 +2187,12 @@ ImageUploader = require('./image-uploader.coffee');
 
 BackgroundImage = require('./background-image.coffee');
 
+Underline = require('./underline.coffee');
+
 onLoad = function() {
   var editor, getImages;
   ContentTools.IMAGE_UPLOADER = ImageUploader;
+  ContentTools.DEFAULT_TOOLS[1].push('underline');
   editor = ContentTools.EditorApp.get();
   getImages = function() {
     var descendants, i, images, name, ref, region, src;
@@ -2244,7 +2247,7 @@ onLoad = function() {
 window.addEventListener('load', onLoad);
 
 
-},{"./api.coffee":9,"./background-image.coffee":10,"./image-uploader.coffee":12}],12:[function(require,module,exports){
+},{"./api.coffee":9,"./background-image.coffee":10,"./image-uploader.coffee":12,"./underline.coffee":13}],12:[function(require,module,exports){
 var API, ImageUploader;
 
 API = require('./api.coffee');
@@ -2336,4 +2339,28 @@ ImageUploader = function(dialog) {
 module.exports = ImageUploader;
 
 
-},{"./api.coffee":9}]},{},[11]);
+},{"./api.coffee":9}],13:[function(require,module,exports){
+var extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
+  hasProp = {}.hasOwnProperty;
+
+ContentTools.Tools.Underline = (function(superClass) {
+  extend(Underline, superClass);
+
+  function Underline() {
+    return Underline.__super__.constructor.apply(this, arguments);
+  }
+
+  ContentTools.ToolShelf.stow(Underline, 'underline');
+
+  Underline.label = 'Underline';
+
+  Underline.icon = 'underline';
+
+  Underline.tagName = 'u';
+
+  return Underline;
+
+})(ContentTools.Tools.Bold);
+
+
+},{}]},{},[11]);

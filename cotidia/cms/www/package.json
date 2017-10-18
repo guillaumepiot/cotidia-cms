@@ -9,10 +9,15 @@
     "grunt": "^0.4.5",
     "grunt-browserify": "^3.8.0",
     "grunt-contrib-uglify": "^0.9.1",
-    "grunt-contrib-watch": "^0.6.1"
+    "grunt-contrib-watch": "^0.6.1",
+    "grunt-contrib-cssmin": "^2.2.1",
+    "grunt-contrib-sass": "^1.0.0",
+    "node-bourbon": "^4.2.8",
+    "node-neat": "^2.0.0-beta.0"
   },
   "www": "../static",
   "dependencies": {
     "superagent": "^3.5.2"
-  }
+  },
+  "static": "../static"
 }
