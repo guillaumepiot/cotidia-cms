@@ -2118,14 +2118,15 @@ ContentEdit.BackgroundImage = (function(superClass) {
     style = this._attributes['style'] ? this._attributes['style'] : '';
     this._domElement.setAttribute('style', style);
     this._domButtonElement = document.createElement("button");
-    buttonText = document.createTextNode("Upload background image");
+    buttonText = document.createTextNode("Upload image");
     this._domButtonElement.appendChild(buttonText);
-    this._domButtonElement.className = 'btn btn--upload-background-image';
+    this._domButtonElement.className = 'btn btn--small btn--change btn--upload-background-image';
     this._domButtonElement.style.position = 'absolute';
     BackgroundImage.__super__.mount.call(this);
     this._domButtonElement.style.zIndex = '9998';
     this._domElement.parentNode.parentNode.appendChild(this._domButtonElement);
     rect = this._domElement.getBoundingClientRect();
+    this._domButtonElement.style.bottom = "16px";
     return this._domButtonElement.style.right = "16px";
   };
 

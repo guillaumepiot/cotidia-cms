@@ -62,9 +62,9 @@ class ContentEdit.BackgroundImage extends ContentEdit.Element
 
         # Add the button to edit the background image
         @_domButtonElement = document.createElement("button")
-        buttonText = document.createTextNode("Upload background image");
+        buttonText = document.createTextNode("Upload image");
         @_domButtonElement.appendChild(buttonText)
-        @_domButtonElement.className = 'btn btn--upload-background-image'
+        @_domButtonElement.className = 'btn btn--small btn--change btn--upload-background-image'
         @_domButtonElement.style.position = 'absolute'
 
         super()
@@ -78,6 +78,7 @@ class ContentEdit.BackgroundImage extends ContentEdit.Element
         # Get the selected element position
         rect = @_domElement.getBoundingClientRect()
         # @_domButtonElement.style.bottom = "16px"
+        @_domButtonElement.style.bottom = "16px"
         @_domButtonElement.style.right = "16px"
 
     _addDOMEventListeners: () ->
