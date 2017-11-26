@@ -3,6 +3,5 @@
 
 {% block toolbar %}
     {% url 'cms-admin:pagedataset-list' as dataset_url %}
-    {% toolbar_custom_button dataset_url "Datasets" %}
     {{block.super}}
 {% endblock toolbar %}

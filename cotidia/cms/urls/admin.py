@@ -1,7 +1,30 @@
 from django.conf.urls import url
 
-from cotidia.cms.views.admin import *
-from cotidia.cms.views.dataset import *
+from cotidia.cms.views.admin.page import (
+    PageList,
+    PageCreate,
+    PageDetail,
+    PageUpdate,
+    PageDelete,
+    add_edit_translation,
+    PageURLUpdate,
+    PagePublish,
+    PageUnpublish
+)
+from cotidia.cms.views.admin.page_title import (
+    PageTitleCreate,
+    PageTitleUpdate
+)
+from cotidia.cms.views.admin.page_url import (
+    PageURLUpdate
+)
+from cotidia.cms.views.admin.dataset import (
+    PageDataSetList,
+    PageDataSetCreate,
+    PageDataSetDetail,
+    PageDataSetUpdate,
+    PageDataSetDelete
+)
 
 urlpatterns = [
     url(r'^$', PageList.as_view(), name='page-list'),
@@ -12,15 +35,13 @@ urlpatterns = [
 
     url(r'^page/(?P<page_id>[\d]+)/meta-data/(?P<language_code>[-\w]+)/', add_edit_translation, name='page-metadata-update'),
 
-    url(r'^page/(?P<page_id>[\d]+)/(?P<lang>[-\w]+)/url/add/$',
-        PageURLCreate, name='page-url-add'),
-    url(r'^page/(?P<page_id>[\d]+)/(?P<lang>[-\w]+)/url/(?P<trans_id>[\d]+)/update/$',
-        PageURLUpdate, name='page-url-update'),
+    url(r'^page/(?P<parent_id>[\d]+)/(?P<lang>[-\w]+)/url/(?P<pk>[\d]+)/update/$',
+        PageURLUpdate.as_view(), name='page-url-update'),
 
-    url(r'^page/(?P<page_id>[\d]+)/(?P<lang>[-\w]+)/title/add/$',
-        PageTitleUpdate, name='page-title-add'),
-    url(r'^page/(?P<page_id>[\d]+)/(?P<lang>[-\w]+)/title/(?P<trans_id>[\d]+)/update/$',
-        PageTitleUpdate, name='page-title-update'),
+    url(r'^page/(?P<parent_id>[\d]+)/(?P<lang>[-\w]+)/title/add/$',
+        PageTitleCreate.as_view(), name='page-title-add'),
+    url(r'^page/(?P<parent_id>[\d]+)/(?P<lang>[-\w]+)/title/(?P<pk>[\d]+)/update/$',
+        PageTitleUpdate.as_view(), name='page-title-update'),
 
     url(r'^page/(?P<page_id>[\d]+)/publish/$',
         PagePublish, name='page-publish'),

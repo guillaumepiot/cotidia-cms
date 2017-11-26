@@ -27,5 +27,9 @@ class CMSConf(AppConf):
 
     DEFAULT_LANGUAGE_FALLBACK = False
 
+    BROWSERCONFIG_TILE_COLOR = "#00abd3"
+
+    GA_CODE = "XXXXXX"
+
     class Meta:
         prefix = 'cms'

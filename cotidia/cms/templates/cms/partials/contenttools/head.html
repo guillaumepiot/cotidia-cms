@@ -1,0 +1,32 @@
+{% load staticfiles %}{% if request.is_preview %}
+<link rel="stylesheet" type="text/css" href="{% static "contenttools/content-tools.min.css" %}">
+<style type="text/css">
+    body.preview{
+
+    }
+
+    img{
+        margin: auto;
+    }
+    .ce-element--type-image{
+        margin: auto;
+        max-width: 100% !important;
+    }
+    .ct-widget.ct-ignition{
+        top: 0.8em;
+    }
+    .admin-toolbar{
+        position: absolute;
+        top: 0;
+        left: 0;
+        z-index: 1000;
+        text-align: center;
+        padding: 1em 20px;
+        font-size: 0.9em;
+    }
+    #overlay-it{
+        left: auto !important;
+        right: 0 !important;
+    }
+</style>
+{% endif %}

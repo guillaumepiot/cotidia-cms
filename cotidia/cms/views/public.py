@@ -1,4 +1,4 @@
-from django.http import HttpResponseRedirect, Http404
+from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.shortcuts import render
 
 from cotidia.cms.models import Page, PageTranslation
@@ -166,3 +166,25 @@ def page(request, page, slug, *args, **kwargs):
     context['nodes'] = nodes
 
     return render(request, page.template, context)
+
+
+# App icons for Windows Metro UI
+def browserconfig(request):
+    content = """<?xml version="1.0" encoding="utf-8"?>
+<browserconfig>
+  <msapplication>
+    <tile>
+      <square70x70logo src="{site_url}{static_url}ico/smalltile.png"/>
+      <square150x150logo src="{site_url}{static_url}ico/mediumtile.png"/>
+      <square310x310logo src="{site_url}{static_url}ico/largetile.png"/>
+      <wide310x150logo src="{site_url}{static_url}ico/widetile.png"/>
+      <TileColor>{color}</TileColor>
+    </tile>
+  </msapplication>
+</browserconfig>""".format(
+        site_url=settings.SITE_URL,
+        static_url=settings.STATIC_URL,
+        color=settings.CMS_BROWSERCONFIG_TILE_COLOR
+    )
+
+    return HttpResponse(content, content_type="text/xml")

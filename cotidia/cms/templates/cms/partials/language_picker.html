@@ -1,0 +1,7 @@
+<!-- Language picker -->
+{% for lang in LANGUAGES %}
+    <a href="{{page|get_page_url:lang.0}}{% if request.is_preview %}?preview{% endif %}">
+        {{ lang.1|safe }}
+    </a> {% if not forloop.last %}/{% endif %}
+{% endfor %}
+<!-- End language picker -->

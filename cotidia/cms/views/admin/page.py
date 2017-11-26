@@ -9,20 +9,23 @@ from django.utils.translation import ugettext_lazy as _
 from django.shortcuts import render, get_object_or_404
 from django.core.exceptions import PermissionDenied
 from django.http import HttpResponseRedirect
-from django.utils.text import slugify
 from django.db import transaction
 
 from cotidia.account.conf import settings
 from cotidia.admin.views import AdminListView
 from cotidia.admin.utils import StaffPermissionRequiredMixin
-
+from cotidia.admin.views import (
+    AdminListView,
+    AdminDetailView,
+    AdminCreateView,
+    AdminUpdateView,
+    AdminDeleteView,
+)
 from cotidia.cms.conf import settings
 from cotidia.cms.models import Page, PageTranslation
-from cotidia.cms.forms.page import (
+from cotidia.cms.forms.admin.page import (
     PageAddForm,
-    PageUpdateForm,
-    PageURLForm,
-    PageTitleForm
+    PageUpdateForm
 )
 from cotidia.cms.forms.custom_form import TranslationForm
 
@@ -34,7 +37,7 @@ from cotidia.cms.forms.custom_form import TranslationForm
 class PageFilter(django_filters.FilterSet):
     display_title = django_filters.CharFilter(
         lookup_expr="icontains",
-        label="Title"
+        label="Search"
     )
 
     class Meta:
@@ -54,6 +57,9 @@ class PageList(AdminListView):
     )
     template_type = "fluid"
     filterset = PageFilter
+    actions = ["approve"]
+    row_click_action = "detail"
+    row_actions = ["view"]
 
     def get_queryset(self):
         queryset = Page.objects.get_originals()
@@ -67,36 +73,95 @@ class PageList(AdminListView):
 
         return queryset
 
+    def approve(self, object):
+        if object.get_translations():
+            object.approval_needed = False
+            object.published = True
+            object.save()
+            object.publish_version()
+            object.publish_translations()
 
-class PageDetail(StaffPermissionRequiredMixin, DetailView):
+    approve.action_name = "Approve & Publish"
+
+
+class PageDetail(AdminDetailView):
     model = Page
-    template_name = 'admin/cms/page_detail.html'
-    permission_required = 'cms.change_page'
+    fieldsets = [
+        # {
+        #     "legend": "Status",
+        #     "fields": [
+        #         {
+        #             "label": "Status",
+        #             "field": "status",
+        #         }
+        #     ]
+        # },
+        {
+            "legend": "Content",
+            "template_name": "admin/cms/page/content.html"
+        },
+        {
+            "legend": "Dataset",
+            "template_name": "admin/cms/page/dataset.html"
+        },
+        {
+            "legend": "Settings",
+            "fields": [
+                [
+                    {
+                        "label": "Display title",
+                        "field": "display_title",
+                    },
+                    {
+                        "label": "Template",
+                        "field": "template",
+                    }
+                ],
+                [
+                    {
+                        "label": "Home",
+                        "field": "home",
+                    },
+                    {
+                        "label": "Hide from navigation",
+                        "field": "hide_from_nav",
+                    }
+                ],
+                {
+                    "label": "Unique page identifier",
+                    "field": "slug",
+                },
+            ]
+        },
+        {
+            "legend": "Redirect",
+            "fields": [
+                [
+                    {
+                        "label": "Redirect to an internal page",
+                        "field": "redirect_to",
+                    },
+                    {
+                        "label": "Redirect to a URL",
+                        "field": "redirect_to_url",
+                    }
+                ]
+            ]
+        }
+    ]
 
 
-class PageCreate(StaffPermissionRequiredMixin, CreateView):
+class PageCreate(AdminCreateView):
     model = Page
     form_class = PageAddForm
-    template_name = 'admin/cms/page_form.html'
-    permission_required = 'cms.add_page'
-
-    def get_success_url(self):
-        messages.success(self.request, _('The page has been created.'))
-        return reverse('cms-admin:page-list')
 
 
-class PageUpdate(StaffPermissionRequiredMixin, UpdateView):
+class PageUpdate(AdminUpdateView):
     model = Page
     form_class = PageUpdateForm
-    template_name = 'admin/cms/page_form.html'
-    permission_required = 'cms.change_page'
 
-    def get_success_url(self):
-        messages.success(self.request, _('The page details have been updated.'))
-        return reverse('cms-admin:page-detail', kwargs={'pk': self.object.id})
-
-    def post(self, request, *args, **kwargs):
-        response = super(PageUpdate, self).post(request, *args, **kwargs)
+    def form_valid(self, form):
+        response = super().form_valid(form)
         if self.object.get_translations:
             self.object.approval_needed = True
             self.object.save()
@@ -246,33 +311,33 @@ def PageUnpublish(request, page_id):
 # Content #
 ###########
 
-@permission_required('cms.add_pagetranslation', settings.ACCOUNT_ADMIN_LOGIN_URL)
-def PageURLCreate(request, page_id, lang):
+# @permission_required('cms.add_pagetranslation', settings.ACCOUNT_ADMIN_LOGIN_URL)
+# def PageURLCreate(request, page_id, lang):
 
-    page = get_object_or_404(Page, id=page_id)
+#     page = get_object_or_404(Page, id=page_id)
 
-    form = PageURLForm()
+#     form = PageURLForm()
 
-    if request.method == 'POST':
-        form = PageURLForm(request.POST)
+#     if request.method == 'POST':
+#         form = PageURLForm(request.POST)
 
-        if form.is_valid():
-            translation = form.save(commit=False)
-            translation.parent = page
-            translation.language_code = lang
-            translation.save()
+#         if form.is_valid():
+#             translation = form.save(commit=False)
+#             translation.parent = page
+#             translation.language_code = lang
+#             translation.save()
 
-            page.approval_needed = True
-            page.save()
+#             page.approval_needed = True
+#             page.save()
 
-            messages.success(request, _('The page URL has been saved.'))
+#             messages.success(request, _('The page URL has been saved.'))
 
-            return HttpResponseRedirect(
-                reverse('cms-admin:page-detail', kwargs={'pk': page.id}))
+#             return HttpResponseRedirect(
+#                 reverse('cms-admin:page-detail', kwargs={'pk': page.id}))
 
-    template = 'admin/cms/page_url_form.html'
+#     template = 'admin/cms/page_url_form.html'
 
-    return render(request, template, {'form': form, 'page': page})
+#     return render(request, template, {'form': form, 'page': page})
 
 
 @permission_required('cms.change_pagetranslation', settings.ACCOUNT_ADMIN_LOGIN_URL)
@@ -316,42 +381,42 @@ def PageURLUpdate(request, page_id, lang, trans_id):
 #
 # Manage the page title for a language
 #
-@permission_required('cms.change_page', settings.ACCOUNT_ADMIN_LOGIN_URL)
-def PageTitleUpdate(request, page_id, lang, trans_id=None):
+# @permission_required('cms.change_page', settings.ACCOUNT_ADMIN_LOGIN_URL)
+# def PageTitleUpdate(request, page_id, lang, trans_id=None):
 
-    page = get_object_or_404(Page, id=page_id)
-    if trans_id:
-        translation = get_object_or_404(PageTranslation, id=trans_id)
-        form = PageTitleForm(instance=translation)
-    else:
-        translation = None
-        form = PageTitleForm()
+#     page = get_object_or_404(Page, id=page_id)
+#     if trans_id:
+#         translation = get_object_or_404(PageTranslation, id=trans_id)
+#         form = PageTitleForm(instance=translation)
+#     else:
+#         translation = None
+#         form = PageTitleForm()
 
-    if request.method == 'POST':
+#     if request.method == 'POST':
 
-        if translation:
-            form = PageTitleForm(instance=translation, data=request.POST)
-        else:
-            form = PageTitleForm(data=request.POST)
+#         if translation:
+#             form = PageTitleForm(instance=translation, data=request.POST)
+#         else:
+#             form = PageTitleForm(data=request.POST)
 
-        if form.is_valid():
+#         if form.is_valid():
 
-            translation = form.save(commit=False)
-            translation.parent = page
-            translation.language_code = lang
-            if not translation.slug:
-                translation.slug = slugify(translation.title.lower())
-            translation.save()
+#             translation = form.save(commit=False)
+#             translation.parent = page
+#             translation.language_code = lang
+#             if not translation.slug:
+#                 translation.slug = slugify(translation.title.lower())
+#             translation.save()
 
-            page.approval_needed = True
-            page.save()
+#             page.approval_needed = True
+#             page.save()
 
-            messages.success(request, _('The page title has been saved.'))
+#             messages.success(request, _('The page title has been saved.'))
 
-            return HttpResponseRedirect(
-                reverse('cms-admin:page-detail', kwargs={'pk': page.id}))
+#             return HttpResponseRedirect(
+#                 reverse('cms-admin:page-detail', kwargs={'pk': page.id}))
 
-    template = 'admin/cms/page_title_form.html'
+#     template = "admin/generic/page/form.html"
 
-    return render(request, template, {'form': form, 'page': page})
+#     return render(request, template, {'form': form, 'page': page})
 

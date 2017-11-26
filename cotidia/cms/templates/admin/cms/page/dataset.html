@@ -1,0 +1,50 @@
+{% load i18n staticfiles %}
+<fieldset class="table-view">
+    <legend>{% trans "Dataset" %}</legend>
+    <div class="form__row">
+        <div class="form__group">
+            <p>{% blocktrans %}The dataset is a set of values which can be used for customisation of the page data, for example to use in meta data for search engine optimisation.{% endblocktrans %}</p>
+        </div>
+    </div>
+    {% if object.dataset %}
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>{% trans "Language" %}</th>
+                    <th>{% trans "Data" %}</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for page in object.languages %}
+                <tr>
+                    <td>
+                        <img src="{% static "img/flags/" %}{{page.language_code}}.png" style="width:16px; position: relative; top:3px;"/>
+                        {{page.get_language}}
+                    </td>
+                    <td>
+                        {% if page.parent %}
+                            {% if perms.cms.change_page %}
+                            <a
+                                href="{% url 'cms-admin:page-metadata-update' page.parent.id page.language_code %}"
+                                class="[ btn btn--small btn--primary ]">
+                                <span class="fa fa-file-text"></span>
+                                {% trans "Edit" %}
+                            </a>
+                            {% endif %}
+                        {% else %}
+                        <span class="text-muted">
+                            {% trans "You must set a title for that language before adding data." %}
+                        </span>
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <a href="{% url 'cms-admin:page-update' page.id %}#dataset"
+            class="btn btn--small btn--create">
+            {% trans "Select dataset" %}
+        </a>
+    {% endif %}
+</fieldset>

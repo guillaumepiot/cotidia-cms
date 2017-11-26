@@ -1,0 +1,85 @@
+{% load i18n staticfiles cms_tags %}
+<fieldset class="table-view">
+    <legend>{% trans "Content" %}</legend>
+    <table class="table table--clickable table--admin-mobile-view">
+        <thead>
+            <tr>
+                <th>{% trans "Language" %}</th>
+                <th>{% trans "Title" %}</th>
+                <th>{% trans "URL" %}</th>
+                <th>{% trans "Content" %}</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for page in object.languages %}
+            <tr {% if page.parent and page.slug %}onclick="window.location = '{{object|get_page_url:page.language_code}}?preview';"{% endif %}>
+                <td>
+                    <img src="{% static "img/flags/" %}{{page.language_code}}.png" style="width:16px; position: relative; top:3px;"/>
+                    {{page.get_language}}
+                    {% if not page.title %}
+                    <a href="{% url 'cms-admin:page-title-add' object.id page.language_code %}" class="btn btn--small btn--create pull-right hidden-tablet hidden-laptop hidden-desktop">
+                        {% trans "Choose title" %}
+                    </a>
+                    {% else %}
+                    <span class="pull-right hidden-tablet hidden-laptop hidden-desktop">
+                        {{page.title}}
+                    </span>
+                    {% endif %}
+                </td>
+                <td>
+                    {% if perms.cms.change_page %}
+                        {% if page.parent %}
+                        {% if page.title %}{{page.title}}{% endif %}
+                        <a
+                            href="{% url 'cms-admin:page-title-update' object.id page.language_code page.id %}"
+                            class="{% if not page.title %}[ btn btn--small btn--create ]{% endif %}"
+                            >
+                            {% if page.title %}
+                                <span class="fa fa-pencil"></span>
+                            {% else %}
+                                {% trans "Add title" %}
+                            {% endif %}
+                        </a>
+                        {% else %}
+                        <a href="{% url 'cms-admin:page-title-add' object.id page.language_code %}" class="btn btn--small btn--create">
+                            {% trans "Choose title" %}
+                        </a>
+                        {% endif %}
+                    {% endif %}
+                </td>
+                <td>
+                    {% if page.parent %}
+                        {% if page.slug %}/{{page.slug}}/{% endif %}
+                        <a href="{% url 'cms-admin:page-url-update' object.id page.language_code page.id %}">
+                            <span class="fa fa-pencil"></span>
+                            {% if not page.slug %}{% trans "Choose URL" %}{% endif %}
+                        </a>
+                    {% else %}
+                    <span class="text-muted">
+                        {% trans "You must choose a title before setting the URL." %}
+                    </span>
+                    {% endif %}
+                </td>
+                <td>
+                    {% if page.parent and page.slug %}
+                    <a
+                        href="{{object|get_page_url:page.language_code}}?preview"
+                        class="[ btn btn--small btn--primary ]">
+                        <span class="fa fa-file-text"></span>
+                        {% if perms.cms.change_page %}
+                            {% trans "Preview & Edit" %}
+                        {% else %}
+                            {% trans "Preview" %}
+                        {% endif %}
+                    </a>
+                    {% else %}
+                    <span class="text-muted">
+                        {% trans "You must set a URL before adding content." %}
+                    </span>
+                    {% endif %}
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</fieldset>

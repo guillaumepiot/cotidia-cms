@@ -15,51 +15,56 @@
 
 {% block form_content %}
 <form action="" method="post" class="form">
-{% csrf_token %}
-{% if form.non_field_errors %}
-    <div class="alert alert--error">
-    {% for error in form.non_field_errors %}
-        {{error}}<br>
-    {% endfor %}
-    </div>
-{% endif %}
+    {% csrf_token %}
+    {% if form.non_field_errors %}
+        <div class="alert alert--error">
+        {% for error in form.non_field_errors %}
+            {{error}}<br>
+        {% endfor %}
+        </div>
+    {% endif %}
 
-{% if page.get_translations %}
+    {% if page.get_translations %}
     <fieldset>
-        <h3>{% trans "Are you sure to unpublish the following page?" %}</h3>
-        <p class="text-strong">{{page.display_title}}</p>
-        <p>
-            {% trans "This page will not be publicly available." %}
-        </p>
-
+        <legend>{% trans "Are you sure to unpublish the following page?" %}</legend>
+        <div class="form__row">
+            <div class="form__group">
+                <p class="text-strong">{{page.display_title}}</p>
+                <p>
+                    {% trans "This page will not be publicly available." %}
+                </p>
+            </div>
+        </div>
     </fieldset>
-
-<div class="form__actions">
-    <form method="post" action=".">
-        <button type="submit" class="btn btn--primary">
-            {% trans "Unpublish" %}
-        </button>
+    <div class="content__inner">
+        <form method="post" action=".">
+            <button type="submit" class="btn btn--primary">
+                {% trans "Unpublish" %}
+            </button>
+            <a href="{% url 'cms-admin:page-detail' page.id %}" class="btn btn--cancel btn--transparent">
+                {% trans "Cancel" %}
+            </a>
+        </form>
+    </div>
+    {% else %}
+    <fieldset>
+        <div class="form__row">
+            <div class="form__group">
+                <p>
+                    {% blocktrans %}
+                        This page can not be published because it doesn't have any
+                        content.
+                    {% endblocktrans %}
+                </p>
+            </div>
+        </div>
+    </fieldset>
+    <div class="content__inner">
         <a href="{% url 'cms-admin:page-detail' page.id %}" class="btn btn--cancel btn--transparent">
-            {% trans "Cancel" %}
+            {% trans "Back to page details" %}
         </a>
-    </form>
-</div>
-{% else %}
-<fieldset>
-    <p>
-        {% blocktrans %}
-            This page can not be published because it doesn't have any
-            content.
-        {% endblocktrans %}
-    </p>
-</fieldset>
-
-<div class="form__actions">
-    <a href="{% url 'cms-admin:page-detail' page.id %}" class="btn btn--cancel btn--transparent">
-        {% trans "Back to page details" %}
-    </a>
-</div>
-{% endif %}
+    </div>
+    {% endif %}
 
 </form>
 {% endblock %}

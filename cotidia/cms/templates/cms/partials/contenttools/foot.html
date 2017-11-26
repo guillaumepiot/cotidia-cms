@@ -1,0 +1,8 @@
+{% load staticfiles %}{% if request.is_preview %}
+<script type="text/javascript" src="{% static "contenttools/content-tools.min.js" %}"></script>
+<script>
+    window.API_ENDPOINT = "{{SITE_URL}}"
+</script>
+<script type="text/javascript" src="{% static "js/cms.js" %}"></script>
+<input type="hidden" value="{{csrf_token}}" name="csrfmiddlewaretoken" />
+{% endif %}
