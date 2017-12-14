@@ -9,8 +9,8 @@
         {% block meta_data %}{% endblock meta_data %}
         {% include "cms/partials/favicon.html" %}
         <link rel="stylesheet" href="{% static "css/frontend.min.css" %}">
-        <link href='https://fonts.googleapis.com/css?family=Roboto:400,500,700' rel='stylesheet' type='text/css'>
         {% include "cms/partials/contenttools/head.html" %}
+        {% block extra_head %}{% endblock extra_head %}
     </head>
     <body class="{% if request.is_preview %}preview{% endif %}">
         {% block header %}
