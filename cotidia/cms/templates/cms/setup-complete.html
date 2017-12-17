@@ -1,16 +1,18 @@
 {% extends "admin/page.html" %}{% load i18n %}
 {% block content %}
-<div class="modal modal--open">
-    <div class="modal__wrapper">
-        <div class="modal__content modal__content--small">
-            <div class="modal__header">
-                <h3>{{SITE_NAME}}</h3>
+<div class="dialog">
+    <div class="dialog__content">
+        <div class="dialog__header dialog-header dialog-section--padded">
+            <div class="dialog-header__title">
+                {{SITE_NAME}}
             </div>
-            <div class="modal__body">
-                <h4>{% trans "Congratulations!" %}</h4>
-                <p>{% trans "You have successfully setup the CMS but there isn't any published pages yet to display." %}</p>
-            </div>
-            <div class="modal__footer">
+        </div>
+        <div class="dialog__body dialog-section--padded">
+            <h4>{% trans "Congratulations!" %}</h4>
+            <p>{% trans "You have successfully setup the CMS but there isn't any published pages yet to display." %}</p>
+        </div>
+        <div class="dialog__footer dialog-footer dialog-section--padded">
+            <div class="dialog-footer__actions">
                 <a href="{% url 'cms-admin:page-add' %}" class="btn btn--create">
                     {% trans "Add the first page" %}
                 </a>
