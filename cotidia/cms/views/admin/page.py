@@ -13,7 +13,7 @@ from django.db import transaction
 
 from cotidia.account.conf import settings
 from cotidia.admin.views import AdminListView
-from cotidia.admin.utils import StaffPermissionRequiredMixin
+from cotidia.admin.mixins import StaffPermissionRequiredMixin
 from cotidia.admin.views import (
     AdminListView,
     AdminDetailView,
