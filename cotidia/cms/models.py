@@ -10,7 +10,6 @@ from django.core.urlresolvers import reverse
 from mptt.models import MPTTModel, TreeForeignKey
 from mptt.managers import TreeManager
 
-from cotidia.admin.mixins import OrderableMixin
 from cotidia.cms.conf import settings
 
 TARGET_CHOICES = (
@@ -38,7 +37,7 @@ class BasePageManager(TreeManager):
         return self.model.objects.filter(published_from=None)
 
 
-class BasePage(MPTTModel, OrderableMixin):
+class BasePage(MPTTModel):
     home = models.BooleanField(default=False)
     published = models.BooleanField(_('Active'), default=False)
     approval_needed = models.BooleanField(default=False)
