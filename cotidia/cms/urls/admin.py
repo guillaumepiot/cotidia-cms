@@ -26,6 +26,8 @@ from cotidia.cms.views.admin.dataset import (
     PageDataSetDelete
 )
 
+app_name = 'cotidia.cms'
+
 urlpatterns = [
     url(r'^$', PageList.as_view(), name='page-list'),
     url(r'^page/add/$', PageCreate.as_view(), name='page-add'),

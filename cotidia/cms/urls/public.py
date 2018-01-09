@@ -1,9 +1,11 @@
-from django.conf.urls import url
+from django.urls import path
 
 from cotidia.cms.views.public import page, browserconfig
 
+app_name = 'cotidia.cms'
+
 urlpatterns = [
-    url(r'^$', page, name="home"),
-    url(r'^browserconfig\.xml$', browserconfig, name="browserconfig"),
-    url(r'^(?P<slug>[-\w\/]+)/$', page, name="page"),
+    path('', page, name="home"),
+    path('browserconfig\.xml', browserconfig, name="browserconfig"),
+    path('(?P<slug>[-\w\/]+)', page, name="page"),
 ]

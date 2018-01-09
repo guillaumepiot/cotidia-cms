@@ -5,7 +5,7 @@ from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.contenttypes.models import ContentType
 from django.utils.text import slugify
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 
 from mptt.models import MPTTModel, TreeForeignKey
 from mptt.managers import TreeManager
@@ -47,10 +47,10 @@ class BasePage(MPTTModel):
     display_title = models.CharField(max_length=250, verbose_name="Display title")
 
     # MPTT parent
-    parent = TreeForeignKey('self', null=True, blank=True, related_name='children')
+    parent = TreeForeignKey('self', null=True, blank=True, related_name='children', on_delete=models.CASCADE)
 
     # Publish version key
-    published_from = models.ForeignKey('self', blank=True, null=True)
+    published_from = models.ForeignKey('self', blank=True, null=True, on_delete=models.CASCADE)
 
     # A unique identifier
     slug = models.SlugField(max_length=60, verbose_name="Unique Page Identifier", blank=True, null=True)
@@ -72,7 +72,8 @@ class BasePage(MPTTModel):
         'self',
         blank=True,
         null=True,
-        related_name='redirect_to_page'
+        related_name='redirect_to_page',
+        on_delete=models.SET_NULL
     )
 
     redirect_to_url = models.URLField(
@@ -611,20 +612,22 @@ class BasePageTranslation(models.Model, PublishTranslation):
 #############################
 
 class PageTranslation(BasePageTranslation):
-    parent = models.ForeignKey('Page', related_name='translations')
+    parent = models.ForeignKey('Page', related_name='translations', on_delete=models.CASCADE)
 
     created_by = models.ForeignKey(
         'account.User',
         blank=True,
         null=True,
-        related_name='translation_created_by'
+        related_name='translation_created_by',
+        on_delete=models.SET_NULL
     )
 
     updated_by = models.ForeignKey(
         'account.User',
         blank=True,
         null=True,
-        related_name='translation_updated_by'
+        related_name='translation_updated_by',
+        on_delete=models.SET_NULL
     )
 
 reversion.register(PageTranslation)
@@ -632,20 +635,22 @@ reversion.register(PageTranslation)
 
 class Page(BasePage):
 
-    dataset = models.ForeignKey('PageDataSet', blank=True, null=True)
+    dataset = models.ForeignKey('PageDataSet', blank=True, null=True, on_delete=models.SET_NULL)
 
     created_by = models.ForeignKey(
         'account.User',
         blank=True,
         null=True,
-        related_name='created_by'
+        related_name='created_by',
+        on_delete=models.SET_NULL
     )
 
     updated_by = models.ForeignKey(
         'account.User',
         blank=True,
         null=True,
-        related_name='updated_by'
+        related_name='updated_by',
+        on_delete=models.SET_NULL
     )
 
     class Meta:

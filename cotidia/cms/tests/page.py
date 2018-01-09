@@ -1,6 +1,6 @@
 from django.test import TestCase, Client
 from django.conf import settings
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 
 from cms.models import Page, PageTranslation
 from account.models import User
@@ -100,7 +100,7 @@ class PageTests(TestCase):
         url = reverse('cms-admin:page-update', kwargs={'pk':page.id})
 
         # Test that we can update the page details
-        
+
         data = {
             'display_title': "Home (updated)",
             'home': 1,
@@ -115,7 +115,7 @@ class PageTests(TestCase):
 
         # Test that we can add a url
         url = reverse(
-            'cms-admin:page-url-add', 
+            'cms-admin:page-url-add',
             kwargs={'page_id':page.id, 'lang':"en"}
             )
 
@@ -132,7 +132,7 @@ class PageTests(TestCase):
 
         # Test that we can update a url
         url = reverse(
-            'cms-admin:page-url-update', 
+            'cms-admin:page-url-update',
             kwargs={'page_id':page.id, 'lang':"en", 'trans_id':translation.id}
             )
 
@@ -170,7 +170,7 @@ class PageTests(TestCase):
 
         # Test that we can add a url
         url = reverse(
-            'cms-admin:page-url-add', 
+            'cms-admin:page-url-add',
             kwargs={'page_id':page.id, 'lang':"en"}
             )
 
@@ -187,7 +187,7 @@ class PageTests(TestCase):
 
         # Test that we can publish the page
         url = reverse(
-            'cms-admin:page-publish', 
+            'cms-admin:page-publish',
             kwargs={'page_id':page.id}
             )
 
@@ -201,7 +201,7 @@ class PageTests(TestCase):
 
         # Test that we can unpublish the page
         url = reverse(
-            'cms-admin:page-unpublish', 
+            'cms-admin:page-unpublish',
             kwargs={'page_id':page.id}
             )
 
@@ -214,4 +214,4 @@ class PageTests(TestCase):
         self.assertEqual(pages.count(), 2)
         self.assertFalse(pages[0].published)
 
-        
+

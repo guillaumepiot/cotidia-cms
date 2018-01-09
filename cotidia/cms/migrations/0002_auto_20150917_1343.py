@@ -20,11 +20,11 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='page',
             name='created_by',
-            field=models.ForeignKey(to=settings.AUTH_USER_MODEL, null=True, blank=True, related_name='created_by'),
+            field=models.ForeignKey(to=settings.AUTH_USER_MODEL, null=True, blank=True, related_name='created_by', on_delete=models.SET_NULL),
         ),
         migrations.AddField(
             model_name='page',
             name='updated_by',
-            field=models.ForeignKey(to=settings.AUTH_USER_MODEL, null=True, blank=True, related_name='updated_by'),
+            field=models.ForeignKey(to=settings.AUTH_USER_MODEL, null=True, blank=True, related_name='updated_by', on_delete=models.SET_NULL),
         ),
     ]

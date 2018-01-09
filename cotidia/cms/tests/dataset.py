@@ -1,5 +1,5 @@
 from django.test import TestCase, Client
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 
 from account.models import User
 from cms.models import PageDataSet
@@ -114,7 +114,7 @@ class PageDataSetTests(TestCase):
         Test that we can update an existing object
         """
 
-        url = reverse('cms-admin:pagedataset-update', 
+        url = reverse('cms-admin:pagedataset-update',
             kwargs={
                 'pk': self.object.id
                 }
@@ -167,7 +167,7 @@ class PageDataSetTests(TestCase):
         Test that we can retrieve an object from its ID
         """
 
-        url = reverse('cms-admin:pagedataset-detail', 
+        url = reverse('cms-admin:pagedataset-detail',
             kwargs={
                 'pk': self.object.id
                 }
@@ -193,7 +193,7 @@ class PageDataSetTests(TestCase):
         Test that we can delete an object
         """
 
-        url = reverse('cms-admin:pagedataset-delete', 
+        url = reverse('cms-admin:pagedataset-delete',
             kwargs={
                 'pk': self.object.id
                 }

@@ -20,14 +20,14 @@ def get_admin_url(page, lang=None):
     return page.get_admin_url()
 
 
-@register.assignment_tag(takes_context=True)
+@register.simple_tag(takes_context=True)
 def get_published_pages(context):
     """Build a Tree Node of published pages."""
     return Page._tree_manager.filter(
         published=True, published_from=None)
 
 
-@register.assignment_tag
+@register.simple_tag
 def home_page():
     """Return the home page object."""
     pages = Page.objects.filter(home=True)

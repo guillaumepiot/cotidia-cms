@@ -1,6 +1,6 @@
 from django import forms
 from django.utils.translation import ugettext_lazy as _
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 
 from mptt.forms import TreeNodeChoiceField
 from betterforms.forms import BetterModelForm

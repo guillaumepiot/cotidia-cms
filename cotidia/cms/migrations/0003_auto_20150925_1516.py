@@ -37,7 +37,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='pagetranslation',
             name='created_by',
-            field=models.ForeignKey(related_name='translation_created_by', to=settings.AUTH_USER_MODEL, blank=True, null=True),
+            field=models.ForeignKey(related_name='translation_created_by', to=settings.AUTH_USER_MODEL, blank=True, null=True, on_delete=models.SET_NULL),
         ),
         migrations.AddField(
             model_name='pagetranslation',
@@ -54,7 +54,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='pagetranslation',
             name='updated_by',
-            field=models.ForeignKey(related_name='translation_updated_by', to=settings.AUTH_USER_MODEL, blank=True, null=True),
+            field=models.ForeignKey(related_name='translation_updated_by', to=settings.AUTH_USER_MODEL, blank=True, null=True, on_delete=models.SET_NULL),
         ),
         migrations.AlterField(
             model_name='pagetranslation',

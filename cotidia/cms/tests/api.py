@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import os, json, io
 
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.conf import settings
 from django.core.files.base import ContentFile
 from django.test import TestCase, Client
@@ -30,7 +30,7 @@ class PageTranslationTests(APITestCase):
 
         self.user.set_password('demo')
         self.user.save()
-        
+
         # Ggenerate an authentication token
         self.token, created = Token.objects.get_or_create(user=self.user)
         self.client = APIClient()
@@ -61,7 +61,7 @@ class PageTranslationTests(APITestCase):
         }
 
         url = reverse(
-            'cms-admin:page-title-add', 
+            'cms-admin:page-title-add',
             kwargs={'page_id': page.id, 'lang':"en"})
 
         response = c.post(url, data)
@@ -78,7 +78,7 @@ class PageTranslationTests(APITestCase):
         self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token.key)
 
         translation = PageTranslation.objects.filter().first()
-        
+
         # Create the add URL
         url = reverse('cms-api:update', kwargs={'id':translation.id})
 
@@ -109,7 +109,7 @@ class PageTranslationTests(APITestCase):
             'model': "cms.PageTranslation",
             'regions': regions,
         }
-        
+
 
         response = self.client.post(url, data, format='multipart')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -129,7 +129,7 @@ class PageTranslationTests(APITestCase):
         self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token.key)
 
         translation = PageTranslation.objects.filter().first()
-        
+
         # Create the add URL
         url = reverse('cms-api:update', kwargs={'id':translation.id})
 
@@ -147,12 +147,12 @@ class PageTranslationTests(APITestCase):
             'model': "cms.PageTranslation",
             'regions': regions,
         }
-        
+
 
         response = self.client.post(url, data, format='multipart')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-        
+
 
 
         #
@@ -202,7 +202,7 @@ class ImageUploadTests(APITestCase):
         # Generate an authentication token
         self.token, created = Token.objects.get_or_create(user=self.user)
         self.client = APIClient()
-        
+
     def test_upload_image(self):
 
         #
@@ -221,7 +221,7 @@ class ImageUploadTests(APITestCase):
         image.save(file_obj, 'png')
 
         file_obj.seek(0)
-        
+
         django_friendly_file = ContentFile(file_obj.read(), 'test.png')
 
         data = {
@@ -248,7 +248,7 @@ class ImageUploadTests(APITestCase):
             'width': 10,
             'crop': '0,0,0.1,0.1'
             }
-        
+
         response = self.client.post(url, data, format='multipart')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data['size'], [10, 5])
@@ -263,7 +263,7 @@ class ImageUploadTests(APITestCase):
         data = {
             'direction': 'CW'
             }
-        
+
         response = self.client.post(url, data, format='multipart')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data['size'], [5, 10])
@@ -273,4 +273,4 @@ class ImageUploadTests(APITestCase):
         self.client.logout()
         response = self.client.post(url, data, format='multipart')
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
-        
+
