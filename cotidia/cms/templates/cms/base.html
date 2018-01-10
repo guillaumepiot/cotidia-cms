@@ -20,9 +20,9 @@
         {% block footer %}
             {% include "cms/partials/footer.html" %}
         {% endblock footer %}
+        {% block footer_scripts %}
         <script type="text/javascript" src="{% static "js/menu.js" %}"></script>
-        <script type="text/javascript" src="{% static "js/header.js" %}"></script>
-        <script type="text/javascript" src="{% static "js/slideshow.js" %}"></script>
+        {% endblock footer_scripts %}
         {% include "cms/partials/contenttools/foot.html" %}
     </body>
 </html>{% endspaceless %}
