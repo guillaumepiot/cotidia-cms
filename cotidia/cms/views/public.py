@@ -81,7 +81,7 @@ def get_page(
 
     if len(published) > 0:
         published = published[0]
-        if published.translated() or settings.DEFAULT_LANGUAGE_FALLBACK:
+        if published.translated() or settings.CMS_DEFAULT_LANGUAGE_FALLBACK:
             return published
 
     return None
@@ -119,7 +119,7 @@ def page_processor(model_class=Page, translation_class=PageTranslation):
                     page.empty = True
                     page.template = 'cms/setup-complete.html'
                 else:
-                    raise Http404('This page could not be retrieved by the CMS')
+                    raise Http404('The page in language ({}) could not be retrieved by the CMS'.format(settings.LANGUAGE_CODE))
 
             else:
 

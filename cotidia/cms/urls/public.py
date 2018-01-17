@@ -6,6 +6,6 @@ app_name = 'cotidia.cms'
 
 urlpatterns = [
     path('', page, name="home"),
-    path('browserconfig\.xml', browserconfig, name="browserconfig"),
+    path('browserconfig.xml', browserconfig, name="browserconfig"),
     path('<path:slug>', page, name="page"),
 ]

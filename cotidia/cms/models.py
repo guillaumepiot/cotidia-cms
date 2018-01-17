@@ -164,7 +164,7 @@ class BasePage(MPTTModel):
             # Check if we want to return the default language translation
             # if the current language one is not available
             #
-            if settings.DEFAULT_LANGUAGE_FALLBACK:
+            if settings.CMS_DEFAULT_LANGUAGE_FALLBACK:
                 translation = self.CMSMeta.translation_class.objects.get(language_code=settings.LANGUAGE_CODE, parent=self)
             else:
                 return None

@@ -7,7 +7,7 @@ class CMSConf(AppConf):
 
     # The default page templates
     PAGE_TEMPLATES = (
-        ('cms/page.html', 'Default page')
+        ('cms/page.html', 'Default page'),
     )
 
     # List available languages
