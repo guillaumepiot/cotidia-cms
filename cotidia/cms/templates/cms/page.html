@@ -4,6 +4,9 @@
 <meta name="object_id" content="{{page.translated.id}}">
 <meta name="content_type_id" content="{{page.translated.content_type.id}}">
 {% endif %}
+{% if page.translated.content.meta_data_meta_title %}<meta name="title" content="{{page.translated.content.meta_data_meta_title}}">{% endif %}
+{% if page.translated.content.meta_data_meta_description %}<meta name="description" content="{{page.translated.content.meta_data_meta_description}}">
+{% endif %}
 {% endblock meta_data %}
 {% block title %}{{page.translated.title}}{% endblock title %}
 {% block main %}
