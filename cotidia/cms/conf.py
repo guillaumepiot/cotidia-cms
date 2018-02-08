@@ -30,6 +30,7 @@ class CMSConf(AppConf):
     BROWSERCONFIG_TILE_COLOR = "#00abd3"
 
     GA_CODE = "XXXXXX"
+    GOOGLE_API_KEY = None
 
     class Meta:
         prefix = 'cms'

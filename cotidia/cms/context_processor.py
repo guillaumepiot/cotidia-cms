@@ -9,5 +9,6 @@ def cms_settings(request):
         "LANGUAGES": settings.LANGUAGES,
         "DEBUG": settings.DEBUG,
         "CMS_GA_CODE": settings.CMS_GA_CODE,
+        "CMS_GOOGLE_API_KEY": settings.CMS_GOOGLE_API_KEY,
         "CMS_BROWSERCONFIG_TILE_COLOR": settings.CMS_BROWSERCONFIG_TILE_COLOR,
     }

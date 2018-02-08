@@ -2,6 +2,7 @@ from django import template
 from django.utils.translation import get_language
 
 from cotidia.cms.models import Page
+from cotidia.cms.conf import settings
 
 register = template.Library()
 
@@ -75,3 +76,28 @@ def get_page_by_unique_identifier(parser, token):
 
     return PageBySlugNode(slug, varname)
 
+
+@register.inclusion_tag('cms/partials/embed_google_map.html')
+def embed_google_map(lat, lng, zoom, address):
+    if settings.CMS_GOOGLE_API_KEY is None:
+        raise Exception("Please set the Google Map API Key: `CMS_GOOGLE_API_KEY`.")
+    return {
+        'lat': lat,
+        'lng': lng,
+        'zoom': zoom,
+        'address': address,
+        'CMS_GOOGLE_API_KEY': settings.CMS_GOOGLE_API_KEY
+    }
+
+
+@register.inclusion_tag('cms/partials/js_google_map.html')
+def js_google_map(lat, lng, zoom, marker_icon):
+    if settings.CMS_GOOGLE_API_KEY is None:
+        raise Exception("Please set the Google Map API Key: `CMS_GOOGLE_API_KEY`.")
+    return {
+        'lat': lat,
+        'lng': lng,
+        'zoom': zoom,
+        'marker_icon': marker_icon,
+        'CMS_GOOGLE_API_KEY': settings.CMS_GOOGLE_API_KEY
+    }
