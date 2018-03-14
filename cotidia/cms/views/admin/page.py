@@ -167,6 +167,10 @@ class PageUpdate(AdminUpdateView):
             self.object.save()
         return response
 
+    def get_success_url(self):
+        messages.success(self.request, _('The page has been deleted.'))
+        return reverse('cms-admin:page-detail', kwargs={'pk': self.object.id})
+
 
 class PageDelete(StaffPermissionRequiredMixin, DeleteView):
     model = Page
@@ -244,8 +248,6 @@ def add_edit_translation(
             messages.add_message(request, messages.SUCCESS, _('The meta data for "%s" has been saved' % translation.title))
             return HttpResponseRedirect(reverse('cms-admin:page-detail', kwargs={'pk':page.id}))
 
-    print("form", form)
-
     template = 'admin/cms/page_metadata_form.html'
 
     context = {
@@ -305,118 +307,3 @@ def PageUnpublish(request, page_id):
     template = 'admin/cms/page_unpublish_form.html'
 
     return render(request, template, {'page': page})
-
-
-###########
-# Content #
-###########
-
-# @permission_required('cms.add_pagetranslation', settings.ACCOUNT_ADMIN_LOGIN_URL)
-# def PageURLCreate(request, page_id, lang):
-
-#     page = get_object_or_404(Page, id=page_id)
-
-#     form = PageURLForm()
-
-#     if request.method == 'POST':
-#         form = PageURLForm(request.POST)
-
-#         if form.is_valid():
-#             translation = form.save(commit=False)
-#             translation.parent = page
-#             translation.language_code = lang
-#             translation.save()
-
-#             page.approval_needed = True
-#             page.save()
-
-#             messages.success(request, _('The page URL has been saved.'))
-
-#             return HttpResponseRedirect(
-#                 reverse('cms-admin:page-detail', kwargs={'pk': page.id}))
-
-#     template = 'admin/cms/page_url_form.html'
-
-#     return render(request, template, {'form': form, 'page': page})
-
-
-@permission_required('cms.change_pagetranslation', settings.ACCOUNT_ADMIN_LOGIN_URL)
-def PageURLUpdate(request, page_id, lang, trans_id):
-
-    page = get_object_or_404(Page, id=page_id)
-    translation = get_object_or_404(PageTranslation, id=trans_id)
-
-    form = PageURLForm(instance=translation)
-
-    if request.method == 'POST':
-        form = PageURLForm(request.POST, instance=translation)
-
-        if form.is_valid():
-            translation = form.save(commit=False)
-            translation.parent = page
-            translation.language_code = lang
-            translation.save()
-
-            page.approval_needed = True
-            page.save()
-
-            messages.success(request, _('The page URL has been saved.'))
-
-            return HttpResponseRedirect(
-                reverse('cms-admin:page-detail', kwargs={'pk': page.id}))
-
-    template = 'admin/cms/page_url_form.html'
-
-    return render(
-        request,
-        template,
-        {
-            'form': form,
-            'page': page,
-            'translation': translation
-        }
-    )
-
-
-#
-# Manage the page title for a language
-#
-# @permission_required('cms.change_page', settings.ACCOUNT_ADMIN_LOGIN_URL)
-# def PageTitleUpdate(request, page_id, lang, trans_id=None):
-
-#     page = get_object_or_404(Page, id=page_id)
-#     if trans_id:
-#         translation = get_object_or_404(PageTranslation, id=trans_id)
-#         form = PageTitleForm(instance=translation)
-#     else:
-#         translation = None
-#         form = PageTitleForm()
-
-#     if request.method == 'POST':
-
-#         if translation:
-#             form = PageTitleForm(instance=translation, data=request.POST)
-#         else:
-#             form = PageTitleForm(data=request.POST)
-
-#         if form.is_valid():
-
-#             translation = form.save(commit=False)
-#             translation.parent = page
-#             translation.language_code = lang
-#             if not translation.slug:
-#                 translation.slug = slugify(translation.title.lower())
-#             translation.save()
-
-#             page.approval_needed = True
-#             page.save()
-
-#             messages.success(request, _('The page title has been saved.'))
-
-#             return HttpResponseRedirect(
-#                 reverse('cms-admin:page-detail', kwargs={'pk': page.id}))
-
-#     template = "admin/generic/page/form.html"
-
-#     return render(request, template, {'form': form, 'page': page})
-

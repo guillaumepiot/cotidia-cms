@@ -32,7 +32,7 @@
         {% trans "Draft" %}
     </span>
     {% if perms.cms.publish_page %}
-        {% if page.get_translations %}
+        {% if object.get_translations %}
         <a href="{% url 'cms-admin:page-publish' object.id %}" class="pull-right">
             {% trans "Publish now" %}
             <span class="fa fa-arrow-right"></span>

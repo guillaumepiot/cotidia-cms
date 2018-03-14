@@ -36,16 +36,14 @@
             </div>
         </div>
     </fieldset>
-    <div class="content__inner">
-        <form method="post" action=".">
-            <button type="submit" class="btn btn--primary">
-                {% trans "Unpublish" %}
-            </button>
-            <a href="{% url 'cms-admin:page-detail' page.id %}" class="btn btn--cancel btn--transparent">
-                {% trans "Cancel" %}
-            </a>
-        </form>
-    </div>
+    <form method="post" action=".">
+        <button type="submit" class="btn btn--primary">
+            {% trans "Unpublish" %}
+        </button>
+        <a href="{% url 'cms-admin:page-detail' page.id %}" class="btn btn--cancel btn--transparent">
+            {% trans "Cancel" %}
+        </a>
+    </form>
     {% else %}
     <fieldset>
         <div class="form__row">
@@ -58,12 +56,13 @@
                 </p>
             </div>
         </div>
+        <div class="form__row">
+            <a href="{% url 'cms-admin:page-detail' page.id %}" class="btn btn--cancel btn--transparent">
+                {% trans "Back to page details" %}
+            </a>
+        </div>
     </fieldset>
-    <div class="content__inner">
-        <a href="{% url 'cms-admin:page-detail' page.id %}" class="btn btn--cancel btn--transparent">
-            {% trans "Back to page details" %}
-        </a>
-    </div>
+
     {% endif %}
 
 </form>

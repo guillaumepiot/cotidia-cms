@@ -44,7 +44,7 @@
     {% else %}
         <div class="form__row">
             <div class="form__group">
-                <a href="{% url 'cms-admin:page-update' page.id %}#dataset"
+                <a href="{% url 'cms-admin:page-update' object.id %}#dataset"
                 class="btn btn--small btn--create">
                 {% trans "Select dataset" %}
             </a>

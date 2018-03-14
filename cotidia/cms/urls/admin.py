@@ -7,7 +7,6 @@ from cotidia.cms.views.admin.page import (
     PageUpdate,
     PageDelete,
     add_edit_translation,
-    PageURLUpdate,
     PagePublish,
     PageUnpublish
 )

@@ -55,6 +55,7 @@ class PageAddForm(BetterModelForm):
         )
         self.fields["parent"].queryset = Page.objects.get_originals()
         self.fields["parent"].help_text = _("Leave blank if this a top level page.")
+        self.fields["parent"].empty_label = ""
 
     def clean_home(self):
         home = self.cleaned_data['home']
@@ -90,14 +91,16 @@ class PageUpdateForm(PageAddForm):
 
     dataset = forms.ModelChoiceField(
         queryset=PageDataSet.objects.all(),
-        required=False
+        required=False,
+        empty_label=""
     )
 
     redirect_to = TreeNodeChoiceField(
         label="Redirect to an internal page",
         queryset=Page.objects.get_published_originals(),
         help_text=_('Redirect this page to another page in the system'),
-        required=False
+        required=False,
+        empty_label=""
     )
 
     redirect_to_url = forms.CharField(
