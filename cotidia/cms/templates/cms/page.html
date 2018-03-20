@@ -1,5 +1,6 @@
 {% extends 'cms/base.html' %}
 {% block meta_data %}
+{{block.super}}
 {% if request.is_preview %}
 <meta name="object_id" content="{{page.translated.id}}">
 <meta name="content_type_id" content="{{page.translated.content_type.id}}">
