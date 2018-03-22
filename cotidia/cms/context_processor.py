@@ -11,4 +11,5 @@ def cms_settings(request):
         "CMS_GA_CODE": settings.CMS_GA_CODE,
         "CMS_GOOGLE_API_KEY": settings.CMS_GOOGLE_API_KEY,
         "CMS_BROWSERCONFIG_TILE_COLOR": settings.CMS_BROWSERCONFIG_TILE_COLOR,
+        "CMS_ENABLE_META_DATA": settings.CMS_ENABLE_META_DATA
     }

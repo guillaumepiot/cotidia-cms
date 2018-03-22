@@ -1,0 +1,55 @@
+{% load i18n staticfiles metadata_tags %}
+{% if CMS_ENABLE_META_DATA %}
+<fieldset class="table-view">
+    <legend>{% trans "SEO & Social meta data" %}</legend>
+    <div class="form__row">
+        <div class="form__group">
+            <p>{% blocktrans %}Set the meta data required for search engine to find and index your page properly. Also set the social meta data requried to enhance the Facebook, Twitter and Google sharing.{% endblocktrans %}</p>
+        </div>
+    </div>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>{% trans "Language" %}</th>
+                <th>{% trans "Data" %}</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for page in object.languages %}
+            <tr>
+                <td>
+                    <img src="{% static "img/flags/" %}{{page.language_code}}.png" style="width:16px; position: relative; top:3px;"/>
+                    {{page.get_language}}
+                </td>
+                <td>
+                    {% if page.parent %}
+                        {% if perms.metadata.change_metadata %}
+                            {% get_meta_data page as page_metadata %}
+                            {% if page_metadata %}
+                                <a
+                                    href="{% url 'metadata-admin:metadata-update' page_metadata.id %}?next={% url 'cms-admin:page-detail' page.parent.id %}"
+                                    class="[ btn btn--small btn--change ]">
+                                    <span class="fa fa-file-text"></span>
+                                    {% trans "Edit" %}
+                                </a>
+                            {% else %}
+                                <a
+                                    href="{% url 'metadata-admin:metadata-add' page.content_type.id page.id %}?next={% url 'cms-admin:page-detail' page.parent.id %}"
+                                    class="[ btn btn--small btn--create ]">
+                                    <span class="fa fa-file-text"></span>
+                                    {% trans "Add" %}
+                                </a>
+                            {% endif %}
+                        {% endif %}
+                    {% else %}
+                    <span class="text-muted">
+                        {% trans "You must set a title for that language before adding data." %}
+                    </span>
+                    {% endif %}
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</fieldset>
+{% endif %}

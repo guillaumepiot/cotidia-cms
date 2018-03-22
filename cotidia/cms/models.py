@@ -522,7 +522,6 @@ class BaseDataSet(models.Model):
         except:
             raise Exception('JSON config could not be loaded from Page mask')
 
-
 #
 # Base translation model
 #
@@ -605,6 +604,9 @@ class BasePageTranslation(models.Model, PublishTranslation):
             self.parent.id,
             self.language_code
         )
+
+    def get_absolute_url(self):
+        return self.parent.get_absolute_url()
 
 
 #############################

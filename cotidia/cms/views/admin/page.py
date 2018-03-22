@@ -101,6 +101,10 @@ class PageDetail(AdminDetailView):
             "template_name": "admin/cms/page/content.html"
         },
         {
+            "legend": "Meta data",
+            "template_name": "admin/cms/page/metadata.html"
+        },
+        {
             "legend": "Dataset",
             "template_name": "admin/cms/page/dataset.html"
         },
