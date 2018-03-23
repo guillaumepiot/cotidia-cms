@@ -1,0 +1,9 @@
+{% load metadata_tags %}
+
+{% if page.published_from %}
+    {% get_meta_data page.published_from.translated as metadata %}
+{% else %}
+    {% get_meta_data page.translated as metadata%}
+{% endif %}
+
+{% include "metadata/metadata.html" %}
