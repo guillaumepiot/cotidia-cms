@@ -87,22 +87,9 @@ class PageList(AdminListView):
 class PageDetail(AdminDetailView):
     model = Page
     fieldsets = [
-        # {
-        #     "legend": "Status",
-        #     "fields": [
-        #         {
-        #             "label": "Status",
-        #             "field": "status",
-        #         }
-        #     ]
-        # },
         {
             "legend": "Content",
             "template_name": "admin/cms/page/content.html"
-        },
-        {
-            "legend": "Meta data",
-            "template_name": "admin/cms/page/metadata.html"
         },
         {
             "legend": "Dataset",
@@ -153,6 +140,17 @@ class PageDetail(AdminDetailView):
             ]
         }
     ]
+
+    def get_fieldsets(self):
+        fieldsets = self.fieldsets
+
+        if settings.CMS_ENABLE_META_DATA:
+            fieldsets.insert(1, {
+                "legend": "Meta data",
+                "template_name": "admin/cms/page/metadata.html"
+            })
+
+        return fieldsets
 
 
 class PageCreate(AdminCreateView):
