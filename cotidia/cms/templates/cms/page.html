@@ -1,6 +1,6 @@
 {% extends 'cms/base.html' %}
 
-{% block title %}{% include "cms/metatitle.html" %}{% endblock %}
+{% block title %}{% if CMS_ENABLE_META_DATA %}{% include "cms/metatitle.html" %}{% endif %}{% endblock %}
 
 {% block meta_data %}
 {{block.super}}
