@@ -1,11 +1,10 @@
 from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.shortcuts import render
+from django.urls import reverse
 
 from cotidia.cms.models import Page, PageTranslation
 from cotidia.cms.conf import settings
 
-
-# Function to retrieve page object depending on previwe mode and language
 
 def get_page(
         request,
@@ -105,6 +104,12 @@ def page_processor(model_class=Page, translation_class=PageTranslation):
 
             # Is it home page or not?
             if slug:
+
+                if slug.endswith('/'):
+                    return HttpResponseRedirect(
+                        reverse('cms-public:page', kwargs={'slug': slug[:-1]})
+                    )
+
                 page = get_page(request=request, model_class=model_class, translation_class=translation_class, slug=slug, preview=is_preview)
             else:
                 page = get_page(request=request, model_class=model_class, translation_class=translation_class, preview=is_preview)
