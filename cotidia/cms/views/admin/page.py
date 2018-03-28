@@ -142,7 +142,7 @@ class PageDetail(AdminDetailView):
     ]
 
     def get_fieldsets(self):
-        fieldsets = self.fieldsets
+        fieldsets = self.fieldsets.copy()
 
         if settings.CMS_ENABLE_META_DATA:
             fieldsets.insert(1, {
