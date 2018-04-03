@@ -1,6 +1,6 @@
-{% load metadata_tags %}{% if page.published_from %}{% get_meta_data page.published_from.translated as metadata %}{% else %}{% get_meta_data page.translated as metadata%}{% endif %}
+{% load metadata_tags %}{% if page %}{% if page.published_from %}{% get_meta_data page.published_from.translated as metadata %}{% else %}{% get_meta_data page.translated as metadata%}{% endif %}
 {% if CMS_ENABLE_META_DATA and metadata.meta_title %}
     {{metadata.meta_title}}
 {% else %}
     {{page.translated.title}} | {{SITE_NAME}}
-{% endif %}
+{% endif %}{% endif %}
