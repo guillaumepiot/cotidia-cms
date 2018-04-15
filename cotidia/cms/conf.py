@@ -13,7 +13,7 @@ class CMSConf(AppConf):
     # List available languages
     LANGUAGES = (
         ('en', "English"),
-        ('fr', "French"),
+        # ('fr', "French"),
     )
 
     DEFAULT_LANGUAGE = LANGUAGES[0]
