@@ -32,7 +32,7 @@ class CMSConf(AppConf):
     GA_CODE = "XXXXXX"
     GOOGLE_API_KEY = None
 
-    ENABLE_META_DATA = True
+    ENABLE_META_DATA = False
 
     class Meta:
         prefix = 'cms'
