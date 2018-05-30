@@ -1,17 +1,15 @@
 {% extends "admin/cms/base_form.html" %}{% load i18n %}
 {% block title %}
-    {% trans "Publish Page" %}
+    {% trans "Unpublish Page" %}
 {% endblock title %}
 
-{% block toolbar %}
-    <span class="toolbar__breadcrumbs">
-        <a href="{% url 'cms-admin:page-list' %}">{% trans "Pages" %}</a>
-        &nbsp;<span class="fa fa-angle-right"></span>&nbsp;
-        <a href="{% url 'cms-admin:page-detail' page.id %}">{{page.display_title}}</a>
-        &nbsp;<span class="fa fa-angle-right"></span>&nbsp;
-        {% trans "Publish Page" %}
-    </span>
-{% endblock toolbar %}
+{% block content_title %}
+<a href="{% url 'cms-admin:page-list' %}">{% trans "Pages" %}</a>
+&nbsp;<span class="fa fa-angle-right"></span>&nbsp;
+<a href="{% url 'cms-admin:page-detail' page.id %}">{{page.display_title}}</a>
+&nbsp;<span class="fa fa-angle-right"></span>&nbsp;
+{% trans "Unpublish Page" %}
+{% endblock content_title %}
 
 {% block form_content %}
 <form action="" method="post" class="form">
@@ -26,19 +24,19 @@
 
     {% if page.get_translations %}
     <fieldset>
-        <legend>{% trans "Are you sure to publish the following page?" %}</legend>
+        <legend>{% trans "Are you sure to unpublish the following page?" %}</legend>
         <div class="form__row">
             <div class="form__group">
                 <p class="text-strong">{{page.display_title}}</p>
                 <p>
-                    {% trans "All translations available for that page will be published." %}
+                    {% trans "This page will not be publicly available." %}
                 </p>
             </div>
         </div>
     </fieldset>
     <form method="post" action=".">
         <button type="submit" class="btn btn--primary">
-            {% trans "Publish" %}
+            {% trans "Unpublish" %}
         </button>
         <a href="{% url 'cms-admin:page-detail' page.id %}" class="btn btn--cancel btn--transparent">
             {% trans "Cancel" %}
@@ -62,6 +60,8 @@
             </a>
         </div>
     </fieldset>
+
     {% endif %}
+
 </form>
 {% endblock %}

@@ -1,0 +1,12 @@
+{% extends "admin/generic/page/form.html" %}
+{% load i18n admin_toolbar_tags admin_list_tags %}
+
+{% block content_title %}
+    <a href="{% get_admin_url app_label model_name 'list' %}">{{verbose_name_plural}}</a>
+    &nbsp;<span class="fa fa-angle-right"></span>&nbsp;
+    {% if object %}
+        <a href="{% get_admin_url app_label model_name 'detail' object %}">{{object}}</a>
+        &nbsp;<span class="fa fa-angle-right"></span>&nbsp;
+    {% endif %}
+    {% trans "Settings" %}
+{% endblock content_title %}

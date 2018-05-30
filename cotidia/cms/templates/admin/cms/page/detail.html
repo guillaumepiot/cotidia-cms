@@ -1,32 +1,33 @@
 {% extends "admin/generic/page/detail.html" %}
 {% load i18n admin_list_tags admin_toolbar_tags admin_detail_tags %}
 
-{% block toolbar %}
-    <a href="{% get_admin_url app_label model_name "delete" object %}" class="btn btn--delete btn--small toolbar__item">
+{% block content_title %}
+<a href="{% get_admin_url app_label model_name "list" %}">{{verbose_name}}</a>
+&nbsp;<span class="fa fa-angle-right"></span>&nbsp;
+{% blocktrans with verbose_name as verbose_name %}
+    {{verbose_name}} details
+{% endblocktrans %}
+{% endblock content_title %}
+
+{% block content_actions %}
+    <a href="{% get_admin_url app_label model_name "delete" object %}" class="btn btn--delete btn--small">
         <span class="fa fa-times"></span>
         {% blocktrans with verbose_name as verbose_name %}
             Delete
         {% endblocktrans %}
     </a>
-    <a href="{% get_admin_url app_label model_name "update" object %}" class="btn btn--small btn--change toolbar__item">
+    <a href="{% get_admin_url app_label model_name "update" object %}" class="btn btn--small btn--change">
         <span class="fa fa-cog"></span>
         {% blocktrans with verbose_name as verbose_name %}
             Settings
         {% endblocktrans %}
     </a>
-    <span class="toolbar__breadcrumbs">
-        <a href="{% get_admin_url app_label model_name "list" %}">{{verbose_name}}</a>
-        &nbsp;<span class="fa fa-angle-right"></span>&nbsp;
-        {% blocktrans with verbose_name as verbose_name %}
-            {{verbose_name}} details
-        {% endblocktrans %}
-    </span>
-{% endblock toolbar %}
+{% endblock content_actions %}
 
-{% block page_content %}
-{% include "admin/cms/page/status.html" %}
+{% block messages %}
 {{block.super}}
-{% endblock %}
+{% include "admin/cms/page/status.html" %}
+{% endblock messages %}
 
 {% block form_actions %}
 <div class="form__actions">

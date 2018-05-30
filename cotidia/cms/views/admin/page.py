@@ -174,14 +174,8 @@ class PageUpdate(AdminUpdateView):
         return reverse('cms-admin:page-detail', kwargs={'pk': self.object.id})
 
 
-class PageDelete(StaffPermissionRequiredMixin, DeleteView):
+class PageDelete(AdminDeleteView):
     model = Page
-    permission_required = 'cms.delete_page'
-    template_name = 'admin/cms/page_confirm_delete.html'
-
-    def get_success_url(self):
-        messages.success(self.request, _('The page has been deleted.'))
-        return reverse('cms-admin:page-list')
 
 
 @login_required
@@ -283,7 +277,7 @@ def PagePublish(request, page_id):
         return HttpResponseRedirect(
             reverse('cms-admin:page-detail', kwargs={'pk': page.id}))
 
-    template = 'admin/cms/page_publish_form.html'
+    template = 'admin/cms/page/publish_form.html'
 
     return render(request, template, {'page': page})
 
@@ -306,6 +300,6 @@ def PageUnpublish(request, page_id):
         return HttpResponseRedirect(
             reverse('cms-admin:page-detail', kwargs={'pk': page.id}))
 
-    template = 'admin/cms/page_unpublish_form.html'
+    template = 'admin/cms/page/unpublish_form.html'
 
     return render(request, template, {'page': page})
