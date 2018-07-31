@@ -35,7 +35,7 @@
                             class="{% if not page.title %}[ btn btn--small btn--create ]{% endif %}"
                             >
                             {% if page.title %}
-                                <span class="fa fa-pencil"></span>
+                                <span class="fa fa-pen"></span>
                             {% else %}
                                 {% trans "Add title" %}
                             {% endif %}
@@ -51,7 +51,7 @@
                     {% if page.parent %}
                         {% if page.slug %}/{{page.slug}}/{% endif %}
                         <a href="{% url 'cms-admin:page-url-update' object.id page.language_code page.id %}">
-                            <span class="fa fa-pencil"></span>
+                            <span class="fa fa-pen"></span>
                             {% if not page.slug %}{% trans "Choose URL" %}{% endif %}
                         </a>
                     {% endif %}
