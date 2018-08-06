@@ -4,7 +4,7 @@
         {% if object.status == 'APPROVAL_NEEDED' %}
         <div class="alert alert--warning">
             <span class="label label--warning">
-                <span class="fa fa-clock-o"></span>
+                <span class="fa fa-clock"></span>
                 {{object.status_verbal}}
             </span>
             {% if perms.cms.publish_page %}
