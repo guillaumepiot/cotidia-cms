@@ -1,45 +1,48 @@
 {% load i18n %}
-
-{% if object.status == 'APPROVAL_NEEDED' %}
-<div class="alert alert--warning">
-    <span class="label label--warning">
-        <span class="fa fa-clock-o"></span>
-        {{object.status_verbal}}
-    </span>
-    {% if perms.cms.publish_page %}
-    <a href="{% url 'cms-admin:page-publish' object.id %}" class="pull-right">
-        {% trans "Approve now" %}
-        <span class="fa fa-arrow-right"></span>
-    </a>
-    {% endif %}
-</div>
-{% elif object.status == 'PUBLISHED' %}
-<div class="alert alert--success">
-    <span class="label label--success">
-        <span class="fa fa-check"></span>
-        {{object.status_verbal}}
-    </span>
-    {% if perms.cms.publish_page %}
-        <a href="{% url 'cms-admin:page-unpublish' object.id %}" class="pull-right">
-            {% trans "Unpublish" %}
-            <span class="fa fa-arrow-right"></span>
-        </a>
-    {% endif %}
-</div>
-{% else %}
-<div class="alert alert--info">
-    <span class="label label--primary">
-        {% trans "Draft" %}
-    </span>
-    {% if perms.cms.publish_page %}
-        {% if object.get_translations %}
-        <a href="{% url 'cms-admin:page-publish' object.id %}" class="pull-right">
-            {% trans "Publish now" %}
-            <span class="fa fa-arrow-right"></span>
-        </a>
+<div class="layout_message">
+    <div class="messages">
+        {% if object.status == 'APPROVAL_NEEDED' %}
+        <div class="alert alert--warning">
+            <span class="label label--warning">
+                <span class="fa fa-clock-o"></span>
+                {{object.status_verbal}}
+            </span>
+            {% if perms.cms.publish_page %}
+            <a href="{% url 'cms-admin:page-publish' object.id %}" class="pull-right">
+                {% trans "Approve now" %}
+                <span class="fa fa-arrow-right"></span>
+            </a>
+            {% endif %}
+        </div>
+        {% elif object.status == 'PUBLISHED' %}
+        <div class="alert alert--success">
+            <span class="label label--success">
+                <span class="fa fa-check"></span>
+                {{object.status_verbal}}
+            </span>
+            {% if perms.cms.publish_page %}
+                <a href="{% url 'cms-admin:page-unpublish' object.id %}" class="pull-right">
+                    {% trans "Unpublish" %}
+                    <span class="fa fa-arrow-right"></span>
+                </a>
+            {% endif %}
+        </div>
         {% else %}
-        You must choose a title for the page before it can be published.
+        <div class="alert alert--info">
+            <span class="label label--primary">
+                {% trans "Draft" %}
+            </span>
+            {% if perms.cms.publish_page %}
+                {% if object.get_translations %}
+                <a href="{% url 'cms-admin:page-publish' object.id %}" class="pull-right">
+                    {% trans "Publish now" %}
+                    <span class="fa fa-arrow-right"></span>
+                </a>
+                {% else %}
+                You must choose a title for the page before it can be published.
+                {% endif %}
+            {% endif %}
+        </div>
         {% endif %}
-    {% endif %}
+    </div>
 </div>
-{% endif %}

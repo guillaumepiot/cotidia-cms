@@ -170,7 +170,7 @@ class PageUpdate(AdminUpdateView):
         return response
 
     def get_success_url(self):
-        messages.success(self.request, _('The page has been deleted.'))
+        messages.success(self.request, _('The page has been updated.'))
         return reverse('cms-admin:page-detail', kwargs={'pk': self.object.id})
 
 

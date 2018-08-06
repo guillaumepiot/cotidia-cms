@@ -33,7 +33,7 @@
         {% endif %}
     </div>
 </div>
-<div class="[ editable ]"  data-name="content">
+<div data-editable data-name="content">
     {% if request.is_preview %}
         {% if page.translated.regions.content %}
             {{page.translated.regions.content|safe}}

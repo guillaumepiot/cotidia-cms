@@ -5,7 +5,7 @@ def admin_menu(context):
     return [
         {
             "text": "Pages",
-            "icon": "file-text-o",
+            "icon": "file",
             "url": reverse("cms-admin:page-list"),
             "permissions": [
                 "cms.add_page",
