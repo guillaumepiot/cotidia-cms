@@ -7,7 +7,7 @@
                 <th>{% trans "Language" %}</th>
                 <th>{% trans "Title" %}</th>
                 <th>{% trans "URL" %}</th>
-                <th>{% trans "Content" %}</th>
+                <th></th>
             </tr>
         </thead>
         <tbody>
@@ -56,16 +56,15 @@
                         </a>
                     {% endif %}
                 </td>
-                <td>
+                <td class="text-right">
                     {% if page.parent and page.slug %}
                     <a
                         href="{{object|get_page_url:page.language_code}}?preview"
-                        class="[ btn btn--small btn--primary ]">
-                        <span class="fa fa-eye"></span>
+                        class="[ btn btn--small btn--outline ]">
                         {% if perms.cms.change_page %}
-                            {% trans "Preview & Edit" %}
+                            <span class="fa fa-pen"></span> {% trans "Edit" %}
                         {% else %}
-                            {% trans "Preview" %}
+                            <span class="fa fa-eye"></span> {% trans "Preview" %}
                         {% endif %}
                     </a>
                     {% endif %}

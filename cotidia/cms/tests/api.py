@@ -15,7 +15,7 @@ from rest_framework.test import APIClient
 from account.models import User
 from cms.models import Page, PageTranslation, Image
 
-# Create your tests here.
+
 class PageTranslationTests(APITestCase):
 
     def setUp(self):
@@ -67,7 +67,6 @@ class PageTranslationTests(APITestCase):
         response = c.post(url, data)
         self.assertEqual(response.status_code, 302)
 
-
     def test_add(self):
 
         """ Test if we can add, retrieve and list """
@@ -110,7 +109,6 @@ class PageTranslationTests(APITestCase):
             'regions': regions,
         }
 
-
         response = self.client.post(url, data, format='multipart')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
@@ -121,7 +119,7 @@ class PageTranslationTests(APITestCase):
         self.assertEqual(page.regions, regions)
 
     def test_change_one_region(self):
-        """ Test if we can add, retrieve and list """
+        """Test if we can add, retrieve and list."""
 
         #
         # Authenticate the client
@@ -147,7 +145,6 @@ class PageTranslationTests(APITestCase):
             'model': "cms.PageTranslation",
             'regions': regions,
         }
-
 
         response = self.client.post(url, data, format='multipart')
         self.assertEqual(response.status_code, status.HTTP_200_OK)

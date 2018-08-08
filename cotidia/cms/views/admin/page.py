@@ -27,7 +27,7 @@ from cotidia.cms.forms.admin.page import (
     PageAddForm,
     PageUpdateForm
 )
-from cotidia.cms.forms.custom_form import TranslationForm
+# from cotidia.cms.forms.custom_form import TranslationForm
 
 
 ########
@@ -90,10 +90,6 @@ class PageDetail(AdminDetailView):
         {
             "legend": "Content",
             "template_name": "admin/cms/page/content.html"
-        },
-        {
-            "legend": "Dataset",
-            "template_name": "admin/cms/page/dataset.html"
         },
         {
             "legend": "Settings",
@@ -178,80 +174,80 @@ class PageDelete(AdminDeleteView):
     model = Page
 
 
-@login_required
-@transaction.atomic()
-def add_edit_translation(
-        request,
-        page_id,
-        language_code,
-        model_class=Page,
-        translation_class=PageTranslation,
-        translation_form_class=TranslationForm):
+# @login_required
+# @transaction.atomic()
+# def add_edit_translation(
+#         request,
+#         page_id,
+#         language_code,
+#         model_class=Page,
+#         translation_class=PageTranslation,
+#         translation_form_class=TranslationForm):
 
-    if language_code not in [lang[0] for lang in settings.CMS_LANGUAGES]:
-        raise ImproperlyConfigured('The language code "%s" is not included in the project settings.' % language_code)
-    if not request.user.has_perm('cms.add_pagetranslation'):
-        raise PermissionDenied
-    page = get_object_or_404(model_class, id=page_id)
+#     if language_code not in [lang[0] for lang in settings.CMS_LANGUAGES]:
+#         raise ImproperlyConfigured('The language code "%s" is not included in the project settings.' % language_code)
+#     if not request.user.has_perm('cms.add_pagetranslation'):
+#         raise PermissionDenied
+#     page = get_object_or_404(model_class, id=page_id)
 
-    translation = translation_class.objects.filter(
-        parent=page,
-        language_code=language_code
-    ).first()
+#     translation = translation_class.objects.filter(
+#         parent=page,
+#         language_code=language_code
+#     ).first()
 
-    initial = {
-        'parent': page,
-        'language_code': language_code
-    }
+#     initial = {
+#         'parent': page,
+#         'language_code': language_code
+#     }
 
-    # Check is we are in revision mode
-    # if recover_id:
-    #     recover = True
-    #     for version in reversion.get_unique_for_object(translation):
-    #         if version.id == int(recover_id):
-    #             # Set values from revision
-    #             translation.title = version.field_dict['title']
-    #             translation.slug = version.field_dict['slug']
-    #             translation.content = version.field_dict['content']
-    # else:
-    #     recover = False
+#     # Check is we are in revision mode
+#     # if recover_id:
+#     #     recover = True
+#     #     for version in reversion.get_unique_for_object(translation):
+#     #         if version.id == int(recover_id):
+#     #             # Set values from revision
+#     #             translation.title = version.field_dict['title']
+#     #             translation.slug = version.field_dict['slug']
+#     #             translation.content = version.field_dict['content']
+#     # else:
+#     #     recover = False
 
-    if not translation:
-        form = translation_form_class(page=page, initial=initial)
-    else:
-        if not request.user.has_perm('cmsbase.change_pagetranslation'):
-            raise PermissionDenied
+#     if not translation:
+#         form = translation_form_class(page=page, initial=initial)
+#     else:
+#         if not request.user.has_perm('cmsbase.change_pagetranslation'):
+#             raise PermissionDenied
 
-        form = translation_form_class(instance=translation, page=page, initial=initial)
+#         form = translation_form_class(instance=translation, page=page, initial=initial)
 
-    if request.method == 'POST':
-        if not translation:
-            form = translation_form_class(data=request.POST, files=request.FILES, page=page)
-        else:
-            form = translation_form_class(data=request.POST, files=request.FILES, instance=translation, page=page)
-        if form.is_valid():
-            translation = form.save()
-            # reversion.set_user(request.user)
+#     if request.method == 'POST':
+#         if not translation:
+#             form = translation_form_class(data=request.POST, files=request.FILES, page=page)
+#         else:
+#             form = translation_form_class(data=request.POST, files=request.FILES, instance=translation, page=page)
+#         if form.is_valid():
+#             translation = form.save()
+#             # reversion.set_user(request.user)
 
-            # Notify the parent page that new content needs to be approved
-            translation.parent.approval_needed = 1
-            translation.parent.save()
+#             # Notify the parent page that new content needs to be approved
+#             translation.parent.approval_needed = 1
+#             translation.parent.save()
 
-            # if recover:
-            #     messages.add_message(request, messages.SUCCESS, _('The content for "%s" has been recovered' % translation.title))
-            # else:
-            #     messages.add_message(request, messages.SUCCESS, _('The content for "%s" has been saved' % translation.title))
-            messages.add_message(request, messages.SUCCESS, _('The meta data for "%s" has been saved' % translation.title))
-            return HttpResponseRedirect(reverse('cms-admin:page-detail', kwargs={'pk':page.id}))
+#             # if recover:
+#             #     messages.add_message(request, messages.SUCCESS, _('The content for "%s" has been recovered' % translation.title))
+#             # else:
+#             #     messages.add_message(request, messages.SUCCESS, _('The content for "%s" has been saved' % translation.title))
+#             messages.add_message(request, messages.SUCCESS, _('The meta data for "%s" has been saved' % translation.title))
+#             return HttpResponseRedirect(reverse('cms-admin:page-detail', kwargs={'pk':page.id}))
 
-    template = 'admin/cms/page_metadata_form.html'
+#     template = 'admin/cms/page_metadata_form.html'
 
-    context = {
-        'form': form,
-        'page': page,
-        'translation': translation,
-    }
-    return render(request, template, context)
+#     context = {
+#         'form': form,
+#         'page': page,
+#         'translation': translation,
+#     }
+#     return render(request, template, context)
 
 
 ##############

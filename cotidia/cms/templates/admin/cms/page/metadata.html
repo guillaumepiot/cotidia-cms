@@ -10,7 +10,7 @@
         <thead>
             <tr>
                 <th>{% trans "Language" %}</th>
-                <th>{% trans "Data" %}</th>
+                <th></th>
             </tr>
         </thead>
         <tbody>
@@ -20,21 +20,21 @@
                     <img src="{% static "img/flags/" %}{{page.language_code}}.png" style="width:16px; position: relative; top:3px;"/>
                     {{page.get_language}}
                 </td>
-                <td>
+                <td class="text-right">
                     {% if page.parent %}
                         {% if perms.metadata.change_metadata %}
                             {% get_meta_data page as page_metadata %}
                             {% if page_metadata %}
                                 <a
                                     href="{% url 'metadata-admin:metadata-update' page_metadata.id %}?next={% url 'cms-admin:page-detail' page.parent.id %}"
-                                    class="[ btn btn--small btn--change ]">
+                                    class="[ btn btn--small btn--outline ]">
                                     <span class="fa fa-pen"></span>
                                     {% trans "Edit" %}
                                 </a>
                             {% else %}
                                 <a
                                     href="{% url 'metadata-admin:metadata-add' page.content_type.id page.id %}?next={% url 'cms-admin:page-detail' page.parent.id %}"
-                                    class="[ btn btn--small btn--create ]">
+                                    class="[ btn btn--small btn--outline ]">
                                     <span class="fa fa-plus"></span>
                                     {% trans "Add" %}
                                 </a>

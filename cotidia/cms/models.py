@@ -502,27 +502,6 @@ class PublishTranslation(object):
 
 
 #
-# Base data set model
-#
-class BaseDataSet(models.Model):
-    name = models.CharField(max_length=50)
-    config = models.TextField()
-
-    class Meta:
-        verbose_name = _('Data set')
-        verbose_name_plural = _('Data sets')
-        abstract = True
-
-    def __str__(self):
-        return u'%s' % self.name
-
-    def get_fields(self):
-        try:
-            return json.loads(self.config)
-        except:
-            raise Exception('JSON config could not be loaded from Page mask')
-
-#
 # Base translation model
 #
 class BasePageTranslation(models.Model, PublishTranslation):
@@ -637,8 +616,6 @@ reversion.register(PageTranslation)
 
 class Page(BasePage):
 
-    dataset = models.ForeignKey('PageDataSet', blank=True, null=True, on_delete=models.SET_NULL)
-
     created_by = models.ForeignKey(
         'account.User',
         blank=True,
@@ -673,9 +650,3 @@ class Page(BasePage):
 
 
 reversion.register(Page, follow=["translations"])
-
-
-class PageDataSet(BaseDataSet):
-    class Meta:
-        verbose_name = _('Page data set')
-        verbose_name_plural = _('Page data sets')

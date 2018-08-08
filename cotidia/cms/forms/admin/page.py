@@ -1,11 +1,10 @@
 from django import forms
 from django.utils.translation import ugettext_lazy as _
-from django.urls import reverse
 
 from mptt.forms import TreeNodeChoiceField
 from betterforms.forms import BetterModelForm
 
-from cotidia.cms.models import Page, PageDataSet
+from cotidia.cms.models import Page
 from cotidia.cms.conf import settings
 
 
@@ -89,12 +88,6 @@ class PageUpdateForm(PageAddForm):
         required=False
     )
 
-    dataset = forms.ModelChoiceField(
-        queryset=PageDataSet.objects.all(),
-        required=False,
-        empty_label=""
-    )
-
     redirect_to = TreeNodeChoiceField(
         label="Redirect to an internal page",
         queryset=Page.objects.get_published_originals(),
@@ -117,7 +110,6 @@ class PageUpdateForm(PageAddForm):
             'template',
             'parent',
             'hide_from_nav',
-            'dataset',
             'redirect_to',
             'redirect_to_url',
             'slug'
@@ -131,12 +123,6 @@ class PageUpdateForm(PageAddForm):
                 ),
                 'legend': 'Page information'
             }),
-            ('dataset', {
-                'fields': (
-                    'dataset',
-                ),
-                'legend': 'Dataset'
-            }),
             ('redirect', {
                 'fields': (
                     'redirect_to',
@@ -144,7 +130,6 @@ class PageUpdateForm(PageAddForm):
                 ),
                 'legend': 'Redirect'
             }),
-
             ('options', {
                 'fields': (
                     'home',
@@ -154,15 +139,3 @@ class PageUpdateForm(PageAddForm):
                 'legend': 'Options'
             }),
         )
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        dataset_url = reverse("cms-admin:pagedataset-list")
-        self.fields["dataset"].help_text = (
-            "Choose a dataset to add more custom data to the page. "
-            "<a href=\"{}\">Manage datasets</a>"
-        ).format(dataset_url)
-
-
-
-
