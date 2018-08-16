@@ -2139,6 +2139,9 @@ ContentEdit.BackgroundImage = (function(superClass) {
         editor = ContentTools.EditorApp.get();
         modal = new ContentTools.ModalUI(transparent = false, allowScrolling = false);
         dialog = new ContentTools.ImageDialog();
+        dialog.addEventListener('imageuploader.mount', function(e) {
+          return dialog._domInput.setAttribute('accept', 'image/*,video/*');
+        });
         dialog.addEventListener('cancel', function() {
           modal.hide();
           return dialog.hide();

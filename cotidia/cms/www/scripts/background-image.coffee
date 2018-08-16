@@ -92,6 +92,10 @@ class ContentEdit.BackgroundImage extends ContentEdit.Element
             dialog = new ContentTools.ImageDialog()
 
             # Support cancelling the dialog
+            dialog.addEventListener 'imageuploader.mount', (e) =>
+                dialog._domInput.setAttribute('accept', 'image/*,video/*');
+
+            # Support cancelling the dialog
             dialog.addEventListener 'cancel', () =>
                 modal.hide()
                 dialog.hide()
