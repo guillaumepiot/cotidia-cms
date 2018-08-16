@@ -57,6 +57,7 @@ class PageTitleUpdate(AdminChildUpdateView):
     form_class = PageTitleUpdateForm
     parent_model = Page
     parent_model_foreign_key = "parent"
+    template_name = 'admin/cms/page/child_form.html'
 
     def get_lang(self, *args, **kwargs):
         lang = kwargs["lang"]
