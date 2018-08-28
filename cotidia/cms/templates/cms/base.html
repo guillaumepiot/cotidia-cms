@@ -11,7 +11,7 @@
         {% include "cms/partials/contenttools/head.html" %}
         {% block extra_head %}{% endblock extra_head %}
     </head>
-    <body class="{% if request.is_preview %}preview{% endif %}">
+    <body class="{% if request.is_preview %}preview{% endif %} {% block body_class %}{% endblock %}">
         {% block header %}
             {% include "cms/partials/header.html" %}
         {% endblock header %}
