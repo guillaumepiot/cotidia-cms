@@ -1,6 +1,7 @@
 {% load staticfiles i18n cms_tags %}<!doctype html>
 <html lang="en">
     <head>
+        {% include "cms/partials/ga.html" %}
         <title>{% block title %}No title set{% endblock %}</title>
         <meta charset="utf-8">
         <meta http-equiv="x-ua-compatible" content="ie=edge">
@@ -23,7 +24,6 @@
         <script type="text/javascript" src="{% static "js/menu.js" %}"></script>
         {% endblock footer_scripts %}
         {% include "cms/partials/contenttools/foot.html" %}
-        {% include "cms/partials/ga.html" %}
         <noscript id="deferred-styles">
             {% block defer_styles %}{% endblock %}
         </noscript>
