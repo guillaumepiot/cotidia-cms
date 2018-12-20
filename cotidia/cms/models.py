@@ -11,24 +11,25 @@ from mptt.models import MPTTModel, TreeForeignKey
 from mptt.managers import TreeManager
 
 from cotidia.cms.conf import settings
+from cotidia.core.models import BaseModel
 
-TARGET_CHOICES = (
-    ('_self', 'the same window'),
-    ('_blank', 'a new window'),
-)
+TARGET_CHOICES = (("_self", "the same window"), ("_blank", "a new window"))
 
 
 class BasePageManager(TreeManager):
-
     def get_published_live(self):
         return self.model.objects.filter(published=True).exclude(published_from=None)
 
     def get_published_translation_live(self, language_code=False):
         translation_model = self.model.CMSMeta.translation_class
         if language_code:
-            return translation_model.objects.filter(parent__published=True, language_code=language_code).exclude(parent__published_from=None)
+            return translation_model.objects.filter(
+                parent__published=True, language_code=language_code
+            ).exclude(parent__published_from=None)
         else:
-            return translation_model.objects.filter(parent__published=True).exclude(parent__published_from=None)
+            return translation_model.objects.filter(parent__published=True).exclude(
+                parent__published_from=None
+            )
 
     def get_published_originals(self):
         return self.model.objects.filter(published=True, published_from=None)
@@ -39,56 +40,62 @@ class BasePageManager(TreeManager):
 
 class BasePage(MPTTModel):
     home = models.BooleanField(default=False)
-    published = models.BooleanField(_('Active'), default=False)
+    published = models.BooleanField(_("Active"), default=False)
     approval_needed = models.BooleanField(default=False)
-    template = models.CharField(max_length=250, choices=[], default='cms/page.html')
+    template = models.CharField(max_length=250, choices=[], default="cms/page.html")
 
     # Display title
     display_title = models.CharField(max_length=250, verbose_name="Display title")
 
     # MPTT parent
-    parent = TreeForeignKey('self', null=True, blank=True, related_name='children', on_delete=models.CASCADE)
+    parent = TreeForeignKey(
+        "self", null=True, blank=True, related_name="children", on_delete=models.CASCADE
+    )
 
     # Publish version key
-    published_from = models.ForeignKey('self', blank=True, null=True, on_delete=models.CASCADE)
+    published_from = models.ForeignKey(
+        "self", blank=True, null=True, on_delete=models.CASCADE
+    )
 
     # A unique identifier
-    slug = models.SlugField(max_length=60, verbose_name="Unique Page Identifier", blank=True, null=True)
+    slug = models.SlugField(
+        max_length=60, verbose_name="Unique Page Identifier", blank=True, null=True
+    )
 
     # Publishing
     publish = models.BooleanField(
-        _('Publish this page. The page will also be set to Active.'),
-        default=False)
+        _("Publish this page. The page will also be set to Active."), default=False
+    )
 
-    approve = models.BooleanField(
-        _('Submit for approval'),
-        default=False)
+    approve = models.BooleanField(_("Submit for approval"), default=False)
 
     date_created = models.DateTimeField(auto_now_add=True)
     date_updated = models.DateTimeField(auto_now=True)
 
     # Optional redirect
     redirect_to = models.ForeignKey(
-        'self',
+        "self",
         blank=True,
         null=True,
-        related_name='redirect_to_page',
-        on_delete=models.SET_NULL
+        related_name="redirect_to_page",
+        on_delete=models.SET_NULL,
     )
 
     redirect_to_url = models.URLField(
-        _('Redirect to URL'),
+        _("Redirect to URL"),
         blank=True,
-        help_text=_('Redirect this page to a given URL')
+        help_text=_("Redirect this page to a given URL"),
     )
 
-    target = models.CharField(_('Open page in'), max_length=50, choices=TARGET_CHOICES, default='_self')
+    target = models.CharField(
+        _("Open page in"), max_length=50, choices=TARGET_CHOICES, default="_self"
+    )
 
     # Navigation
-    hide_from_nav = models.BooleanField(_('Hide from navigation'), default=False)
+    hide_from_nav = models.BooleanField(_("Hide from navigation"), default=False)
 
     # Related pages / can be used for reading more about the same subject
-    related_pages = models.ManyToManyField('self', blank=True)
+    related_pages = models.ManyToManyField("self", blank=True)
 
     objects = BasePageManager()
 
@@ -100,7 +107,7 @@ class BasePage(MPTTModel):
         templates = settings.CMS_PAGE_TEMPLATES
         # Must be provided on model extension
         # translation_class = PageTranslation
-        model_url_name = 'cms:page'
+        model_url_name = "cms:page"
 
     def __str__(self):
         return self.display_title
@@ -144,13 +151,13 @@ class BasePage(MPTTModel):
 
     def set_dynamic_attributes(self, translation):
         # Go through each fieldset
-        if hasattr(self, 'dataset') and self.dataset:
+        if hasattr(self, "dataset") and self.dataset:
             for fieldset in self.dataset.get_fields():
-                fieldset_id = slugify(fieldset['fieldset']).replace('-', '_')
-                for field in fieldset['fields']:
+                fieldset_id = slugify(fieldset["fieldset"]).replace("-", "_")
+                for field in fieldset["fields"]:
 
                     # Get the name of the field
-                    field_name = '%s_%s' % (fieldset_id, field['name'])
+                    field_name = "%s_%s" % (fieldset_id, field["name"])
                     # Assign the value of the field to the translation object
                     setattr(translation, field_name, translation.get_attr(field_name))
 
@@ -158,14 +165,18 @@ class BasePage(MPTTModel):
         from django.utils.translation import get_language
 
         try:
-            translation = self.CMSMeta.translation_class.objects.get(language_code=get_language(), parent=self)
+            translation = self.CMSMeta.translation_class.objects.get(
+                language_code=get_language(), parent=self
+            )
         except:
             #
             # Check if we want to return the default language translation
             # if the current language one is not available
             #
             if settings.CMS_DEFAULT_LANGUAGE_FALLBACK:
-                translation = self.CMSMeta.translation_class.objects.get(language_code=settings.LANGUAGE_CODE, parent=self)
+                translation = self.CMSMeta.translation_class.objects.get(
+                    language_code=settings.LANGUAGE_CODE, parent=self
+                )
             else:
                 return None
 
@@ -199,7 +210,20 @@ class BasePage(MPTTModel):
         cls = self.__class__
 
         # Fields to ignore in duplication
-        ignore_fields = ['id', 'approval_needed', 'parent_id', 'published_from_id', 'order_id', 'publish', 'approve', 'lft', 'rght', 'tree_id', 'level', 'page_ptr_id']
+        ignore_fields = [
+            "id",
+            "approval_needed",
+            "parent_id",
+            "published_from_id",
+            "order_id",
+            "publish",
+            "approve",
+            "lft",
+            "rght",
+            "tree_id",
+            "level",
+            "page_ptr_id",
+        ]
 
         # Check if the page exist already
         try:
@@ -243,17 +267,30 @@ class BasePage(MPTTModel):
         cls = self.__class__
 
         # Fields to ignore in duplication
-        ignore_fields = ['id', 'published', 'approval_needed', 'published_from_id', 'order_id', 'publish', 'approve', 'lft', 'rght', 'tree_id', 'level', 'page_ptr_id']
+        ignore_fields = [
+            "id",
+            "published",
+            "approval_needed",
+            "published_from_id",
+            "order_id",
+            "publish",
+            "approve",
+            "lft",
+            "rght",
+            "tree_id",
+            "level",
+            "page_ptr_id",
+        ]
 
         obj = cls()
 
         # Update fields which are not ignored
         for field in cls._meta.fields:
             if field.attname not in ignore_fields:
-                if field.attname == 'slug':
-                    obj.__dict__[field.attname] = self.__dict__[field.attname] + '-copy'
-                elif field.attname == 'display_title':
-                    obj.__dict__[field.attname] = self.__dict__[field.attname] + ' Copy'
+                if field.attname == "slug":
+                    obj.__dict__[field.attname] = self.__dict__[field.attname] + "-copy"
+                elif field.attname == "display_title":
+                    obj.__dict__[field.attname] = self.__dict__[field.attname] + " Copy"
                 else:
                     obj.__dict__[field.attname] = self.__dict__[field.attname]
 
@@ -266,11 +303,8 @@ class BasePage(MPTTModel):
         return obj
 
     def get_absolute_url(
-            self,
-            current_language=False,
-            urlargs=False,
-            preview=False,
-            parent_only=False):
+        self, current_language=False, urlargs=False, preview=False, parent_only=False
+    ):
 
         from django.utils.translation import get_language
 
@@ -282,16 +316,16 @@ class BasePage(MPTTModel):
         else:
             prefix = False
 
-        if prefix and not prefix[len(prefix) - 1] == '/':
-            prefix = prefix + '/'
+        if prefix and not prefix[len(prefix) - 1] == "/":
+            prefix = prefix + "/"
 
         if self.home:
             if prefix:
-                url = reverse('cms-public:home', prefix=prefix)
+                url = reverse("cms-public:home", prefix=prefix)
             else:
-                url = reverse('cms-public:home')
+                url = reverse("cms-public:home")
         else:
-            slug = ''
+            slug = ""
             # Get ancestor from original
             if self.get_published():
                 ancestors = self.get_ancestors()
@@ -303,24 +337,33 @@ class BasePage(MPTTModel):
             # Go through the ancestor to get slugs
             for ancestor in ancestors:
                 # Get the ancestor's slugs
-                translation = self.CMSMeta.translation_class.objects.filter(parent=ancestor.id, language_code=current_language)
+                translation = self.CMSMeta.translation_class.objects.filter(
+                    parent=ancestor.id, language_code=current_language
+                )
 
                 # If no translation available in the current language
                 if translation.count() > 0:
                     translation = translation[0]
                 else:
-                    translation = self.CMSMeta.translation_class.objects.get(parent=ancestor.id, language_code=settings.CMS_DEFAULT_LANGUAGE[0])
+                    translation = self.CMSMeta.translation_class.objects.get(
+                        parent=ancestor.id,
+                        language_code=settings.CMS_DEFAULT_LANGUAGE[0],
+                    )
 
                 # Only add slug if the ansector is not home
                 if not ancestor.home:
                     slug = "%s%s/" % (slug, translation.slug)
 
-            translation = self.CMSMeta.translation_class.objects.filter(parent=self.id, language_code=current_language)
+            translation = self.CMSMeta.translation_class.objects.filter(
+                parent=self.id, language_code=current_language
+            )
 
             if translation.count() > 0:
                 translation = translation[0]
             else:
-                translation = self.CMSMeta.translation_class.objects.filter(parent=self.id, language_code=settings.CMS_DEFAULT_LANGUAGE[0]).first()
+                translation = self.CMSMeta.translation_class.objects.filter(
+                    parent=self.id, language_code=settings.CMS_DEFAULT_LANGUAGE[0]
+                ).first()
 
             if not translation:
                 return None
@@ -328,7 +371,7 @@ class BasePage(MPTTModel):
             slug = "%s%s" % (slug, translation.slug)
 
             # Add extra prefixes if required
-            default_args = {'slug': slug}
+            default_args = {"slug": slug}
             if urlargs:
                 reverse_args = default_args.update(urlargs)
 
@@ -336,7 +379,9 @@ class BasePage(MPTTModel):
 
             # Create the full url based on the pattern
             if prefix:
-                url = reverse(self.CMSMeta.model_url_name, kwargs=reverse_args, prefix=prefix)
+                url = reverse(
+                    self.CMSMeta.model_url_name, kwargs=reverse_args, prefix=prefix
+                )
             else:
                 url = reverse(self.CMSMeta.model_url_name, kwargs=reverse_args)
 
@@ -345,15 +390,15 @@ class BasePage(MPTTModel):
         #
         if current_language:
             available_languages = [lang[0] for lang in settings.CMS_LANGUAGES]
-            if url.split('/')[1] in available_languages:
-                slugs = url.split('/')
+            if url.split("/")[1] in available_languages:
+                slugs = url.split("/")
                 slugs[1] = current_language
                 url = "/".join(slugs)
 
         return url
 
     def get_admin_url(self):
-        return reverse(self.CMSMeta.admin_url_name, kwargs={'pk': self.id})
+        return reverse(self.CMSMeta.admin_url_name, kwargs={"pk": self.id})
 
     def get_breadcrumbs(self):
         if self.home:
@@ -401,9 +446,7 @@ class BasePage(MPTTModel):
     @property
     def has_published_version(self):
         try:
-            return bool(self.__class__.objects.get(
-                published_from=self, published=True
-            ))
+            return bool(self.__class__.objects.get(published_from=self, published=True))
         except:
             return False
 
@@ -418,7 +461,9 @@ class BasePage(MPTTModel):
         for lang in settings.CMS_LANGUAGES:
 
             try:
-                page = self.CMSMeta.translation_class.objects.get(parent=self, language_code=lang[0])
+                page = self.CMSMeta.translation_class.objects.get(
+                    parent=self, language_code=lang[0]
+                )
             except self.CMSMeta.translation_class.DoesNotExist:
                 page = self.CMSMeta.translation_class(language_code=lang[0])
 
@@ -463,15 +508,14 @@ class PublishTranslation(object):
         cls = self.__class__
 
         # Fields to ignore in duplication
-        ignore_fields = ['id', 'parent_id', ]
+        ignore_fields = ["id", "parent_id"]
 
         published_page = parent_cls.objects.filter(published_from=self.parent)
         if len(published_page) > 0:
             published_page = published_page[0]
             try:
                 obj = cls.objects.get(
-                    language_code=self.language_code,
-                    parent=published_page
+                    language_code=self.language_code, parent=published_page
                 )
             except:
                 obj = cls()
@@ -490,7 +534,7 @@ class PublishTranslation(object):
         obj = cls()
 
         # Fields to ignore in duplication
-        ignore_fields = ['id', 'parent_id', ]
+        ignore_fields = ["id", "parent_id"]
 
         # Update fields which are not ignored
         for field in cls._meta.fields:
@@ -504,34 +548,33 @@ class PublishTranslation(object):
 #
 # Base translation model
 #
-class BasePageTranslation(models.Model, PublishTranslation):
-    title = models.CharField(_('Page title'), max_length=100)
+class BasePageTranslation(BaseModel, PublishTranslation):
+    title = models.CharField(_("Page title"), max_length=100)
     slug = models.SlugField(max_length=100)
     language_code = models.CharField(
-        _('language'), max_length=7, choices=settings.CMS_LANGUAGES,
-        blank=False, null=False
+        _("language"),
+        max_length=7,
+        choices=settings.CMS_LANGUAGES,
+        blank=False,
+        null=False,
     )
     content = models.TextField(blank=True)
     regions = models.TextField(blank=True)
     images = models.TextField(blank=True)
 
-    date_created = models.DateTimeField(auto_now_add=True)
-    date_updated = models.DateTimeField(auto_now=True)
-
     class Meta:
-        unique_together = ('parent', 'language_code')
+        unique_together = ("parent", "language_code")
         abstract = True
         if len(settings.CMS_LANGUAGES) > 1:
-            verbose_name = _('Translation')
-            verbose_name_plural = _('Translations')
+            verbose_name = _("Translation")
+            verbose_name_plural = _("Translations")
         else:
-            verbose_name = _('Content')
-            verbose_name_plural = _('Content')
+            verbose_name = _("Content")
+            verbose_name_plural = _("Content")
 
     def __str__(self):
-        return u'{} - {}'.format(
-            self.title,
-            dict(settings.CMS_LANGUAGES).get(self.language_code)
+        return u"{} - {}".format(
+            self.title, dict(settings.CMS_LANGUAGES).get(self.language_code)
         )
 
     def get_language(self):
@@ -549,39 +592,35 @@ class BasePageTranslation(models.Model, PublishTranslation):
         try:
             value = self.get_content[attr_name]
             # In the case of page link field, we need to return the url
-            if hasattr(value, 'url'):
-                return value['url']
+            if hasattr(value, "url"):
+                return value["url"]
             return value
         except:
-            return ''
+            return ""
 
     def translation_edit_url(self):
         return reverse(
-            'admin:add_edit_translation_' + self.parent._meta.model_name,
-            kwargs={
-                'page_id': self.parent.id,
-                'language_code': self.language_code
-            }
+            "admin:add_edit_translation_" + self.parent._meta.model_name,
+            kwargs={"page_id": self.parent.id, "language_code": self.language_code},
         )
 
     def translation_revision_url(self):
         return reverse(
-            'admin:translation_revision_' + self.parent._meta.model_name,
+            "admin:translation_revision_" + self.parent._meta.model_name,
             kwargs={
-                'page_id': self.parent.id,
-                'language_code': self.language_code,
-                'translation_id': self.id
-            }
+                "page_id": self.parent.id,
+                "language_code": self.language_code,
+                "translation_id": self.id,
+            },
         )
 
     def translation_recover_url(self):
-        return '{}translation/{}/{}/recover'.format(
-            reverse('admin:{}_{}_changelist').format(
-                self.parent._meta.app_label,
-                self.parent._meta.model_name
+        return "{}translation/{}/{}/recover".format(
+            reverse("admin:{}_{}_changelist").format(
+                self.parent._meta.app_label, self.parent._meta.model_name
             ),
             self.parent.id,
-            self.language_code
+            self.language_code,
         )
 
     def get_absolute_url(self):
@@ -592,24 +631,30 @@ class BasePageTranslation(models.Model, PublishTranslation):
 # Create the working models #
 #############################
 
+
 class PageTranslation(BasePageTranslation):
-    parent = models.ForeignKey('Page', related_name='translations', on_delete=models.CASCADE)
+    parent = models.ForeignKey(
+        "Page", related_name="translations", on_delete=models.CASCADE
+    )
 
     created_by = models.ForeignKey(
-        'account.User',
+        "account.User",
         blank=True,
         null=True,
-        related_name='translation_created_by',
-        on_delete=models.SET_NULL
+        related_name="translation_created_by",
+        on_delete=models.SET_NULL,
     )
 
     updated_by = models.ForeignKey(
-        'account.User',
+        "account.User",
         blank=True,
         null=True,
-        related_name='translation_updated_by',
-        on_delete=models.SET_NULL
+        related_name="translation_updated_by",
+        on_delete=models.SET_NULL,
     )
+
+    parent_field = "parent"
+
 
 reversion.register(PageTranslation)
 
@@ -617,27 +662,25 @@ reversion.register(PageTranslation)
 class Page(BasePage):
 
     created_by = models.ForeignKey(
-        'account.User',
+        "account.User",
         blank=True,
         null=True,
-        related_name='created_by',
-        on_delete=models.SET_NULL
+        related_name="created_by",
+        on_delete=models.SET_NULL,
     )
 
     updated_by = models.ForeignKey(
-        'account.User',
+        "account.User",
         blank=True,
         null=True,
-        related_name='updated_by',
-        on_delete=models.SET_NULL
+        related_name="updated_by",
+        on_delete=models.SET_NULL,
     )
 
     class Meta:
-        verbose_name = _('Page')
-        verbose_name_plural = _('Pages')
-        permissions = (
-            ("publish_page", "Can publish page"),
-        )
+        verbose_name = _("Page")
+        verbose_name_plural = _("Pages")
+        permissions = (("publish_page", "Can publish page"),)
 
     class CMSMeta:
         # A tuple of templates paths and names
@@ -645,8 +688,8 @@ class Page(BasePage):
         # Indicate which Translation class to use for content
         translation_class = PageTranslation
         # Provide the url name to create a url for that model
-        model_url_name = 'cms-public:page'
-        admin_url_name = 'cms-admin:page-detail'
+        model_url_name = "cms-public:page"
+        admin_url_name = "cms-admin:page-detail"
 
 
 reversion.register(Page, follow=["translations"])
