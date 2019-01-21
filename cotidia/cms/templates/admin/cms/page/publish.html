@@ -1,0 +1,45 @@
+{% extends "admin/generic/page/confirm_delete.html" %}
+{% load i18n admin_list_tags %}
+
+{% block title %}
+    {% trans "Publish article" %}
+{% endblock title %}
+
+{% block page_content %}
+<div class="content__body">
+    <div class="content__inner">
+        <div class="content__delete">
+            <fieldset>
+                <legend>{% blocktrans with verbose_name|lower as verbose_name %}
+                    Are you sure to unpublish the following page?
+                    {% endblocktrans %}
+                </legend>
+                <div class="form__row">
+                    <p>
+                        {{object}}
+                    </p>
+                </div>
+            </fieldset>
+        </div>
+    </div>
+</div>
+{% block form_actions %}
+<form method="post" action="">
+    {% csrf_token %}
+    <div class="content__foot">
+        <div class="content__inner content-foot">
+            <div class="content-foot__left">
+                <button type="submit" class="btn btn--primary">
+                    {% trans "Confirm publish" %}
+                </button>
+            </div>
+            <div class="content-foot__right">
+                <a href="{% if next %}{{next}}{% else %}{% get_admin_url app_label model_name 'detail' object %}{% endif %}" class="btn btn--cancel pull-right">
+                    {% trans "Cancel" %}
+                </a>
+            </div>
+        </div>
+    </div>
+</form>
+{% endblock form_actions %}
+{% endblock page_content %}

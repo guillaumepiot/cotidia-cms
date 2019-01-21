@@ -16,36 +16,31 @@ from cotidia.admin.views import (
     AdminDeleteView,
 )
 from cotidia.cms.models import Page
-from cotidia.cms.forms.admin.page import (
-    PageAddForm,
-    PageUpdateForm
-)
+from cotidia.cms.forms.admin.page import PageAddForm, PageUpdateForm
 
 
 ########
 # Page #
 ########
 
+
 class PageFilter(django_filters.FilterSet):
-    display_title = django_filters.CharFilter(
-        lookup_expr="icontains",
-        label="Search"
-    )
+    display_title = django_filters.CharFilter(lookup_expr="icontains", label="Search")
 
     class Meta:
         model = Page
-        fields = ['display_title']
+        fields = ["display_title"]
 
 
 class PageList(AdminListView):
     model = Page
     columns = (
-        ('Title', 'display_title'),
-        ('URL', 'get_absolute_url'),
-        ('Status', 'status'),
-        ('Show in menu', 'hide_from_nav'),
-        ('Template', 'template_label'),
-        ('Order', 'order'),
+        ("Title", "display_title"),
+        ("URL", "get_absolute_url"),
+        ("Status", "status"),
+        ("Show in menu", "hide_from_nav"),
+        ("Template", "template_label"),
+        ("Order", "order"),
     )
     template_type = "fluid"
     filterset = PageFilter
@@ -57,10 +52,7 @@ class PageList(AdminListView):
         queryset = Page.objects.get_originals()
 
         if self.filterset:
-            self.filter = self.filterset(
-                self.request.GET,
-                queryset=queryset
-            )
+            self.filter = self.filterset(self.request.GET, queryset=queryset)
             queryset = self.filter.qs
 
         return queryset
@@ -79,64 +71,43 @@ class PageList(AdminListView):
 class PageDetail(AdminDetailView):
     model = Page
     fieldsets = [
-        {
-            "legend": "Content",
-            "template_name": "admin/cms/page/content.html"
-        },
+        {"legend": "Content", "template_name": "admin/cms/page/content.html"},
         {
             "legend": "Settings",
             "fields": [
                 [
-                    {
-                        "label": "Display title",
-                        "field": "display_title",
-                    },
-                    {
-                        "label": "Template",
-                        "field": "template",
-                    }
+                    {"label": "Display title", "field": "display_title"},
+                    {"label": "Template", "field": "template"},
                 ],
                 [
-                    {
-                        "label": "Home",
-                        "field": "home",
-                    },
-                    {
-                        "label": "Hide from navigation",
-                        "field": "hide_from_nav",
-                    }
+                    {"label": "Home", "field": "home"},
+                    {"label": "Hide from navigation", "field": "hide_from_nav"},
                 ],
-                {
-                    "label": "Unique page identifier",
-                    "field": "slug",
-                },
-            ]
+                {"label": "Unique page identifier", "field": "slug"},
+            ],
         },
         {
             "legend": "Redirect",
             "fields": [
                 [
-                    {
-                        "label": "Redirect to an internal page",
-                        "field": "redirect_to",
-                    },
-                    {
-                        "label": "Redirect to a URL",
-                        "field": "redirect_to_url",
-                    }
+                    {"label": "Redirect to an internal page", "field": "redirect_to"},
+                    {"label": "Redirect to a URL", "field": "redirect_to_url"},
                 ]
-            ]
-        }
+            ],
+        },
     ]
 
     def get_fieldsets(self):
         fieldsets = self.fieldsets.copy()
 
         if settings.CMS_ENABLE_META_DATA:
-            fieldsets.insert(1, {
-                "legend": "Meta data",
-                "template_name": "admin/cms/page/metadata.html"
-            })
+            fieldsets.insert(
+                1,
+                {
+                    "legend": "Meta data",
+                    "template_name": "admin/cms/page/metadata.html",
+                },
+            )
 
         return fieldsets
 
@@ -158,8 +129,8 @@ class PageUpdate(AdminUpdateView):
         return response
 
     def get_success_url(self):
-        messages.success(self.request, _('The page has been updated.'))
-        return reverse('cms-admin:page-detail', kwargs={'pk': self.object.id})
+        messages.success(self.request, _("The page has been updated."))
+        return reverse("cms-admin:page-detail", kwargs={"pk": self.object.id})
 
 
 class PageDelete(AdminDeleteView):
@@ -170,12 +141,13 @@ class PageDelete(AdminDeleteView):
 # Publishing #
 ##############
 
-@permission_required('cms.publish_page', settings.ACCOUNT_ADMIN_LOGIN_URL)
+
+@permission_required("cms.publish_page", settings.ACCOUNT_ADMIN_LOGIN_URL)
 def PagePublish(request, page_id):
 
     page = get_object_or_404(Page, id=page_id)
 
-    if request.method == 'POST':
+    if request.method == "POST":
         if page.get_translations():
 
             page.approval_needed = False
@@ -184,22 +156,25 @@ def PagePublish(request, page_id):
             page.publish_version()
             page.publish_translations()
 
-            messages.success(request, _('The page has been published.'))
+            messages.success(request, _("The page has been published."))
 
         return HttpResponseRedirect(
-            reverse('cms-admin:page-detail', kwargs={'pk': page.id}))
+            reverse("cms-admin:page-detail", kwargs={"pk": page.id})
+        )
 
-    template = 'admin/cms/page/publish_form.html'
+    template = "admin/cms/page/publish.html"
 
-    return render(request, template, {'page': page})
+    return render(
+        request, template, {"object": page, "app_label": "cms", "model_name": "page"}
+    )
 
 
-@permission_required('cms.publish_page', settings.ACCOUNT_ADMIN_LOGIN_URL)
+@permission_required("cms.publish_page", settings.ACCOUNT_ADMIN_LOGIN_URL)
 def PageUnpublish(request, page_id):
 
     page = get_object_or_404(Page, id=page_id)
 
-    if request.method == 'POST':
+    if request.method == "POST":
         if page.get_translations():
 
             page.approval_needed = False
@@ -207,11 +182,14 @@ def PageUnpublish(request, page_id):
             page.save()
             page.unpublish_version()
 
-            messages.success(request, _('The page has been unpublished.'))
+            messages.success(request, _("The page has been unpublished."))
 
         return HttpResponseRedirect(
-            reverse('cms-admin:page-detail', kwargs={'pk': page.id}))
+            reverse("cms-admin:page-detail", kwargs={"pk": page.id})
+        )
 
-    template = 'admin/cms/page/unpublish_form.html'
+    template = "admin/cms/page/unpublish.html"
 
-    return render(request, template, {'page': page})
+    return render(
+        request, template, {"object": page, "app_label": "cms", "model_name": "page"}
+    )

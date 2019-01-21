@@ -508,7 +508,7 @@ class PublishTranslation(object):
         cls = self.__class__
 
         # Fields to ignore in duplication
-        ignore_fields = ["id", "parent_id"]
+        ignore_fields = ["id", "parent_id", "uuid"]
 
         published_page = parent_cls.objects.filter(published_from=self.parent)
         if len(published_page) > 0:
