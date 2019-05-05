@@ -6,11 +6,13 @@ API = require './api.coffee'
 ImageUploader = require './image-uploader.coffee'
 BackgroundImage = require './background-image.coffee'
 Underline = require './underline.coffee'
+AudioDialog = require './audio.coffee'
 
 onLoad = ->
 
     ContentTools.IMAGE_UPLOADER = ImageUploader
-    ContentTools.DEFAULT_TOOLS[1].push('underline')
+    ContentTools.DEFAULT_TOOLS[0].push('underline')
+    ContentTools.DEFAULT_TOOLS[0].push('audio')
 
     editor = ContentTools.EditorApp.get()
 

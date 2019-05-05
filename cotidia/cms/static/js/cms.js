@@ -2079,6 +2079,353 @@ module.exports = API;
 var extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
   hasProp = {}.hasOwnProperty;
 
+ContentEdit.Audio = (function(superClass) {
+  extend(Audio, superClass);
+
+  function Audio(tagName, attributes, sources) {
+    var size;
+    if (sources == null) {
+      sources = [];
+    }
+    Audio.__super__.constructor.call(this, tagName, attributes);
+    this.sources = sources;
+    size = this.size();
+    this._aspectRatio = size[1] / size[0];
+  }
+
+  Audio.prototype.cssTypeName = function() {
+    return 'video';
+  };
+
+  Audio.prototype.type = function() {
+    return 'Video';
+  };
+
+  Audio.prototype.typeName = function() {
+    return 'Video';
+  };
+
+  Audio.prototype._title = function() {
+    var src;
+    src = '';
+    if (this.attr('src')) {
+      src = this.attr('src');
+    } else {
+      if (this.sources.length) {
+        src = this.sources[0]['src'];
+      }
+    }
+    if (!src) {
+      src = 'No video source set';
+    }
+    if (src.length > 80) {
+      src = src.substr(0, 80) + '...';
+    }
+    return src;
+  };
+
+  Audio.prototype.createDraggingDOMElement = function() {
+    var helper;
+    if (!this.isMounted()) {
+      return;
+    }
+    helper = Audio.__super__.createDraggingDOMElement.call(this);
+    helper.innerHTML = this._title();
+    return helper;
+  };
+
+  Audio.prototype.html = function(indent) {
+    var attributes, i, le, len, ref, source, sourceStrings;
+    if (indent == null) {
+      indent = '';
+    }
+    le = ContentEdit.LINE_ENDINGS;
+    if (this.tagName() === 'video') {
+      sourceStrings = [];
+      ref = this.sources;
+      for (i = 0, len = ref.length; i < len; i++) {
+        source = ref[i];
+        attributes = ContentEdit.attributesToString(source);
+        sourceStrings.push("" + indent + ContentEdit.INDENT + "<source " + attributes + ">");
+      }
+      return (indent + "<video" + (this._attributesToString()) + ">" + le) + sourceStrings.join(le) + ("" + le + indent + "</video>");
+    } else {
+      return (indent + "<" + this._tagName + (this._attributesToString()) + ">") + ("</" + this._tagName + ">");
+    }
+  };
+
+  Audio.prototype.mount = function() {
+    var style;
+    this._domElement = document.createElement('div');
+    if (this.a && this.a['class']) {
+      this._domElement.setAttribute('class', this.a['class']);
+    } else if (this._attributes['class']) {
+      this._domElement.setAttribute('class', this._attributes['class']);
+    }
+    style = this._attributes['style'] ? this._attributes['style'] : '';
+    if (this._attributes['width']) {
+      style += "width:" + this._attributes['width'] + "px;";
+    }
+    if (this._attributes['height']) {
+      style += "height:" + this._attributes['height'] + "px;";
+    }
+    this._domElement.setAttribute('style', style);
+    this._domElement.setAttribute('data-ce-title', this._title());
+    return Audio.__super__.mount.call(this);
+  };
+
+  Audio.prototype.unmount = function() {
+    var domElement, wrapper;
+    if (this.isFixed()) {
+      wrapper = document.createElement('div');
+      wrapper.innerHTML = this.html();
+      domElement = wrapper.querySelector('iframe');
+      this._domElement.parentNode.replaceChild(domElement, this._domElement);
+      this._domElement = domElement;
+    }
+    return Audio.__super__.unmount.call(this);
+  };
+
+  Audio.droppers = {
+    'Image': ContentEdit.Element._dropBoth,
+    'PreText': ContentEdit.Element._dropBoth,
+    'Static': ContentEdit.Element._dropBoth,
+    'Text': ContentEdit.Element._dropBoth,
+    'Video': ContentEdit.Element._dropBoth
+  };
+
+  Audio.placements = ['above', 'below', 'left', 'right', 'center'];
+
+  Audio.fromDOMElement = function(domElement) {
+    var c, childNode, childNodes, i, len, sources;
+    childNodes = (function() {
+      var i, len, ref, results;
+      ref = domElement.childNodes;
+      results = [];
+      for (i = 0, len = ref.length; i < len; i++) {
+        c = ref[i];
+        results.push(c);
+      }
+      return results;
+    })();
+    sources = [];
+    for (i = 0, len = childNodes.length; i < len; i++) {
+      childNode = childNodes[i];
+      if (childNode.nodeType === 1 && childNode.tagName.toLowerCase() === 'source') {
+        sources.push(this.getDOMElementAttributes(childNode));
+      }
+    }
+    return new this(domElement.tagName, this.getDOMElementAttributes(domElement), sources);
+  };
+
+  return Audio;
+
+})(ContentEdit.ResizableElement);
+
+ContentEdit.TagNames.get().register(ContentEdit.Video, 'iframe', 'video');
+
+ContentTools.Tools.Audio = (function(superClass) {
+  extend(Audio, superClass);
+
+  function Audio() {
+    return Audio.__super__.constructor.apply(this, arguments);
+  }
+
+  ContentTools.ToolShelf.stow(Audio, 'audio');
+
+  Audio.label = 'Audio';
+
+  Audio.icon = 'audio';
+
+  Audio.canApply = function(element, selection) {
+    return !element.isFixed();
+  };
+
+  Audio.apply = function(element, selection, callback) {
+    var app, dialog, modal, toolDetail;
+    toolDetail = {
+      'tool': this,
+      'element': element,
+      'selection': selection
+    };
+    if (!this.dispatchEditorEvent('tool-apply', toolDetail)) {
+      return;
+    }
+    if (element.storeState) {
+      element.storeState();
+    }
+    app = ContentTools.EditorApp.get();
+    modal = new ContentTools.ModalUI();
+    dialog = new ContentTools.AudioDialog();
+    dialog.addEventListener('cancel', (function(_this) {
+      return function() {
+        modal.hide();
+        dialog.hide();
+        if (element.restoreState) {
+          element.restoreState();
+        }
+        return callback(false);
+      };
+    })(this));
+    dialog.addEventListener('save', (function(_this) {
+      return function(ev) {
+        var applied, audio, index, node, ref, regex, src, url;
+        url = ev.detail().url;
+        if (url) {
+          regex = /<iframe.*?src="(.*?)"/;
+          src = regex.exec(url)[1];
+          audio = new ContentEdit.Audio('iframe', {
+            'frameborder': 0,
+            'height': ContentTools.DEFAULT_VIDEO_HEIGHT,
+            'src': src,
+            'width': "100%"
+          });
+          ref = _this._insertAt(element), node = ref[0], index = ref[1];
+          node.parent().attach(audio, index);
+          audio.focus();
+        } else {
+          if (element.restoreState) {
+            element.restoreState();
+          }
+        }
+        modal.hide();
+        dialog.hide();
+        applied = url !== '';
+        callback(applied);
+        if (applied) {
+          return _this.dispatchEditorEvent('tool-applied', toolDetail);
+        }
+      };
+    })(this));
+    app.attach(modal);
+    app.attach(dialog);
+    modal.show();
+    return dialog.show();
+  };
+
+  return Audio;
+
+})(ContentTools.Tool);
+
+ContentTools.AudioDialog = (function(superClass) {
+  extend(AudioDialog, superClass);
+
+  function AudioDialog() {
+    AudioDialog.__super__.constructor.call(this, 'Insert audio');
+  }
+
+  AudioDialog.prototype.clearPreview = function() {
+    if (this._domPreview) {
+      this._domPreview.parentNode.removeChild(this._domPreview);
+      return this._domPreview = void 0;
+    }
+  };
+
+  AudioDialog.prototype.mount = function() {
+    var domControlGroup;
+    AudioDialog.__super__.mount.call(this);
+    ContentEdit.addCSSClass(this._domElement, 'ct-video-dialog');
+    ContentEdit.addCSSClass(this._domView, 'ct-video-dialog__preview');
+    domControlGroup = this.constructor.createDiv(['ct-control-group']);
+    this._domControls.appendChild(domControlGroup);
+    this._domInput = document.createElement('input');
+    this._domInput.setAttribute('class', 'ct-video-dialog__input');
+    this._domInput.setAttribute('name', 'url');
+    this._domInput.setAttribute('placeholder', ContentEdit._('Paste Soundcloud embed code'));
+    this._domInput.setAttribute('type', 'text');
+    domControlGroup.appendChild(this._domInput);
+    this._domButton = this.constructor.createDiv(['ct-control', 'ct-control--text', 'ct-control--insert', 'ct-control--muted']);
+    this._domButton.textContent = ContentEdit._('Insert');
+    domControlGroup.appendChild(this._domButton);
+    return this._addDOMEventListeners();
+  };
+
+  AudioDialog.prototype.preview = function(embedCode) {
+    this.clearPreview();
+    this._domPreview = document.createElement('div');
+    this._domPreview.innerHTML = embedCode;
+    return this._domView.appendChild(this._domPreview);
+  };
+
+  AudioDialog.prototype.save = function() {
+    var embedURL, videoURL;
+    videoURL = this._domInput.value.trim();
+    embedURL = ContentTools.getEmbedVideoURL(videoURL);
+    if (embedURL) {
+      return this.dispatchEvent(this.createEvent('save', {
+        'url': embedURL
+      }));
+    } else {
+      return this.dispatchEvent(this.createEvent('save', {
+        'url': videoURL
+      }));
+    }
+  };
+
+  AudioDialog.prototype.show = function() {
+    AudioDialog.__super__.show.call(this);
+    return this._domInput.focus();
+  };
+
+  AudioDialog.prototype.unmount = function() {
+    if (this.isMounted()) {
+      this._domInput.blur();
+    }
+    AudioDialog.__super__.unmount.call(this);
+    this._domButton = null;
+    this._domInput = null;
+    return this._domPreview = null;
+  };
+
+  AudioDialog.prototype._addDOMEventListeners = function() {
+    AudioDialog.__super__._addDOMEventListeners.call(this);
+    this._domInput.addEventListener('input', (function(_this) {
+      return function(ev) {
+        var updatePreview;
+        if (ev.target.value) {
+          ContentEdit.removeCSSClass(_this._domButton, 'ct-control--muted');
+        } else {
+          ContentEdit.addCSSClass(_this._domButton, 'ct-control--muted');
+        }
+        if (_this._updatePreviewTimeout) {
+          clearTimeout(_this._updatePreviewTimeout);
+        }
+        updatePreview = function() {
+          var videoURL;
+          videoURL = _this._domInput.value.trim();
+          return _this.preview(videoURL);
+        };
+        return _this._updatePreviewTimeout = setTimeout(updatePreview, 500);
+      };
+    })(this));
+    this._domInput.addEventListener('keypress', (function(_this) {
+      return function(ev) {
+        if (ev.keyCode === 13) {
+          return _this.save();
+        }
+      };
+    })(this));
+    return this._domButton.addEventListener('click', (function(_this) {
+      return function(ev) {
+        var cssClass;
+        ev.preventDefault();
+        cssClass = _this._domButton.getAttribute('class');
+        if (cssClass.indexOf('ct-control--muted') === -1) {
+          return _this.save();
+        }
+      };
+    })(this));
+  };
+
+  return AudioDialog;
+
+})(ContentTools.DialogUI);
+
+
+},{}],11:[function(require,module,exports){
+var extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
+  hasProp = {}.hasOwnProperty;
+
 ContentEdit.BackgroundImage = (function(superClass) {
   extend(BackgroundImage, superClass);
 
@@ -2181,8 +2528,8 @@ ContentEdit.BackgroundImage = (function(superClass) {
 ContentEdit.TagNames.get().register(ContentEdit.BackgroundImage, 'bkgimg');
 
 
-},{}],11:[function(require,module,exports){
-var API, BackgroundImage, ImageUploader, Underline, onLoad;
+},{}],12:[function(require,module,exports){
+var API, AudioDialog, BackgroundImage, ImageUploader, Underline, onLoad;
 
 API = require('./api.coffee');
 
@@ -2192,10 +2539,13 @@ BackgroundImage = require('./background-image.coffee');
 
 Underline = require('./underline.coffee');
 
+AudioDialog = require('./audio.coffee');
+
 onLoad = function() {
   var editor, getImages;
   ContentTools.IMAGE_UPLOADER = ImageUploader;
-  ContentTools.DEFAULT_TOOLS[1].push('underline');
+  ContentTools.DEFAULT_TOOLS[0].push('underline');
+  ContentTools.DEFAULT_TOOLS[0].push('audio');
   editor = ContentTools.EditorApp.get();
   getImages = function() {
     var descendants, i, images, name, ref, region, src;
@@ -2250,7 +2600,7 @@ onLoad = function() {
 window.addEventListener('load', onLoad);
 
 
-},{"./api.coffee":9,"./background-image.coffee":10,"./image-uploader.coffee":12,"./underline.coffee":13}],12:[function(require,module,exports){
+},{"./api.coffee":9,"./audio.coffee":10,"./background-image.coffee":11,"./image-uploader.coffee":13,"./underline.coffee":14}],13:[function(require,module,exports){
 var API, ImageUploader;
 
 API = require('./api.coffee');
@@ -2342,7 +2692,7 @@ ImageUploader = function(dialog) {
 module.exports = ImageUploader;
 
 
-},{"./api.coffee":9}],13:[function(require,module,exports){
+},{"./api.coffee":9}],14:[function(require,module,exports){
 var extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
   hasProp = {}.hasOwnProperty;
 
@@ -2366,4 +2716,4 @@ ContentTools.Tools.Underline = (function(superClass) {
 })(ContentTools.Tools.Bold);
 
 
-},{}]},{},[11]);
+},{}]},{},[12]);
