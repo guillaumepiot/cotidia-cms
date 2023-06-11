@@ -34,7 +34,6 @@ setup(
         "djangorestframework==3.8.2",
         "django-mptt==0.9.1",
         "django-reversion==2.0.13",
-        "Pillow==5.4.1",
         "django-codemirror-widget==0.4.1",
     ],
     classifiers=[
