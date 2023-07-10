@@ -31,7 +31,7 @@ setup(
     install_requires=[
         "django==2.2",
         "django-form-utils==1.0.3",
-        "djangorestframework==3.8.2",
+        "djangorestframework==3.13",
         "django-mptt==0.9.1",
         "django-reversion==2.0.13",
         "django-codemirror-widget==0.4.1",
