@@ -29,7 +29,7 @@ setup(
     namespace_packages=["cotidia"],
     include_package_data=True,
     install_requires=[
-        "django==2.2",
+        "django==5.2.17",
         "django-form-utils==1.0.3",
         "djangorestframework==3.13",
         "django-mptt==0.9.1",
